@@ -124,6 +124,29 @@ export type Database = {
           created_at?: string;
         };
       };
+      profiles: {
+        Row: {
+          id: string;
+          email: string;
+          display_name: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id: string;
+          email: string;
+          display_name?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          email?: string;
+          display_name?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
       moderation_flags: {
         Row: {
           id: string;

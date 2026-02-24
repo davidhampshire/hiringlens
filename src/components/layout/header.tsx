@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { SearchBar } from "./search-bar";
+import { UserMenu } from "@/components/auth/user-menu";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
@@ -53,6 +54,7 @@ export function Header() {
               {link.label}
             </Link>
           ))}
+          <UserMenu />
           <Link
             href="/submit"
             className={cn(
@@ -124,6 +126,7 @@ export function Header() {
             >
               Share Experience
             </Link>
+            <UserMenu variant="mobile" onAction={() => setMobileMenuOpen(false)} />
           </nav>
         </div>
       )}

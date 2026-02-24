@@ -228,6 +228,11 @@ export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
     try {
       const supabase = createClient();
 
+      // Get authenticated user for submitted_by
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
       let companyId = data.company_id;
 
       // Create company if new
@@ -301,6 +306,7 @@ export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
           fairness_rating: data.fairness_rating,
           overall_comments: commentsPayload || null,
           candidate_tip: data.candidate_tip || null,
+          submitted_by: user?.id ?? null,
           status: "pending",
         });
 
