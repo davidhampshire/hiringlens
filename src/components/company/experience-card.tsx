@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { StarRating } from "@/components/shared/star-rating";
@@ -14,9 +15,11 @@ import type { Interview } from "@/types";
 
 interface ExperienceCardProps {
   interview: Interview;
+  companyName?: string;
+  companySlug?: string;
 }
 
-export function ExperienceCard({ interview }: ExperienceCardProps) {
+export function ExperienceCard({ interview, companyName, companySlug }: ExperienceCardProps) {
   const [vote, setVote] = useState<"helpful" | "unhelpful" | null>(null);
   const [helpfulCount, setHelpfulCount] = useState(0);
   const [unhelpfulCount, setUnhelpfulCount] = useState(0);
@@ -54,6 +57,18 @@ export function ExperienceCard({ interview }: ExperienceCardProps) {
   return (
     <Card className="gap-0 p-0">
       <div className="p-5">
+        {/* Company name (shown on Recent Posts page) */}
+        {companyName && companySlug && (
+          <div className="mb-2">
+            <Link
+              href={`/company/${companySlug}`}
+              className="text-sm font-medium text-primary hover:underline"
+            >
+              {companyName}
+            </Link>
+          </div>
+        )}
+
         {/* Header */}
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">

@@ -11,6 +11,8 @@ import { ProcessTimeline } from "@/components/company/process-timeline";
 import { RedFlagIndicators } from "@/components/company/red-flag-indicators";
 import { CandidateTips } from "@/components/company/candidate-tips";
 import { ExperienceList } from "@/components/company/experience-list";
+import { Breadcrumbs } from "@/components/shared/breadcrumbs";
+import { ShareButton } from "@/components/shared/share-button";
 import type { CompanyScore, Interview } from "@/types";
 
 export const revalidate = 3600;
@@ -92,6 +94,14 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+      <Breadcrumbs
+        items={[
+          { label: "Home", href: "/" },
+          { label: "Companies", href: "/companies" },
+          { label: c.name },
+        ]}
+      />
+
       {/* Company header */}
       <div className="mb-8">
         <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
@@ -99,6 +109,10 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
           {c.industry && (
             <span className="text-sm text-muted-foreground">{c.industry}</span>
           )}
+          <ShareButton
+            title={`${c.name} Interview Experience | HiringLens`}
+            text={`Check out interview experiences at ${c.name} on HiringLens`}
+          />
         </div>
         {c.location && (
           <p className="mt-1 text-sm text-muted-foreground">{c.location}</p>

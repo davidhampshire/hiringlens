@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { HeroSection } from "@/components/home/hero-section";
+import { PlatformStats } from "@/components/home/platform-stats";
 import { TrendingCompanies } from "@/components/home/trending-companies";
 import { RecentReviews } from "@/components/home/recent-reviews";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -32,10 +33,21 @@ function ReviewsSkeleton() {
   );
 }
 
+function StatsSkeleton() {
+  return (
+    <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+      <Skeleton className="h-24 rounded-xl" />
+    </section>
+  );
+}
+
 export default function HomePage() {
   return (
     <>
       <HeroSection />
+      <Suspense fallback={<StatsSkeleton />}>
+        <PlatformStats />
+      </Suspense>
       <Suspense fallback={<CompanySkeleton />}>
         <TrendingCompanies />
       </Suspense>
