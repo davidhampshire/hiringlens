@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { interviewSchema, type InterviewFormData } from "@/lib/validators";
@@ -73,9 +75,51 @@ const FORM_STEPS = [
   { id: "advice", label: "Your Advice", fields: ["candidate_tip", "overall_comments"] },
 ] as const;
 
+const FORM_STORAGE_KEY = "hiringlens_draft";
+
+function AuthBanner({ isSignedIn }: { isSignedIn: boolean }) {
+  if (isSignedIn) return null;
+  return (
+    <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50/60 px-4 py-3">
+      <svg
+        className="mt-0.5 h-5 w-5 shrink-0 text-amber-600"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg>
+      <div className="text-sm">
+        <p className="font-medium text-amber-900">
+          You&apos;ll need an account to post
+        </p>
+        <p className="mt-0.5 text-amber-800/80">
+          Start filling in your experience — when you&apos;re ready to submit, we&apos;ll
+          ask you to{" "}
+          <Link href="/sign-up" className="font-medium underline hover:text-amber-900">
+            create a free account
+          </Link>{" "}
+          or{" "}
+          <Link href="/sign-in" className="font-medium underline hover:text-amber-900">
+            sign in
+          </Link>
+          . Your progress will be saved.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isSignedIn, setIsSignedIn] = useState<boolean | null>(null);
   const [followUpAnswers, setFollowUpAnswers] = useState<
     Record<string, Record<string, string>>
   >({});
@@ -118,6 +162,65 @@ export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
 
   const currentOutcome = watch("outcome");
   const watchedValues = watch();
+
+  // Check auth state and restore saved draft
+  useEffect(() => {
+    const supabase = createClient();
+
+    // Check initial auth
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setIsSignedIn(!!user);
+    });
+
+    // Listen for auth changes (e.g., user signs in in another tab)
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsSignedIn(!!session?.user);
+    });
+
+    // Restore saved draft from localStorage
+    try {
+      const saved = localStorage.getItem(FORM_STORAGE_KEY);
+      if (saved) {
+        const draft = JSON.parse(saved) as {
+          formData: Partial<InterviewFormData>;
+          followUps?: Record<string, Record<string, string>>;
+        };
+        // Restore form values
+        for (const [key, value] of Object.entries(draft.formData)) {
+          if (value !== undefined && value !== null && value !== "") {
+            setValue(key as keyof InterviewFormData, value as never);
+          }
+        }
+        // Restore follow-up answers
+        if (draft.followUps) {
+          setFollowUpAnswers(draft.followUps);
+        }
+        // Clear the draft after restoring
+        localStorage.removeItem(FORM_STORAGE_KEY);
+        toast.success("Your draft has been restored.");
+      }
+    } catch {
+      // Ignore parse errors
+    }
+
+    return () => subscription.unsubscribe();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Save current form to localStorage (called before redirect)
+  const saveDraft = useCallback(() => {
+    try {
+      const currentData = form.getValues();
+      localStorage.setItem(
+        FORM_STORAGE_KEY,
+        JSON.stringify({ formData: currentData, followUps: followUpAnswers })
+      );
+    } catch {
+      // Ignore storage errors
+    }
+  }, [form, followUpAnswers]);
 
   function isFlagsCompleted(): boolean {
     return !!(
@@ -232,6 +335,15 @@ export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
       const {
         data: { user },
       } = await supabase.auth.getUser();
+
+      // If not signed in, save draft and redirect to sign-up
+      if (!user) {
+        saveDraft();
+        setIsSubmitting(false);
+        toast("Create an account to submit your experience. Your progress has been saved.");
+        router.push("/sign-up?redirectTo=/submit");
+        return;
+      }
 
       let companyId = data.company_id;
 
@@ -464,6 +576,9 @@ export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
 
       {/* Form */}
       <form onSubmit={handleSubmit(onSubmit)} className="flex-1 min-w-0 space-y-8 pt-10 lg:pt-0">
+        {/* Auth banner — top */}
+        {isSignedIn === false && <AuthBanner isSignedIn={false} />}
+
         {/* Company Section */}
         <section id="step-company" className="scroll-mt-28 lg:scroll-mt-20">
           <h2 className="mb-4 text-lg font-semibold">Company</h2>
@@ -786,6 +901,9 @@ export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
           </div>
         </section>
 
+        {/* Auth banner — bottom */}
+        {isSignedIn === false && <AuthBanner isSignedIn={false} />}
+
         {/* Submit */}
         <div className="sticky bottom-0 border-t bg-background py-4 sm:static sm:border-0 sm:py-0">
           <Button
@@ -794,7 +912,11 @@ export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
             className="w-full sm:w-auto"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Submitting..." : "Submit Experience"}
+            {isSubmitting
+              ? "Submitting..."
+              : isSignedIn === false
+                ? "Create Account & Submit"
+                : "Submit Experience"}
           </Button>
           <p className="mt-2 text-xs text-muted-foreground">
             Your submission will be reviewed before being published.
