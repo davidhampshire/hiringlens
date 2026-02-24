@@ -29,7 +29,7 @@ const VALUES = [
     ),
     title: "Help each other prepare",
     description:
-      "Tips from candidates who've been through it. What to expect, how to prepare, and what the process is really like — from people who've sat in that chair.",
+      "Tips from candidates who've been through it. What to expect, how to prepare, and what the process is really like. From people who've sat in that chair.",
   },
   {
     icon: (
@@ -53,7 +53,7 @@ export function MissionSection() {
         <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
           Interviewing is stressful. People invest real time and emotional energy
           into every application. We believe they deserve to know what
-          they&apos;re walking into &mdash; and companies should be held to a
+          they&apos;re walking into, and companies should be held to a
           higher standard.
         </p>
       </div>
@@ -86,7 +86,7 @@ export function MissionSection() {
           >
             Share your experience
           </Link>{" "}
-          &mdash; it only takes a few minutes and it helps everyone.
+          . It only takes a few minutes and it helps everyone.
         </p>
       </div>
     </section>

@@ -37,7 +37,7 @@ const VALUES = [
     ),
     title: "Build a community",
     description:
-      "Real tips from people who've sat in that chair. What to expect, how to prepare, and what the process is actually like &mdash; from candidates helping candidates.",
+      "Real tips from people who've sat in that chair. What to expect, how to prepare, and what the process is actually like. From candidates helping candidates.",
   },
   {
     icon: (
@@ -57,7 +57,7 @@ export default function AboutPage() {
       <div className="mb-8">
         <h1 className="text-2xl font-bold">About HiringLens</h1>
         <p className="mt-2 text-lg text-muted-foreground">
-          Championing transparency in hiring &mdash; for candidates and
+          Championing transparency in hiring, for candidates and
           companies alike
         </p>
       </div>
@@ -68,8 +68,8 @@ export default function AboutPage() {
           <h2 className="text-lg font-semibold">The Problem</h2>
           <p className="mt-2 text-muted-foreground">
             Interviewing is stressful. Candidates invest real time and emotional
-            energy into every application &mdash; researching the company,
-            preparing for interviews, completing take-home tasks &mdash; only to
+            energy into every application. Researching the company,
+            preparing for interviews, completing take-home tasks, only to
             be ghosted after reaching the final two, or to discover that the
             process wasn&apos;t what they expected. There&apos;s no dedicated
             place to share structured feedback about these experiences, so the
@@ -119,7 +119,7 @@ export default function AboutPage() {
               <h3 className="mt-3 font-medium">Share</h3>
               <p className="mt-1 text-sm text-muted-foreground">
                 Been through an interview? Share a structured review of the
-                experience &mdash; the good, the bad, and the tips you wish
+                experience. The good, the bad, and the tips you wish
                 you&apos;d had.
               </p>
             </div>
@@ -152,8 +152,8 @@ export default function AboutPage() {
           <h2 className="text-lg font-semibold">The Reality Score</h2>
           <p className="mt-2 text-muted-foreground">
             Every company receives a Reality Score from 0 to 100 based on four
-            dimensions &mdash; professionalism, communication, clarity, and
-            fairness &mdash; with penalties for red flags like ghosting, unpaid
+            dimensions: professionalism, communication, clarity, and
+            fairness. It applies penalties for red flags like ghosting, unpaid
             work, and exceeded timelines. It&apos;s a single number that cuts
             through the noise and tells you what to actually expect when you
             apply.
@@ -179,7 +179,7 @@ export default function AboutPage() {
           </h2>
           <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">
             Your experience matters. Whether it was brilliant or terrible, sharing
-            it helps the next person walking into that room &mdash; and it pushes
+            it helps the next person walking into that room, and it pushes
             companies to do better.
           </p>
           <Button asChild className="mt-4">

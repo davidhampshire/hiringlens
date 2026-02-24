@@ -27,7 +27,7 @@ export default function GuidelinesPage() {
             <li className="flex gap-2">
               <span className="text-emerald-600">&#10003;</span>
               <span>
-                <strong className="text-foreground">Be specific</strong> &mdash;
+                <strong className="text-foreground">Be specific.</strong>{" "}
                 Describe the stages, timing, and format of the process. The more
                 detail, the more useful it is.
               </span>
@@ -35,7 +35,7 @@ export default function GuidelinesPage() {
             <li className="flex gap-2">
               <span className="text-emerald-600">&#10003;</span>
               <span>
-                <strong className="text-foreground">Be honest</strong> &mdash;
+                <strong className="text-foreground">Be honest.</strong>{" "}
                 Share your genuine experience, whether positive or negative.
                 Balanced reviews are the most helpful.
               </span>
@@ -43,15 +43,15 @@ export default function GuidelinesPage() {
             <li className="flex gap-2">
               <span className="text-emerald-600">&#10003;</span>
               <span>
-                <strong className="text-foreground">Be constructive</strong>{" "}
-                &mdash; Focus on the process, not personal grudges. Explain what
+                <strong className="text-foreground">Be constructive.</strong>{" "}
+                Focus on the process, not personal grudges. Explain what
                 went well and what could be improved.
               </span>
             </li>
             <li className="flex gap-2">
               <span className="text-emerald-600">&#10003;</span>
               <span>
-                <strong className="text-foreground">Share tips</strong> &mdash;
+                <strong className="text-foreground">Share tips.</strong>{" "}
                 Help future candidates prepare. What would you tell a friend
                 before their interview?
               </span>
@@ -68,9 +68,9 @@ export default function GuidelinesPage() {
               <span className="text-red-600">&#10007;</span>
               <span>
                 <strong className="text-foreground">
-                  Personal attacks on individuals
+                  Personal attacks on individuals.
                 </strong>{" "}
-                &mdash; Do not name or identify specific interviewers in a
+                Do not name or identify specific interviewers in a
                 negative context. Focus on the process, not the person.
               </span>
             </li>
@@ -78,9 +78,9 @@ export default function GuidelinesPage() {
               <span className="text-red-600">&#10007;</span>
               <span>
                 <strong className="text-foreground">
-                  Inappropriate language
+                  Inappropriate language.
                 </strong>{" "}
-                &mdash; Profanity, slurs, or offensive language will result in
+                Profanity, slurs, or offensive language will result in
                 your review being rejected.
               </span>
             </li>
@@ -88,17 +88,17 @@ export default function GuidelinesPage() {
               <span className="text-red-600">&#10007;</span>
               <span>
                 <strong className="text-foreground">
-                  Confidential information
+                  Confidential information.
                 </strong>{" "}
-                &mdash; Do not share proprietary interview questions, NDA-protected
+                Do not share proprietary interview questions, NDA-protected
                 content, trade secrets, or confidential business information.
               </span>
             </li>
             <li className="flex gap-2">
               <span className="text-red-600">&#10007;</span>
               <span>
-                <strong className="text-foreground">Fake reviews</strong>{" "}
-                &mdash; Only submit reviews for interviews you have actually
+                <strong className="text-foreground">Fake reviews.</strong>{" "}
+                Only submit reviews for interviews you have actually
                 experienced. Fabricated reviews undermine trust.
               </span>
             </li>
@@ -106,9 +106,9 @@ export default function GuidelinesPage() {
               <span className="text-red-600">&#10007;</span>
               <span>
                 <strong className="text-foreground">
-                  Spam or promotional content
+                  Spam or promotional content.
                 </strong>{" "}
-                &mdash; Reviews must be genuine experiences, not advertisements
+                Reviews must be genuine experiences, not advertisements
                 or promotional material.
               </span>
             </li>

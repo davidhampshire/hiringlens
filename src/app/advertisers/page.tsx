@@ -50,15 +50,15 @@ export default function AdvertisersPage() {
             <li className="flex gap-2">
               <span className="text-primary">&bull;</span>
               <span>
-                <strong className="text-foreground">Sponsored placements</strong>{" "}
-                &mdash; Featured positions on search results and company
+                <strong className="text-foreground">Sponsored placements.</strong>{" "}
+                Featured positions on search results and company
                 directory pages.
               </span>
             </li>
             <li className="flex gap-2">
               <span className="text-primary">&bull;</span>
               <span>
-                <strong className="text-foreground">Display ads</strong> &mdash;
+                <strong className="text-foreground">Display ads.</strong>{" "}
                 Non-intrusive banner ads on high-traffic pages.
               </span>
             </li>
@@ -66,9 +66,9 @@ export default function AdvertisersPage() {
               <span className="text-primary">&bull;</span>
               <span>
                 <strong className="text-foreground">
-                  Employer branding
+                  Employer branding.
                 </strong>{" "}
-                &mdash; Enhanced company profiles with branding, media, and
+                Enhanced company profiles with branding, media, and
                 direct links. Coming soon.
               </span>
             </li>

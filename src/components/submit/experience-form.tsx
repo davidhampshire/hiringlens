@@ -99,7 +99,7 @@ function AuthBanner({ isSignedIn }: { isSignedIn: boolean }) {
           You&apos;ll need an account to post
         </p>
         <p className="mt-0.5 text-amber-800/80">
-          Start filling in your experience — when you&apos;re ready to submit, we&apos;ll
+          Start filling in your experience. When you&apos;re ready to submit, we&apos;ll
           ask you to{" "}
           <Link href="/sign-up" className="font-medium underline hover:text-amber-900">
             create a free account
@@ -817,7 +817,7 @@ export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
         <section id="step-flags" className="scroll-mt-28 lg:scroll-mt-20">
           <h2 className="mb-1 text-lg font-semibold">Experience Flags</h2>
           <p className="mb-4 text-sm text-muted-foreground">
-            Toggle any that apply — follow-up details are optional but help paint
+            Toggle any that apply. Follow-up details are optional but help paint
             a fuller picture
           </p>
           <div className="space-y-3">

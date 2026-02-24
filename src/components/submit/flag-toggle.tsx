@@ -65,7 +65,7 @@ export function FlagToggle({
       {checked && followUps && followUps.length > 0 && (
         <div className="border-t bg-muted/20 px-3 pb-3 pt-2.5">
           <p className="mb-2 text-xs font-medium text-muted-foreground">
-            Optional — help us understand more:
+            Optional, help us understand more:
           </p>
           <div className="space-y-2.5">
             {followUps.map((q) => (

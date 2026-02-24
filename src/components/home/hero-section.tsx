@@ -26,9 +26,9 @@ export function HeroSection() {
             <span className="text-primary">fair</span> for everyone
           </h1>
           <p className="mt-4 text-base text-muted-foreground sm:text-lg">
-            Candidates spend hours preparing, researching, and interviewing
-            &mdash; they deserve transparency. We spotlight companies that get
-            hiring right and hold accountable those that don&apos;t.
+            Candidates spend hours preparing, researching, and interviewing.
+            They deserve transparency. We spotlight companies that get hiring
+            right and hold accountable those that don&apos;t.
           </p>
 
           {/* Search */}
