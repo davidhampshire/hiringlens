@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { BackgroundGlow } from "@/components/layout/background-glow";
+import { ScrollToTop } from "@/components/layout/scroll-to-top";
 import "./globals.css";
 
 const inter = Inter({
@@ -43,6 +44,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} font-sans antialiased`}>
         <div className="relative flex min-h-screen flex-col">
+          <ScrollToTop />
           <BackgroundGlow />
           <Header />
           <main className="flex-1">{children}</main>

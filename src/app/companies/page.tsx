@@ -64,7 +64,7 @@ export default async function CompaniesPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <div className="mb-6">
+      <div className="animate-in-view mb-6">
         <h1 className="text-2xl font-bold">Company Directory</h1>
         <p className="mt-2 text-muted-foreground">
           Browse all {companies.length} rated companies alphabetically. Click a
@@ -72,9 +72,11 @@ export default async function CompaniesPage() {
         </p>
       </div>
 
-      <LetterNav availableLetters={availableLetters} />
+      <div className="animate-in-view-d1">
+        <LetterNav availableLetters={availableLetters} />
+      </div>
 
-      <div className="mt-6 space-y-10">
+      <div className="animate-in-view-d2 mt-6 space-y-10">
         {Array.from(grouped.entries()).map(([letter, letterCompanies]) => (
           <section
             key={letter}

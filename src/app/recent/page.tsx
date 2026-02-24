@@ -29,7 +29,7 @@ export default async function RecentPostsPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <div className="mb-8">
+      <div className="animate-in-view mb-8">
         <h1 className="text-2xl font-bold">Recent Interview Experiences</h1>
         <p className="mt-2 text-muted-foreground">
           Browse the latest interview insights shared by candidates across all
@@ -37,10 +37,12 @@ export default async function RecentPostsPage() {
         </p>
       </div>
 
-      <RecentPostsList
-        initialPosts={interviews}
-        totalCount={count ?? 0}
-      />
+      <div className="animate-in-view-d1">
+        <RecentPostsList
+          initialPosts={interviews}
+          totalCount={count ?? 0}
+        />
+      </div>
     </div>
   );
 }

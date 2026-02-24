@@ -94,16 +94,18 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <Breadcrumbs
-        items={[
-          { label: "Home", href: "/" },
-          { label: "Companies", href: "/companies" },
-          { label: c.name },
-        ]}
-      />
+      <div className="animate-in-view">
+        <Breadcrumbs
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Companies", href: "/companies" },
+            { label: c.name },
+          ]}
+        />
+      </div>
 
       {/* Company header */}
-      <div className="mb-8">
+      <div className="animate-in-view-d1 mb-8">
         <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
           <h1 className="text-2xl font-bold sm:text-3xl">{c.name}</h1>
           {c.industry && (
@@ -121,7 +123,7 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
 
       <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
         {/* Sidebar */}
-        <aside className="space-y-6">
+        <aside className="animate-in-view-d2 space-y-6">
           <RealityScoreBadge
             score={c.reality_score}
             totalReviews={c.total_reviews}
@@ -162,7 +164,7 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
         </aside>
 
         {/* Main content */}
-        <div className="space-y-6">
+        <div className="animate-in-view-d3 space-y-6">
           <CandidateTips tips={tips} />
 
           {tips.length > 0 && <Separator />}
