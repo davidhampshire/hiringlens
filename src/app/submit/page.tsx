@@ -16,7 +16,7 @@ export default async function SubmitPage({ searchParams }: SubmitPageProps) {
   const { company } = await searchParams;
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
+    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
       <div className="mb-8">
         <h1 className="text-2xl font-bold">Share Your Experience</h1>
         <p className="mt-2 text-muted-foreground">
