@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { HeroSection } from "@/components/home/hero-section";
 import { PlatformStats } from "@/components/home/platform-stats";
+import { MissionSection } from "@/components/home/mission-section";
 import { TrendingCompanies } from "@/components/home/trending-companies";
 import { RecentReviews } from "@/components/home/recent-reviews";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -48,6 +49,7 @@ export default function HomePage() {
       <Suspense fallback={<StatsSkeleton />}>
         <PlatformStats />
       </Suspense>
+      <MissionSection />
       <Suspense fallback={<CompanySkeleton />}>
         <TrendingCompanies />
       </Suspense>

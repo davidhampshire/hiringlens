@@ -65,8 +65,8 @@ export function Footer() {
               <span className="font-semibold tracking-tight">HiringLens</span>
             </Link>
             <p className="mt-3 text-sm text-muted-foreground">
-              See how companies really hire. Real interview experiences from real
-              candidates.
+              Championing transparency in hiring. Spotlighting great companies,
+              flagging the rest, and helping candidates support each other.
             </p>
           </div>
 

@@ -22,12 +22,13 @@ export function HeroSection() {
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
         <div className="mx-auto max-w-2xl text-center">
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
-            See how companies{" "}
-            <span className="text-primary">really</span> hire
+            Interviews should be{" "}
+            <span className="text-primary">fair</span> for everyone
           </h1>
           <p className="mt-4 text-base text-muted-foreground sm:text-lg">
-            Real interview experiences from real candidates. Know the process,
-            prepare smarter, and interview with confidence.
+            Candidates spend hours preparing, researching, and interviewing
+            &mdash; they deserve transparency. We spotlight companies that get
+            hiring right and hold accountable those that don&apos;t.
           </p>
 
           {/* Search */}
