@@ -1,0 +1,60 @@
+import Link from "next/link";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { cn, formatScore, getScoreColor, getScoreBgColor } from "@/lib/utils";
+import type { CompanyScore } from "@/types";
+
+interface CompanyCardProps {
+  company: CompanyScore;
+}
+
+export function CompanyCard({ company }: CompanyCardProps) {
+  return (
+    <Link href={`/company/${company.slug}`}>
+      <Card className="group gap-0 p-0 transition-all hover:shadow-md">
+        <div className="p-5">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <h3 className="truncate text-base font-semibold group-hover:text-primary">
+                {company.name}
+              </h3>
+              {company.industry && (
+                <p className="mt-0.5 text-sm text-muted-foreground">
+                  {company.industry}
+                </p>
+              )}
+              {company.location && (
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  {company.location}
+                </p>
+              )}
+            </div>
+
+            {/* Reality Score */}
+            <div
+              className={cn(
+                "flex h-12 w-12 flex-shrink-0 flex-col items-center justify-center rounded-lg border",
+                getScoreBgColor(company.reality_score)
+              )}
+            >
+              <span className={cn("text-lg font-bold leading-none", getScoreColor(company.reality_score))}>
+                {formatScore(company.reality_score)}
+              </span>
+            </div>
+          </div>
+
+          <div className="mt-3 flex items-center gap-2">
+            <Badge variant="secondary" className="text-xs font-normal">
+              {company.total_reviews} {company.total_reviews === 1 ? "review" : "reviews"}
+            </Badge>
+            {company.avg_duration_days && (
+              <Badge variant="outline" className="text-xs font-normal">
+                ~{Math.round(company.avg_duration_days)} days
+              </Badge>
+            )}
+          </div>
+        </div>
+      </Card>
+    </Link>
+  );
+}
