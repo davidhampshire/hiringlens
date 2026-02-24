@@ -41,7 +41,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} font-sans antialiased`}>
-        <div className="flex min-h-screen flex-col">
+        <div className="relative flex min-h-screen flex-col">
+          {/* Radial gradient background glow */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
+          >
+            <div className="absolute -top-32 left-1/2 h-[700px] w-[1000px] -translate-x-1/2 rounded-full bg-emerald-400/20 blur-[140px]" />
+            <div className="absolute top-[350px] -right-32 h-[450px] w-[550px] rounded-full bg-emerald-300/12 blur-[110px]" />
+            <div className="absolute top-[600px] -left-40 h-[350px] w-[450px] rounded-full bg-emerald-200/8 blur-[100px]" />
+          </div>
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
