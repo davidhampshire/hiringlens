@@ -119,6 +119,16 @@ export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
   const currentOutcome = watch("outcome");
   const watchedValues = watch();
 
+  function isFlagsCompleted(): boolean {
+    return !!(
+      watchedValues.received_feedback ||
+      watchedValues.unpaid_task ||
+      watchedValues.ghosted ||
+      watchedValues.interviewer_late ||
+      watchedValues.exceeded_timeline
+    );
+  }
+
   // Track which steps are completed
   useEffect(() => {
     function getCompletedSteps(): boolean[] {
@@ -140,7 +150,7 @@ export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
               watchedValues.fairness_rating > 0
             );
           case "flags":
-            return true; // Always considered complete (optional)
+            return isFlagsCompleted();
           case "advice":
             return !!(watchedValues.candidate_tip || watchedValues.overall_comments);
           default:
@@ -178,7 +188,10 @@ export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
   function scrollToStep(stepId: string) {
     const el = document.getElementById(`step-${stepId}`);
     if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      // Offset for sticky header (desktop ~64px, mobile ~64px header + ~40px progress bar)
+      const headerOffset = window.innerWidth >= 1024 ? 80 : 120;
+      const top = el.getBoundingClientRect().top + window.scrollY - headerOffset;
+      window.scrollTo({ top, behavior: "smooth" });
     }
   }
 
@@ -201,7 +214,7 @@ export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
           watchedValues.fairness_rating > 0
         );
       case "flags":
-        return true;
+        return isFlagsCompleted();
       case "advice":
         return !!(watchedValues.candidate_tip || watchedValues.overall_comments);
       default:
@@ -370,7 +383,7 @@ export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
                       watchedValues.fairness_rating > 0
                     );
                   case "flags":
-                    return true;
+                    return isFlagsCompleted();
                   case "advice":
                     return !!(watchedValues.candidate_tip || watchedValues.overall_comments);
                   default:
@@ -446,7 +459,7 @@ export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
       {/* Form */}
       <form onSubmit={handleSubmit(onSubmit)} className="flex-1 min-w-0 space-y-8 pt-10 lg:pt-0">
         {/* Company Section */}
-        <section id="step-company">
+        <section id="step-company" className="scroll-mt-28 lg:scroll-mt-20">
           <h2 className="mb-4 text-lg font-semibold">Company</h2>
           <div className="space-y-4">
             <CompanySearchInput
@@ -487,7 +500,7 @@ export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
         <Separator />
 
         {/* Outcome */}
-        <section id="step-outcome">
+        <section id="step-outcome" className="scroll-mt-28 lg:scroll-mt-20">
           <h2 className="mb-1 text-lg font-semibold">How did it go?</h2>
           <p className="mb-4 text-sm text-muted-foreground">
             This helps frame the rest of your feedback
@@ -541,7 +554,7 @@ export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
         <Separator />
 
         {/* Role Details — full-width fields */}
-        <section id="step-role">
+        <section id="step-role" className="scroll-mt-28 lg:scroll-mt-20">
           <h2 className="mb-4 text-lg font-semibold">Role Details</h2>
           <div className="space-y-4">
             <div>
@@ -622,7 +635,7 @@ export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
         <Separator />
 
         {/* Process Metrics */}
-        <section id="step-process">
+        <section id="step-process" className="scroll-mt-28 lg:scroll-mt-20">
           <h2 className="mb-4 text-lg font-semibold">Process</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
@@ -655,7 +668,7 @@ export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
         <Separator />
 
         {/* Ratings */}
-        <section id="step-ratings">
+        <section id="step-ratings" className="scroll-mt-28 lg:scroll-mt-20">
           <h2 className="mb-4 text-lg font-semibold">
             Ratings <span className="text-destructive">*</span>
           </h2>
@@ -680,7 +693,7 @@ export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
         <Separator />
 
         {/* Experience Flags — stacked vertically */}
-        <section id="step-flags">
+        <section id="step-flags" className="scroll-mt-28 lg:scroll-mt-20">
           <h2 className="mb-1 text-lg font-semibold">Experience Flags</h2>
           <p className="mb-4 text-sm text-muted-foreground">
             Toggle any that apply — follow-up details are optional but help paint
@@ -722,7 +735,7 @@ export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
         <Separator />
 
         {/* Tips & Comments — deeper textareas */}
-        <section id="step-advice">
+        <section id="step-advice" className="scroll-mt-28 lg:scroll-mt-20">
           <h2 className="mb-4 text-lg font-semibold">Your Advice</h2>
           <div className="space-y-4">
             <div>
