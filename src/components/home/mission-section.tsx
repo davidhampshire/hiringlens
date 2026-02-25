@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AdPlaceholder } from "@/components/shared/ad-placeholder";
 
 const VALUES = [
   {
@@ -89,6 +90,8 @@ export function MissionSection() {
           . It only takes a few minutes and it helps everyone.
         </p>
       </div>
+
+      <AdPlaceholder variant="leaderboard" className="mt-8" />
     </section>
   );
 }
