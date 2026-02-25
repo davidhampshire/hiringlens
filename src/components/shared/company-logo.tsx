@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 interface CompanyLogoProps {
   name: string;
   logoUrl?: string | null;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl";
   className?: string;
 }
 
@@ -15,6 +15,7 @@ const SIZES = {
   sm: { container: "h-8 w-8", text: "text-xs", px: 32 },
   md: { container: "h-10 w-10", text: "text-sm", px: 40 },
   lg: { container: "h-14 w-14", text: "text-lg", px: 56 },
+  xl: { container: "h-[72px] w-[72px]", text: "text-xl", px: 72 },
 };
 
 // Generate a consistent colour from a company name

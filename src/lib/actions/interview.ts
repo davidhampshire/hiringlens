@@ -109,6 +109,7 @@ export async function submitInterview(payload: SubmitPayload) {
     clarity_rating: data.clarity_rating,
     fairness_rating: data.fairness_rating,
     salary_range: data.salary_range || null,
+    display_name: data.display_name?.trim() || null,
     overall_comments: commentsPayload || null,
     candidate_tip: data.candidate_tip || null,
     submitted_by: user.id,
@@ -122,6 +123,157 @@ export async function submitInterview(payload: SubmitPayload) {
   revalidatePath("/");
   revalidatePath("/recent");
   revalidatePath("/admin");
+
+  return { success: true };
+}
+
+export async function getInterviewForEdit(interviewId: string) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
+
+  const { data: interview } = await supabase
+    .from("interviews")
+    .select("*, companies(name, slug)")
+    .eq("id", interviewId)
+    .single();
+
+  if (!interview || interview.submitted_by !== user.id) {
+    return { error: "Not authorised" };
+  }
+
+  return { data: interview };
+}
+
+export async function updateInterview(
+  interviewId: string,
+  payload: SubmitPayload
+) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "You must be signed in to edit an experience." };
+  }
+
+  // Verify ownership
+  const { data: existing } = await supabase
+    .from("interviews")
+    .select("id, submitted_by, company_id")
+    .eq("id", interviewId)
+    .single();
+
+  if (!existing || existing.submitted_by !== user.id) {
+    return { error: "Not authorised" };
+  }
+
+  // Validate form data
+  const parsed = interviewSchema.safeParse(payload.formData);
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0].message };
+  }
+
+  const data = parsed.data;
+
+  // Handle company creation / lookup
+  let companyId = data.company_id;
+
+  if (!companyId) {
+    const slug = slugify(data.company_name);
+    const { data: existingCompany } = await supabase
+      .from("companies")
+      .select("id")
+      .eq("slug", slug)
+      .single();
+
+    if (existingCompany) {
+      companyId = existingCompany.id;
+    } else {
+      const { data: newCompany, error: companyError } = await supabase
+        .from("companies")
+        .insert({
+          name: data.company_name.trim(),
+          slug,
+          industry: data.industry ?? null,
+        })
+        .select("id")
+        .single();
+
+      if (companyError) {
+        return { error: "Failed to create company. Please try again." };
+      }
+      companyId = newCompany.id;
+    }
+  }
+
+  // Build follow-up comments payload
+  let commentsPayload = data.overall_comments || "";
+  if (Object.keys(payload.followUpData).length > 0) {
+    const followUpJson = JSON.stringify(payload.followUpData);
+    commentsPayload = commentsPayload
+      ? `${commentsPayload}\n\n---FOLLOW_UP_DATA---\n${followUpJson}`
+      : `---FOLLOW_UP_DATA---\n${followUpJson}`;
+  }
+
+  // Update interview — edited posts go back to pending for re-review
+  const { error: updateError } = await supabase
+    .from("interviews")
+    .update({
+      company_id: companyId,
+      role_title: data.role_title,
+      seniority: data.seniority ?? null,
+      location: data.location || null,
+      interview_type: data.interview_type ?? null,
+      stages_count: data.stages_count ?? null,
+      total_duration_days: data.total_duration_days ?? null,
+      outcome: data.outcome ?? null,
+      received_feedback: data.received_feedback,
+      unpaid_task: data.unpaid_task,
+      ghosted: data.ghosted,
+      interviewer_late: data.interviewer_late,
+      exceeded_timeline: data.exceeded_timeline,
+      professionalism_rating: data.professionalism_rating,
+      communication_rating: data.communication_rating,
+      clarity_rating: data.clarity_rating,
+      fairness_rating: data.fairness_rating,
+      salary_range: data.salary_range || null,
+      display_name: data.display_name?.trim() || null,
+      overall_comments: commentsPayload || null,
+      candidate_tip: data.candidate_tip || null,
+      status: "pending",
+    })
+    .eq("id", interviewId);
+
+  if (updateError) {
+    return { error: "Failed to update experience. Please try again." };
+  }
+
+  revalidatePath("/");
+  revalidatePath("/recent");
+  revalidatePath("/admin");
+  revalidatePath("/account");
+
+  // Revalidate company page
+  if (companyId) {
+    const { data: company } = await supabase
+      .from("companies")
+      .select("slug")
+      .eq("id", companyId)
+      .single();
+
+    if (company?.slug) {
+      revalidatePath(`/company/${company.slug}`);
+    }
+  }
 
   return { success: true };
 }

@@ -65,7 +65,7 @@ export async function RecentReviews() {
                   <CompanyLogo
                     name={company?.name ?? "?"}
                     logoUrl={company?.logo_url}
-                    size="md"
+                    size="xl"
                   />
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-semibold group-hover:text-primary">
@@ -85,7 +85,17 @@ export async function RecentReviews() {
 
                 {/* Card body */}
                 <div className="flex flex-1 flex-col p-5">
-                  <p className="font-medium">{review.role_title}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-medium">{review.role_title}</p>
+                    {Date.now() - new Date(review.created_at).getTime() < 7 * 24 * 60 * 60 * 1000 && (
+                      <Badge className="bg-blue-100 text-[10px] font-semibold text-blue-700 hover:bg-blue-100">
+                        New
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    by {review.display_name || "Anonymous"}
+                  </p>
 
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     {review.outcome && (
@@ -114,11 +124,15 @@ export async function RecentReviews() {
                   </div>
 
                   {/* Comments preview */}
-                  {review.overall_comments && (
-                    <p className="mt-3 line-clamp-2 text-sm text-muted-foreground">
-                      {review.overall_comments}
-                    </p>
-                  )}
+                  {review.overall_comments && (() => {
+                    const idx = review.overall_comments!.indexOf("---FOLLOW_UP_DATA---");
+                    const cleaned = idx === -1 ? review.overall_comments : review.overall_comments!.substring(0, idx).trim();
+                    return cleaned ? (
+                      <p className="mt-3 line-clamp-2 text-sm text-muted-foreground">
+                        {cleaned}
+                      </p>
+                    ) : null;
+                  })()}
 
                   {/* Tip */}
                   {review.candidate_tip && (

@@ -18,7 +18,7 @@ export function CompanyCard({ company }: CompanyCardProps) {
             <CompanyLogo
               name={company.name}
               logoUrl={company.logo_url}
-              size="md"
+              size="xl"
             />
             <div className="min-w-0 flex-1">
               <h3 className="truncate text-base font-semibold group-hover:text-primary">

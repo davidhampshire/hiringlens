@@ -2,6 +2,17 @@ import type { CompanyScore, Interview } from "@/types";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hiringlens.vercel.app";
 
+/**
+ * Sanitise a string for safe embedding inside a <script type="application/ld+json"> tag.
+ * Prevents XSS via closing script tags or HTML entities in user-generated content.
+ */
+function sanitizeJsonLdString(str: string): string {
+  return str
+    .replace(/</g, "\\u003C")
+    .replace(/>/g, "\\u003E")
+    .replace(/&/g, "\\u0026");
+}
+
 export function buildHomepageJsonLd() {
   return [
     {
@@ -45,12 +56,12 @@ export function buildCompanyJsonLd(
   const jsonLd: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: company.name,
+    name: sanitizeJsonLdString(company.name),
     url: companyUrl,
   };
 
   if (company.industry) {
-    jsonLd.description = `${company.name} interview experiences in ${company.industry}`;
+    jsonLd.description = `${sanitizeJsonLdString(company.name)} interview experiences in ${sanitizeJsonLdString(company.industry)}`;
   }
 
   if (ratingValue && company.total_reviews > 0) {
@@ -74,7 +85,12 @@ export function buildCompanyJsonLd(
 
     const review: Record<string, unknown> = {
       "@type": "Review",
-      author: { "@type": "Person", name: "Anonymous Candidate" },
+      author: {
+        "@type": "Person",
+        name: interview.display_name
+          ? sanitizeJsonLdString(interview.display_name)
+          : "Anonymous Candidate",
+      },
       datePublished: interview.created_at.split("T")[0],
       reviewRating: {
         "@type": "Rating",
@@ -82,11 +98,11 @@ export function buildCompanyJsonLd(
         bestRating: "5",
         worstRating: "1",
       },
-      name: `${interview.role_title} Interview`,
+      name: `${sanitizeJsonLdString(interview.role_title)} Interview`,
     };
 
     if (interview.candidate_tip) {
-      review.reviewBody = interview.candidate_tip;
+      review.reviewBody = sanitizeJsonLdString(interview.candidate_tip);
     }
 
     return review;

@@ -32,8 +32,36 @@ import {
 } from "@/lib/constants";
 import { toast } from "sonner";
 
+interface EditData {
+  id: string;
+  company_name: string;
+  company_id: string;
+  industry?: string;
+  role_title: string;
+  seniority?: string;
+  location?: string;
+  interview_type?: string;
+  salary_range?: string;
+  display_name?: string | null;
+  stages_count?: number | null;
+  total_duration_days?: number | null;
+  outcome?: string;
+  received_feedback: boolean;
+  unpaid_task: boolean;
+  ghosted: boolean;
+  interviewer_late: boolean;
+  exceeded_timeline: boolean;
+  professionalism_rating: number;
+  communication_rating: number;
+  clarity_rating: number;
+  fairness_rating: number;
+  overall_comments?: string | null;
+  candidate_tip?: string | null;
+}
+
 interface ExperienceFormProps {
   prefilledCompany?: string;
+  editData?: EditData;
 }
 
 const OUTCOME_ICONS: Record<string, string> = {
@@ -115,8 +143,9 @@ function AuthBanner({ isSignedIn }: { isSignedIn: boolean }) {
   );
 }
 
-export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
+export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormProps) {
   const router = useRouter();
+  const isEditMode = !!editData;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isSignedIn, setIsSignedIn] = useState<boolean | null>(null);
@@ -124,33 +153,71 @@ export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
     Record<string, Record<string, string>>
   >({});
   const [activeStep, setActiveStep] = useState(0);
+  const [isAnonymous, setIsAnonymous] = useState(
+    editData ? !editData.display_name : true
+  );
+
+  // Strip follow-up data from comments for editing
+  function cleanCommentsForEdit(text: string | null): string {
+    if (!text) return "";
+    const idx = text.indexOf("---FOLLOW_UP_DATA---");
+    if (idx === -1) return text;
+    return text.substring(0, idx).trim();
+  }
 
   const form = useForm<InterviewFormData>({
     resolver: zodResolver(interviewSchema),
-    defaultValues: {
-      company_name: prefilledCompany ?? "",
-      company_id: undefined,
-      industry: undefined,
-      role_title: "",
-      seniority: undefined,
-      location: "",
-      interview_type: undefined,
-      salary_range: undefined,
-      stages_count: undefined,
-      total_duration_days: undefined,
-      outcome: undefined,
-      received_feedback: false,
-      unpaid_task: false,
-      ghosted: false,
-      interviewer_late: false,
-      exceeded_timeline: false,
-      professionalism_rating: 0,
-      communication_rating: 0,
-      clarity_rating: 0,
-      fairness_rating: 0,
-      overall_comments: "",
-      candidate_tip: "",
-    },
+    defaultValues: editData
+      ? {
+          company_name: editData.company_name,
+          company_id: editData.company_id,
+          industry: editData.industry ?? undefined,
+          role_title: editData.role_title,
+          seniority: (editData.seniority as InterviewFormData["seniority"]) ?? undefined,
+          location: editData.location ?? "",
+          interview_type: (editData.interview_type as InterviewFormData["interview_type"]) ?? undefined,
+          salary_range: editData.salary_range ?? undefined,
+          display_name: editData.display_name ?? "",
+          stages_count: editData.stages_count ?? undefined,
+          total_duration_days: editData.total_duration_days ?? undefined,
+          outcome: (editData.outcome as InterviewFormData["outcome"]) ?? undefined,
+          received_feedback: editData.received_feedback,
+          unpaid_task: editData.unpaid_task,
+          ghosted: editData.ghosted,
+          interviewer_late: editData.interviewer_late,
+          exceeded_timeline: editData.exceeded_timeline,
+          professionalism_rating: editData.professionalism_rating,
+          communication_rating: editData.communication_rating,
+          clarity_rating: editData.clarity_rating,
+          fairness_rating: editData.fairness_rating,
+          overall_comments: cleanCommentsForEdit(editData.overall_comments ?? null),
+          candidate_tip: editData.candidate_tip ?? "",
+        }
+      : {
+          company_name: prefilledCompany ?? "",
+          company_id: undefined,
+          industry: undefined,
+          role_title: "",
+          seniority: undefined,
+          location: "",
+          interview_type: undefined,
+          salary_range: undefined,
+          display_name: "",
+          stages_count: undefined,
+          total_duration_days: undefined,
+          outcome: undefined,
+          received_feedback: false,
+          unpaid_task: false,
+          ghosted: false,
+          interviewer_late: false,
+          exceeded_timeline: false,
+          professionalism_rating: 0,
+          communication_rating: 0,
+          clarity_rating: 0,
+          fairness_rating: 0,
+          overall_comments: "",
+          candidate_tip: "",
+        },
   });
 
   const {
@@ -180,7 +247,8 @@ export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
       setIsSignedIn(!!session?.user);
     });
 
-    // Restore saved draft from localStorage
+    // Restore saved draft from localStorage (skip in edit mode)
+    if (isEditMode) return () => subscription.unsubscribe();
     try {
       const saved = localStorage.getItem(FORM_STORAGE_KEY);
       if (saved) {
@@ -360,7 +428,27 @@ export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
         }
       }
 
-      // Submit via server action (handles rate limiting, company creation, insert)
+      // Submit or update via server action
+      if (isEditMode) {
+        const { updateInterview } = await import("@/lib/actions/interview");
+        const result = await updateInterview(editData!.id, {
+          formData: data as unknown as Record<string, unknown>,
+          followUpData: activeFollowUps,
+        });
+
+        if (result.error) {
+          toast.error(result.error);
+          return;
+        }
+
+        toast.success(
+          "Your experience has been updated and will be re-reviewed."
+        );
+        router.push("/account");
+        return;
+      }
+
+      // New submission
       const { submitInterview } = await import("@/lib/actions/interview");
       const result = await submitInterview({
         formData: data as unknown as Record<string, unknown>,
@@ -829,6 +917,54 @@ export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
         <section id="step-advice" className="scroll-mt-28 lg:scroll-mt-20">
           <h2 className="mb-4 text-lg font-semibold">Your Advice</h2>
           <div className="space-y-4">
+            {/* Display name + anonymous toggle */}
+            <div className="rounded-lg border bg-muted/20 p-4">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-sm font-medium">How should we display your name?</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    {isAnonymous
+                      ? "Your review will be shown as \"Anonymous\""
+                      : "Your name will be shown on your review"}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={!isAnonymous}
+                  onClick={() => {
+                    const newAnon = !isAnonymous;
+                    setIsAnonymous(newAnon);
+                    if (newAnon) {
+                      setValue("display_name", "");
+                    }
+                  }}
+                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ${
+                    !isAnonymous ? "bg-primary" : "bg-muted-foreground/25"
+                  }`}
+                >
+                  <span
+                    className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition-transform ${
+                      !isAnonymous ? "translate-x-5" : "translate-x-0"
+                    }`}
+                  />
+                </button>
+              </div>
+              {!isAnonymous && (
+                <div className="mt-3">
+                  <Input
+                    placeholder="Your first name or nickname"
+                    {...register("display_name")}
+                  />
+                  {errors.display_name && (
+                    <p className="mt-1 text-xs text-destructive">
+                      {errors.display_name.message}
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+
             <div>
               <label className="mb-1.5 block text-sm font-medium">
                 Tip for future candidates
@@ -872,7 +1008,7 @@ export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
         </section>
 
         {/* Auth banner — bottom */}
-        {isSignedIn === false && <AuthBanner isSignedIn={false} />}
+        {!isEditMode && isSignedIn === false && <AuthBanner isSignedIn={false} />}
 
         {/* Submit */}
         <div className="sticky bottom-0 border-t bg-background py-4 sm:static sm:border-0 sm:py-0">
@@ -883,13 +1019,19 @@ export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
             disabled={isSubmitting}
           >
             {isSubmitting
-              ? "Submitting..."
-              : isSignedIn === false
-                ? "Create Account & Submit"
-                : "Submit Experience"}
+              ? isEditMode
+                ? "Saving..."
+                : "Submitting..."
+              : isEditMode
+                ? "Save Changes"
+                : isSignedIn === false
+                  ? "Create Account & Submit"
+                  : "Submit Experience"}
           </Button>
           <p className="mt-2 text-xs text-muted-foreground">
-            Your submission will be reviewed before being published.
+            {isEditMode
+              ? "Your edited submission will be re-reviewed before being published."
+              : "Your submission will be reviewed before being published."}
           </p>
         </div>
       </form>

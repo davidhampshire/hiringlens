@@ -73,14 +73,24 @@ export function UserMenu({ onAction, variant = "desktop" }: UserMenuProps) {
   if (variant === "mobile") {
     return (
       <div className="space-y-1 border-t pt-2 mt-2">
-        <p className="px-3 py-1 text-xs text-muted-foreground truncate">
-          {email}
-        </p>
         <Link
           href="/account"
-          className="block rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
+          className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
           onClick={onAction}
         >
+          <svg
+            className="h-4 w-4 shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+            />
+          </svg>
           My Account
         </Link>
         <button
@@ -100,7 +110,7 @@ export function UserMenu({ onAction, variant = "desktop" }: UserMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="max-w-[160px] gap-1.5">
+        <Button variant="outline" size="sm" className="gap-1.5">
           <svg
             className="h-4 w-4 shrink-0"
             fill="none"
@@ -114,7 +124,7 @@ export function UserMenu({ onAction, variant = "desktop" }: UserMenuProps) {
               d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
             />
           </svg>
-          <span className="truncate text-xs">{email}</span>
+          <span className="text-xs font-medium">My Account</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">

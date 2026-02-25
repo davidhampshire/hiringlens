@@ -73,3 +73,40 @@ export async function rejectInterview(interviewId: string) {
 
   return { success: true };
 }
+
+export async function deleteInterviewAdmin(interviewId: string) {
+  const { supabase } = await requireAdmin();
+
+  // Get company info for revalidation
+  const { data: interview } = await supabase
+    .from("interviews")
+    .select("company_id")
+    .eq("id", interviewId)
+    .single();
+
+  const { error } = await supabase
+    .from("interviews")
+    .delete()
+    .eq("id", interviewId);
+
+  if (error) throw new Error(error.message);
+
+  // Revalidate relevant pages
+  if (interview?.company_id) {
+    const { data: company } = await supabase
+      .from("companies")
+      .select("slug")
+      .eq("id", interview.company_id)
+      .single();
+
+    if (company?.slug) {
+      revalidatePath(`/company/${company.slug}`);
+    }
+  }
+
+  revalidatePath("/");
+  revalidatePath("/recent");
+  revalidatePath("/admin");
+
+  return { success: true };
+}

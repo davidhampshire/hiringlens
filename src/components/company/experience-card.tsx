@@ -33,6 +33,21 @@ interface ExperienceCardProps {
   companyLogoUrl?: string | null;
 }
 
+/** Strip the ---FOLLOW_UP_DATA--- JSON block from comments */
+function cleanComments(text: string | null): string | null {
+  if (!text) return null;
+  const idx = text.indexOf("---FOLLOW_UP_DATA---");
+  if (idx === -1) return text;
+  const cleaned = text.substring(0, idx).trim();
+  return cleaned || null;
+}
+
+/** Check if an interview is "new" (posted within the last 7 days) */
+function isNew(createdAt: string): boolean {
+  const diff = Date.now() - new Date(createdAt).getTime();
+  return diff < 7 * 24 * 60 * 60 * 1000;
+}
+
 /* ── Rating Breakdown Grid ── */
 function RatingBreakdown({ interview }: { interview: Interview }) {
   const ratings = [
@@ -93,6 +108,9 @@ function ExperienceModal({
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
             <h3 className="text-lg font-semibold">{interview.role_title}</h3>
+            <p className="mt-0.5 text-sm text-muted-foreground">
+              by {interview.display_name || "Anonymous"}
+            </p>
             <div className="mt-0.5 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
               {interview.seniority && (
                 <span>{SENIORITY_LABELS[interview.seniority]}</span>
@@ -182,13 +200,13 @@ function ExperienceModal({
       </div>
 
       {/* Full Comments */}
-      {interview.overall_comments && (
+      {cleanComments(interview.overall_comments) && (
         <>
           <Separator />
           <div>
             <h4 className="mb-2 text-sm font-semibold">Experience Details</h4>
             <p className="whitespace-pre-wrap text-sm text-muted-foreground">
-              {interview.overall_comments}
+              {cleanComments(interview.overall_comments)}
             </p>
           </div>
         </>
@@ -272,17 +290,17 @@ export function ExperienceCard({
         onClick={() => setModalOpen(true)}
       >
         <div className="p-5">
-          {/* Company name + logo (shown on Recent Posts page) */}
+          {/* Company name + logo (shown on All Experiences page) */}
           {companyName && companySlug && (
-            <div className="mb-3 flex items-center gap-2.5" onClick={(e) => e.stopPropagation()}>
+            <div className="mb-3 flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
               <CompanyLogo
                 name={companyName}
                 logoUrl={companyLogoUrl}
-                size="sm"
+                size="lg"
               />
               <Link
                 href={`/company/${companySlug}`}
-                className="text-sm font-medium text-primary hover:underline"
+                className="font-semibold text-primary hover:underline"
               >
                 {companyName}
               </Link>
@@ -292,12 +310,30 @@ export function ExperienceCard({
           {/* Header */}
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0 flex-1">
-              <p className="font-semibold">{interview.role_title}</p>
-              <div className="mt-0.5 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-                {interview.seniority && (
-                  <span>{SENIORITY_LABELS[interview.seniority]}</span>
+              <div className="flex items-center gap-2">
+                <p className="font-semibold">{interview.role_title}</p>
+                {isNew(interview.created_at) && (
+                  <Badge className="bg-blue-100 text-[10px] font-semibold text-blue-700 hover:bg-blue-100">
+                    New
+                  </Badge>
                 )}
-                {interview.location && <span>{interview.location}</span>}
+              </div>
+              <div className="mt-0.5 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+                <span className="text-xs">
+                  by {interview.display_name || "Anonymous"}
+                </span>
+                {interview.seniority && (
+                  <>
+                    <span className="text-muted-foreground/40">&middot;</span>
+                    <span>{SENIORITY_LABELS[interview.seniority]}</span>
+                  </>
+                )}
+                {interview.location && (
+                  <>
+                    <span className="text-muted-foreground/40">&middot;</span>
+                    <span>{interview.location}</span>
+                  </>
+                )}
               </div>
             </div>
             <div className="flex flex-col items-end gap-1">
@@ -356,9 +392,9 @@ export function ExperienceCard({
           </div>
 
           {/* Comments (truncated) */}
-          {interview.overall_comments && (
+          {cleanComments(interview.overall_comments) && (
             <p className="mt-3 line-clamp-3 text-sm text-muted-foreground">
-              {interview.overall_comments}
+              {cleanComments(interview.overall_comments)}
             </p>
           )}
 

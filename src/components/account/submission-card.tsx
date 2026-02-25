@@ -93,6 +93,14 @@ export function SubmissionCard({ interview }: SubmissionCardProps) {
           <Badge variant={status.variant} className="shrink-0 text-xs">
             {status.label}
           </Badge>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-7 px-2 text-xs"
+            asChild
+          >
+            <Link href={`/submit/edit/${interview.id}`}>Edit</Link>
+          </Button>
           {interview.status === "pending" && (
             <AlertDialog>
               <AlertDialogTrigger asChild>

@@ -4,7 +4,22 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { approveInterview, rejectInterview } from "@/lib/actions/admin";
+import {
+  approveInterview,
+  rejectInterview,
+  deleteInterviewAdmin,
+} from "@/lib/actions/admin";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import type { Interview } from "@/types";
 
@@ -33,7 +48,8 @@ export function AdminInterviewRow({
 }: AdminInterviewRowProps) {
   const [isApproving, setIsApproving] = useState(false);
   const [isRejecting, setIsRejecting] = useState(false);
-  const [actionDone, setActionDone] = useState<"approved" | "rejected" | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [actionDone, setActionDone] = useState<"approved" | "rejected" | "deleted" | null>(null);
 
   async function handleApprove() {
     setIsApproving(true);
@@ -61,11 +77,24 @@ export function AdminInterviewRow({
     }
   }
 
+  async function handleDelete() {
+    setIsDeleting(true);
+    try {
+      await deleteInterviewAdmin(interview.id);
+      setActionDone("deleted");
+      toast.success("Interview deleted");
+    } catch {
+      toast.error("Failed to delete interview");
+    } finally {
+      setIsDeleting(false);
+    }
+  }
+
   if (actionDone) {
     return (
       <Card className="border-dashed p-5 opacity-60">
         <p className="text-sm text-muted-foreground">
-          {actionDone === "approved" ? "Approved" : "Rejected"} review for{" "}
+          {actionDone === "approved" ? "Approved" : actionDone === "deleted" ? "Deleted" : "Rejected"} review for{" "}
           <span className="font-medium text-foreground">
             {interview.role_title}
           </span>{" "}
@@ -150,11 +179,15 @@ export function AdminInterviewRow({
         )}
 
         {/* Comments preview */}
-        {interview.overall_comments && (
-          <p className="mt-3 line-clamp-3 text-sm text-muted-foreground">
-            {interview.overall_comments}
-          </p>
-        )}
+        {interview.overall_comments && (() => {
+          const idx = interview.overall_comments!.indexOf("---FOLLOW_UP_DATA---");
+          const cleaned = idx === -1 ? interview.overall_comments : interview.overall_comments!.substring(0, idx).trim();
+          return cleaned ? (
+            <p className="mt-3 line-clamp-3 text-sm text-muted-foreground">
+              {cleaned}
+            </p>
+          ) : null;
+        })()}
 
         {interview.candidate_tip && (
           <p className="mt-2 line-clamp-2 text-sm italic text-muted-foreground">
@@ -164,22 +197,56 @@ export function AdminInterviewRow({
 
         {/* Actions */}
         {showActions && (
-          <div className="mt-4 flex gap-2 border-t pt-4">
-            <Button
-              size="sm"
-              onClick={handleApprove}
-              disabled={isApproving || isRejecting}
-            >
-              {isApproving ? "Approving..." : "Approve"}
-            </Button>
-            <Button
-              size="sm"
-              variant="destructive"
-              onClick={handleReject}
-              disabled={isApproving || isRejecting}
-            >
-              {isRejecting ? "Rejecting..." : "Reject"}
-            </Button>
+          <div className="mt-4 flex items-center justify-between border-t pt-4">
+            <div className="flex gap-2">
+              <Button
+                size="sm"
+                onClick={handleApprove}
+                disabled={isApproving || isRejecting || isDeleting}
+              >
+                {isApproving ? "Approving..." : "Approve"}
+              </Button>
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={handleReject}
+                disabled={isApproving || isRejecting || isDeleting}
+              >
+                {isRejecting ? "Rejecting..." : "Reject"}
+              </Button>
+            </div>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
+                  disabled={isApproving || isRejecting || isDeleting}
+                >
+                  {isDeleting ? "Deleting..." : "Delete"}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete this submission?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This will permanently delete the{" "}
+                    <strong>{interview.role_title}</strong> review at{" "}
+                    <strong>{interview.companies?.name ?? "Unknown"}</strong>.
+                    This action cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDelete}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    Delete permanently
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         )}
       </div>
