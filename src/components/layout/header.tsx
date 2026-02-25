@@ -11,6 +11,7 @@ const NAV_LINKS = [
   { label: "Home", href: "/" },
   { label: "All Experiences", href: "/recent" },
   { label: "Companies", href: "/companies" },
+  { label: "Compare", href: "/compare" },
 ];
 
 export function Header() {

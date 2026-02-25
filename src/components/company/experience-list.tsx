@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import { ExperienceCard } from "./experience-card";
 import { createClient } from "@/lib/supabase/client";
+import { SENIORITY_LABELS, INTERVIEW_TYPE_LABELS } from "@/lib/constants";
 import type { Interview } from "@/types";
 
 interface ExperienceListProps {
@@ -47,8 +48,18 @@ export function ExperienceList({
   const [isLoading, setIsLoading] = useState(false);
   const [sortBy, setSortBy] = useState<SortOption>("newest");
   const [filterBy, setFilterBy] = useState<FilterOption>("all");
+  const [seniorityFilter, setSeniorityFilter] = useState<string>("all");
+  const [typeFilter, setTypeFilter] = useState<string>("all");
 
   const hasMore = interviews.length < totalCount;
+  const hasActiveFilters =
+    filterBy !== "all" || seniorityFilter !== "all" || typeFilter !== "all";
+
+  function clearFilters() {
+    setFilterBy("all");
+    setSeniorityFilter("all");
+    setTypeFilter("all");
+  }
 
   // Sort and filter the loaded interviews
   const displayedInterviews = useMemo(() => {
@@ -57,6 +68,16 @@ export function ExperienceList({
     // Filter by outcome
     if (filterBy !== "all") {
       filtered = filtered.filter((i) => i.outcome === filterBy);
+    }
+
+    // Filter by seniority
+    if (seniorityFilter !== "all") {
+      filtered = filtered.filter((i) => i.seniority === seniorityFilter);
+    }
+
+    // Filter by interview type
+    if (typeFilter !== "all") {
+      filtered = filtered.filter((i) => i.interview_type === typeFilter);
     }
 
     // Sort
@@ -86,7 +107,7 @@ export function ExperienceList({
     });
 
     return filtered;
-  }, [interviews, sortBy, filterBy]);
+  }, [interviews, sortBy, filterBy, seniorityFilter, typeFilter]);
 
   async function loadMore() {
     setIsLoading(true);
@@ -121,16 +142,28 @@ export function ExperienceList({
   return (
     <div className="space-y-4">
       {/* Header with filters */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h3 className="text-sm font-semibold">
-          Interview Experiences ({totalCount})
-        </h3>
-        <div className="flex gap-2">
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-semibold">
+            Interview Experiences ({totalCount})
+          </h3>
+          {hasActiveFilters && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearFilters}
+              className="h-7 text-xs text-muted-foreground"
+            >
+              Clear filters
+            </Button>
+          )}
+        </div>
+        <div className="flex flex-wrap gap-2">
           <Select
             value={sortBy}
             onValueChange={(v) => setSortBy(v as SortOption)}
           >
-            <SelectTrigger className="h-8 w-[150px] text-xs">
+            <SelectTrigger className="h-8 w-[140px] text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -157,6 +190,44 @@ export function ExperienceList({
               ))}
             </SelectContent>
           </Select>
+
+          <Select
+            value={seniorityFilter}
+            onValueChange={setSeniorityFilter}
+          >
+            <SelectTrigger className="h-8 w-[130px] text-xs">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all" className="text-xs">
+                All levels
+              </SelectItem>
+              {Object.entries(SENIORITY_LABELS).map(([value, label]) => (
+                <SelectItem key={value} value={value} className="text-xs">
+                  {label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={typeFilter}
+            onValueChange={setTypeFilter}
+          >
+            <SelectTrigger className="h-8 w-[130px] text-xs">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all" className="text-xs">
+                All types
+              </SelectItem>
+              {Object.entries(INTERVIEW_TYPE_LABELS).map(([value, label]) => (
+                <SelectItem key={value} value={value} className="text-xs">
+                  {label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
@@ -168,12 +239,12 @@ export function ExperienceList({
           ))
         ) : (
           <div className="py-6 text-center text-sm text-muted-foreground">
-            No experiences match this filter.
+            No experiences match these filters.
           </div>
         )}
       </div>
 
-      {hasMore && filterBy === "all" && (
+      {hasMore && !hasActiveFilters && (
         <div className="flex justify-center pt-2">
           <Button
             variant="outline"

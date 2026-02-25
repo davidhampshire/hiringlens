@@ -5,6 +5,7 @@ import { MissionSection } from "@/components/home/mission-section";
 import { TrendingCompanies } from "@/components/home/trending-companies";
 import { RecentReviews } from "@/components/home/recent-reviews";
 import { Skeleton } from "@/components/ui/skeleton";
+import { buildHomepageJsonLd } from "@/lib/json-ld";
 
 export const revalidate = 300;
 
@@ -43,8 +44,17 @@ function StatsSkeleton() {
 }
 
 export default function HomePage() {
+  const jsonLd = buildHomepageJsonLd();
+
   return (
     <>
+      {jsonLd.map((schema, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        />
+      ))}
       <HeroSection />
       <Suspense fallback={<StatsSkeleton />}>
         <PlatformStats />

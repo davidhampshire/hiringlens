@@ -67,6 +67,7 @@ export type Database = {
           communication_rating: number;
           clarity_rating: number;
           fairness_rating: number;
+          salary_range: string | null;
           overall_comments: string | null;
           candidate_tip: string | null;
           status: Database["public"]["Enums"]["review_status"];
@@ -92,6 +93,7 @@ export type Database = {
           communication_rating: number;
           clarity_rating: number;
           fairness_rating: number;
+          salary_range?: string | null;
           overall_comments?: string | null;
           candidate_tip?: string | null;
           status?: Database["public"]["Enums"]["review_status"];
@@ -117,6 +119,7 @@ export type Database = {
           communication_rating?: number;
           clarity_rating?: number;
           fairness_rating?: number;
+          salary_range?: string | null;
           overall_comments?: string | null;
           candidate_tip?: string | null;
           status?: Database["public"]["Enums"]["review_status"];

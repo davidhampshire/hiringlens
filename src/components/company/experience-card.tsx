@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { StarRating } from "@/components/shared/star-rating";
 import { FlagReportDialog } from "@/components/shared/flag-report-dialog";
+import { ShareButton } from "@/components/shared/share-button";
 import {
   Dialog,
   DialogContent,
@@ -119,6 +121,11 @@ function ExperienceModal({
         {interview.interview_type && (
           <Badge variant="outline" className="text-xs font-normal">
             {INTERVIEW_TYPE_LABELS[interview.interview_type]}
+          </Badge>
+        )}
+        {interview.salary_range && interview.salary_range !== "Prefer not to say" && (
+          <Badge variant="outline" className="border-emerald-200 bg-emerald-50 text-xs font-normal text-emerald-700">
+            {interview.salary_range}
           </Badge>
         )}
         {interview.stages_count && (
@@ -316,6 +323,11 @@ export function ExperienceCard({
                 {INTERVIEW_TYPE_LABELS[interview.interview_type]}
               </Badge>
             )}
+            {interview.salary_range && interview.salary_range !== "Prefer not to say" && (
+              <Badge variant="outline" className="border-emerald-200 bg-emerald-50 text-xs font-normal text-emerald-700">
+                {interview.salary_range}
+              </Badge>
+            )}
             {interview.stages_count && (
               <Badge variant="outline" className="text-xs font-normal">
                 {interview.stages_count} stages
@@ -445,11 +457,36 @@ export function ExperienceCard({
               )}
             </div>
 
-            <FlagReportDialog interviewId={interview.id}>
-              <button className="text-xs text-muted-foreground hover:text-foreground">
-                Report
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  const url = window.location.origin + (companySlug ? `/company/${companySlug}` : "");
+                  if (navigator.share) {
+                    navigator.share({
+                      title: `${interview.role_title} Interview${companyName ? ` at ${companyName}` : ""}`,
+                      url,
+                    }).catch(() => {});
+                  } else {
+                    navigator.clipboard.writeText(url).then(
+                      () => toast.success("Link copied!"),
+                      () => toast.error("Failed to copy link")
+                    );
+                  }
+                }}
+                className="text-xs text-muted-foreground hover:text-foreground"
+                title="Share"
+              >
+                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                </svg>
               </button>
-            </FlagReportDialog>
+              <FlagReportDialog interviewId={interview.id}>
+                <button className="text-xs text-muted-foreground hover:text-foreground">
+                  Report
+                </button>
+              </FlagReportDialog>
+            </div>
           </div>
         </div>
       </Card>
@@ -458,11 +495,19 @@ export function ExperienceCard({
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Interview Experience</DialogTitle>
-            <DialogDescription>
-              Full details for the {interview.role_title} interview
-              {companyName ? ` at ${companyName}` : ""}
-            </DialogDescription>
+            <div className="flex items-start justify-between gap-2">
+              <div>
+                <DialogTitle>Interview Experience</DialogTitle>
+                <DialogDescription>
+                  Full details for the {interview.role_title} interview
+                  {companyName ? ` at ${companyName}` : ""}
+                </DialogDescription>
+              </div>
+              <ShareButton
+                title={`${interview.role_title} Interview${companyName ? ` at ${companyName}` : ""} | HiringLens`}
+                text={`Check out this ${interview.role_title} interview experience${companyName ? ` at ${companyName}` : ""} on HiringLens`}
+              />
+            </div>
           </DialogHeader>
           <ExperienceModal
             interview={interview}

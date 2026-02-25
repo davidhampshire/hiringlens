@@ -1,17 +1,26 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { submitContactMessage } from "@/lib/actions/contact";
+import { toast } from "sonner";
 
 export function ContactForm() {
   const [state, formAction, isPending] = useActionState(
     submitContactMessage,
     null
   );
+  const toastShown = useRef(false);
+
+  useEffect(() => {
+    if (state?.success && !toastShown.current) {
+      toast.success("Message sent successfully!");
+      toastShown.current = true;
+    }
+  }, [state?.success]);
 
   if (state?.success) {
     return (

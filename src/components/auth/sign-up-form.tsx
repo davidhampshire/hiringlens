@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState } from "react";
 import Link from "next/link";
 import { signUp } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/button";
@@ -9,41 +9,6 @@ import { Label } from "@/components/ui/label";
 
 export function SignUpForm() {
   const [state, formAction, isPending] = useActionState(signUp, null);
-  const [showSuccess, setShowSuccess] = useState(false);
-
-  // Show success screen once server action returns success
-  if (state?.success || showSuccess) {
-    return (
-      <div className="py-4 text-center">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50">
-          <svg
-            className="h-7 w-7 text-emerald-600"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-            />
-          </svg>
-        </div>
-        <h3 className="text-lg font-semibold">Check your email</h3>
-        <p className="mt-2 text-sm text-muted-foreground">
-          We&apos;ve sent you a confirmation link. Click it to activate your
-          account, then you can start sharing your experiences.
-        </p>
-        <Link
-          href="/sign-in"
-          className="mt-4 inline-block text-sm font-medium text-primary hover:underline"
-        >
-          Back to sign in
-        </Link>
-      </div>
-    );
-  }
 
   return (
     <form

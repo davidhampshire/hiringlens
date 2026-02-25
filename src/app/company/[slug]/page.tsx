@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
@@ -11,9 +12,11 @@ import { ProcessTimeline } from "@/components/company/process-timeline";
 import { RedFlagIndicators } from "@/components/company/red-flag-indicators";
 import { CandidateTips } from "@/components/company/candidate-tips";
 import { ExperienceList } from "@/components/company/experience-list";
+import { ExperienceListSkeleton } from "@/components/company/company-page-skeleton";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { ShareButton } from "@/components/shared/share-button";
 import { CompanyLogo } from "@/components/shared/company-logo";
+import { buildCompanyJsonLd } from "@/lib/json-ld";
 import type { CompanyScore, Interview } from "@/types";
 
 export const revalidate = 3600;
@@ -62,6 +65,37 @@ export async function generateMetadata({ params }: CompanyPageProps): Promise<Me
   };
 }
 
+/* Async component that fetches interviews — wrapped in Suspense for streaming */
+async function CompanyExperiences({ companyId }: { companyId: string }) {
+  const supabase = await createClient();
+
+  const { data: interviewData, count } = await supabase
+    .from("interviews")
+    .select("*", { count: "exact" })
+    .eq("company_id", companyId)
+    .order("created_at", { ascending: false })
+    .limit(10);
+
+  const interviews = (interviewData ?? []) as Interview[];
+
+  const tips = interviews
+    .map((i) => i.candidate_tip)
+    .filter((t): t is string => !!t)
+    .slice(0, 5);
+
+  return (
+    <>
+      <CandidateTips tips={tips} />
+      {tips.length > 0 && <Separator />}
+      <ExperienceList
+        companyId={companyId}
+        initialInterviews={interviews}
+        totalCount={count ?? 0}
+      />
+    </>
+  );
+}
+
 export default async function CompanyPage({ params }: CompanyPageProps) {
   const { slug } = await params;
   const supabase = await createClient();
@@ -77,24 +111,23 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
 
   const c = company as CompanyScore;
 
-  // Fetch interviews (RLS limits to approved only)
-  const { data: interviewData, count } = await supabase
+  // Fetch interviews for JSON-LD (lightweight — only need a few fields)
+  const { data: interviewData } = await supabase
     .from("interviews")
-    .select("*", { count: "exact" })
+    .select("*")
     .eq("company_id", c.company_id)
     .order("created_at", { ascending: false })
-    .limit(10);
+    .limit(5);
 
-  const interviews = (interviewData ?? []) as Interview[];
-
-  // Extract tips
-  const tips = interviews
-    .map((i) => i.candidate_tip)
-    .filter((t): t is string => !!t)
-    .slice(0, 5);
+  const jsonLdInterviews = (interviewData ?? []) as Interview[];
+  const jsonLd = buildCompanyJsonLd(c, jsonLdInterviews, slug);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="animate-in-view">
         <Breadcrumbs
           items={[
@@ -173,17 +206,11 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
           </div>
         </aside>
 
-        {/* Main content */}
+        {/* Main content — streams in */}
         <div className="animate-in-view-d3 space-y-6">
-          <CandidateTips tips={tips} />
-
-          {tips.length > 0 && <Separator />}
-
-          <ExperienceList
-            companyId={c.company_id}
-            initialInterviews={interviews}
-            totalCount={count ?? 0}
-          />
+          <Suspense fallback={<ExperienceListSkeleton />}>
+            <CompanyExperiences companyId={c.company_id} />
+          </Suspense>
         </div>
       </div>
     </div>

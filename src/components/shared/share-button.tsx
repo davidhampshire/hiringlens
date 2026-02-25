@@ -5,11 +5,12 @@ import { toast } from "sonner";
 interface ShareButtonProps {
   title: string;
   text?: string;
+  url?: string;
 }
 
-export function ShareButton({ title, text }: ShareButtonProps) {
+export function ShareButton({ title, text, url: urlProp }: ShareButtonProps) {
   async function handleShare() {
-    const url = window.location.href;
+    const url = urlProp ?? window.location.href;
 
     // Try native share API first (mobile)
     if (navigator.share) {

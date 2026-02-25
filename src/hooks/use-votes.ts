@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { toast } from "sonner";
 
 interface VoteState {
   userVote: "helpful" | "unhelpful" | null;
@@ -90,7 +91,7 @@ export function useVotes(interviewId: string) {
           .eq("user_id", user.id);
 
         if (error) {
-          // Revert on error
+          toast.error("Failed to record vote. Please try again.");
           setState((prev) => ({
             ...prev,
             userVote: previousVote,
@@ -130,6 +131,7 @@ export function useVotes(interviewId: string) {
             .eq("user_id", user.id);
 
           if (error) {
+            toast.error("Failed to record vote. Please try again.");
             setState((prev) => ({
               ...prev,
               userVote: previousVote,
@@ -156,6 +158,7 @@ export function useVotes(interviewId: string) {
           });
 
           if (error) {
+            toast.error("Failed to record vote. Please try again.");
             setState((prev) => ({
               ...prev,
               userVote: null,

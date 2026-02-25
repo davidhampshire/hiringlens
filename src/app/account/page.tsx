@@ -2,20 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { OUTCOME_LABELS, SENIORITY_LABELS } from "@/lib/constants";
+import { SubmissionCard } from "@/components/account/submission-card";
 
 export const metadata: Metadata = {
   title: "My Account | HiringLens",
   description: "View your submitted interview experiences.",
   robots: { index: false },
-};
-
-const STATUS_STYLES: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  pending: { label: "Pending Review", variant: "secondary" },
-  approved: { label: "Published", variant: "default" },
-  rejected: { label: "Rejected", variant: "destructive" },
 };
 
 export default async function AccountPage() {
@@ -27,7 +20,7 @@ export default async function AccountPage() {
   // Fetch user's interviews with company names (all statuses via RLS)
   const { data: interviews } = await supabase
     .from("interviews")
-    .select("*, companies(name, slug)")
+    .select("id, role_title, seniority, outcome, status, created_at, companies(name, slug)")
     .eq("submitted_by", user!.id)
     .order("created_at", { ascending: false });
 
@@ -37,6 +30,19 @@ export default async function AccountPage() {
         year: "numeric",
       })
     : null;
+
+  // Compute stats
+  const total = interviews?.length ?? 0;
+  const approved = interviews?.filter((i) => i.status === "approved").length ?? 0;
+  const pending = interviews?.filter((i) => i.status === "pending").length ?? 0;
+  const rejected = interviews?.filter((i) => i.status === "rejected").length ?? 0;
+
+  const stats = [
+    { label: "Total", value: total, color: "text-foreground" },
+    { label: "Published", value: approved, color: "text-emerald-600" },
+    { label: "Pending", value: pending, color: "text-amber-600" },
+    { label: "Rejected", value: rejected, color: "text-destructive" },
+  ];
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
@@ -51,13 +57,25 @@ export default async function AccountPage() {
         )}
       </div>
 
+      {/* Stats Bar */}
+      {total > 0 && (
+        <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {stats.map((stat) => (
+            <Card key={stat.label} className="gap-0 p-4 text-center">
+              <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
+              <p className="text-xs text-muted-foreground">{stat.label}</p>
+            </Card>
+          ))}
+        </div>
+      )}
+
       {/* Submissions Section */}
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-semibold">
           My Submissions
-          {interviews && interviews.length > 0 && (
+          {total > 0 && (
             <span className="ml-2 text-sm font-normal text-muted-foreground">
-              ({interviews.length})
+              ({total})
             </span>
           )}
         </h2>
@@ -68,44 +86,15 @@ export default async function AccountPage() {
 
       {interviews && interviews.length > 0 ? (
         <div className="space-y-3">
-          {interviews.map((interview) => {
-            const status = STATUS_STYLES[interview.status] ?? STATUS_STYLES.pending;
-            const date = new Date(interview.created_at).toLocaleDateString(
-              "en-GB",
-              { day: "numeric", month: "short", year: "numeric" }
-            );
-            const company = interview.companies as { name: string; slug: string } | null;
-
-            return (
-              <Card key={interview.id} className="gap-0 p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0 flex-1">
-                    {company && (
-                      <Link
-                        href={`/company/${company.slug}`}
-                        className="text-sm font-medium text-primary hover:underline"
-                      >
-                        {company.name}
-                      </Link>
-                    )}
-                    <p className="font-semibold">{interview.role_title}</p>
-                    <div className="mt-0.5 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-                      {interview.seniority && (
-                        <span>{SENIORITY_LABELS[interview.seniority]}</span>
-                      )}
-                      {interview.outcome && (
-                        <span>{OUTCOME_LABELS[interview.outcome]}</span>
-                      )}
-                      <span>{date}</span>
-                    </div>
-                  </div>
-                  <Badge variant={status.variant} className="shrink-0 text-xs">
-                    {status.label}
-                  </Badge>
-                </div>
-              </Card>
-            );
-          })}
+          {interviews.map((interview) => (
+            <SubmissionCard
+              key={interview.id}
+              interview={{
+                ...interview,
+                companies: interview.companies as unknown as { name: string; slug: string } | null,
+              }}
+            />
+          ))}
         </div>
       ) : (
         <Card className="p-8 text-center">

@@ -24,6 +24,7 @@ export const interviewSchema = z.object({
   communication_rating: z.number().int().min(1, "Rating required").max(5),
   clarity_rating: z.number().int().min(1, "Rating required").max(5),
   fairness_rating: z.number().int().min(1, "Rating required").max(5),
+  salary_range: z.string().optional(),
   overall_comments: z.string().max(2000).optional(),
   candidate_tip: z.string().max(1000).optional(),
 });

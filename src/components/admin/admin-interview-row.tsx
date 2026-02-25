@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { approveInterview, rejectInterview } from "@/lib/actions/admin";
+import { toast } from "sonner";
 import type { Interview } from "@/types";
 
 type InterviewWithCompany = Interview & {
@@ -39,8 +40,9 @@ export function AdminInterviewRow({
     try {
       await approveInterview(interview.id);
       setActionDone("approved");
-    } catch (err) {
-      console.error("Failed to approve:", err);
+      toast.success("Interview approved");
+    } catch {
+      toast.error("Failed to approve interview");
     } finally {
       setIsApproving(false);
     }
@@ -51,8 +53,9 @@ export function AdminInterviewRow({
     try {
       await rejectInterview(interview.id);
       setActionDone("rejected");
-    } catch (err) {
-      console.error("Failed to reject:", err);
+      toast.success("Interview rejected");
+    } catch {
+      toast.error("Failed to reject interview");
     } finally {
       setIsRejecting(false);
     }

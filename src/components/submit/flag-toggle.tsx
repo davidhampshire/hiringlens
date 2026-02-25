@@ -43,7 +43,7 @@ export function FlagToggle({
   return (
     <div
       className={`rounded-lg border transition-colors ${
-        checked ? "border-primary/30 bg-primary/[0.02]" : ""
+        checked ? "border-primary/20 bg-primary/5" : ""
       }`}
     >
       <div className="flex items-start gap-3 p-3">
@@ -63,7 +63,7 @@ export function FlagToggle({
 
       {/* Conditional follow-up questions */}
       {checked && followUps && followUps.length > 0 && (
-        <div className="border-t bg-muted/20 px-3 pb-3 pt-2.5">
+        <div className="border-t border-l-2 border-l-primary bg-accent/50 px-3 pb-3 pt-2.5">
           <p className="mb-2 text-xs font-medium text-muted-foreground">
             Optional, help us understand more:
           </p>

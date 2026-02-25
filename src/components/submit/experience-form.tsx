@@ -7,7 +7,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { interviewSchema, type InterviewFormData } from "@/lib/validators";
 import { createClient } from "@/lib/supabase/client";
-import { slugify } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -24,6 +23,7 @@ import { RatingInput } from "./rating-input";
 import { FlagToggle } from "./flag-toggle";
 import {
   INDUSTRIES,
+  SALARY_RANGES,
   SENIORITY_LABELS,
   INTERVIEW_TYPE_LABELS,
   OUTCOME_LABELS,
@@ -135,6 +135,7 @@ export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
       seniority: undefined,
       location: "",
       interview_type: undefined,
+      salary_range: undefined,
       stages_count: undefined,
       total_duration_days: undefined,
       outcome: undefined,
@@ -331,7 +332,7 @@ export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
     try {
       const supabase = createClient();
 
-      // Get authenticated user for submitted_by
+      // Get authenticated user
       const {
         data: { user },
       } = await supabase.auth.getUser();
@@ -343,35 +344,6 @@ export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
         toast("Create an account to submit your experience. Your progress has been saved.");
         router.push("/sign-up?redirectTo=/submit");
         return;
-      }
-
-      let companyId = data.company_id;
-
-      // Create company if new
-      if (!companyId) {
-        const slug = slugify(data.company_name);
-        const { data: existingCompany } = await supabase
-          .from("companies")
-          .select("id")
-          .eq("slug", slug)
-          .single();
-
-        if (existingCompany) {
-          companyId = existingCompany.id;
-        } else {
-          const { data: newCompany, error: companyError } = await supabase
-            .from("companies")
-            .insert({
-              name: data.company_name.trim(),
-              slug,
-              industry: data.industry ?? null,
-            })
-            .select("id")
-            .single();
-
-          if (companyError) throw companyError;
-          companyId = newCompany.id;
-        }
       }
 
       // Collect follow-up data
@@ -388,42 +360,19 @@ export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
         }
       }
 
-      let commentsPayload = data.overall_comments || "";
-      if (Object.keys(activeFollowUps).length > 0) {
-        const followUpJson = JSON.stringify(activeFollowUps);
-        commentsPayload = commentsPayload
-          ? `${commentsPayload}\n\n---FOLLOW_UP_DATA---\n${followUpJson}`
-          : `---FOLLOW_UP_DATA---\n${followUpJson}`;
+      // Submit via server action (handles rate limiting, company creation, insert)
+      const { submitInterview } = await import("@/lib/actions/interview");
+      const result = await submitInterview({
+        formData: data as unknown as Record<string, unknown>,
+        followUpData: activeFollowUps,
+      });
+
+      if (result.error) {
+        toast.error(result.error);
+        return;
       }
 
-      const { error: interviewError } = await supabase
-        .from("interviews")
-        .insert({
-          company_id: companyId,
-          role_title: data.role_title,
-          seniority: data.seniority ?? null,
-          location: data.location || null,
-          interview_type: data.interview_type ?? null,
-          stages_count: data.stages_count ?? null,
-          total_duration_days: data.total_duration_days ?? null,
-          outcome: data.outcome ?? null,
-          received_feedback: data.received_feedback,
-          unpaid_task: data.unpaid_task,
-          ghosted: data.ghosted,
-          interviewer_late: data.interviewer_late,
-          exceeded_timeline: data.exceeded_timeline,
-          professionalism_rating: data.professionalism_rating,
-          communication_rating: data.communication_rating,
-          clarity_rating: data.clarity_rating,
-          fairness_rating: data.fairness_rating,
-          overall_comments: commentsPayload || null,
-          candidate_tip: data.candidate_tip || null,
-          submitted_by: user?.id ?? null,
-          status: "pending",
-        });
-
-      if (interviewError) throw interviewError;
-
+      localStorage.removeItem(FORM_STORAGE_KEY);
       setIsSuccess(true);
       toast.success(
         "Thanks for sharing! Your experience will be visible after review."
@@ -749,6 +698,27 @@ export function ExperienceForm({ prefilledCompany }: ExperienceFormProps) {
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+
+            <div>
+              <label className="mb-1.5 block text-sm font-medium">
+                Salary Range
+              </label>
+              <Select
+                value={watch("salary_range") ?? ""}
+                onValueChange={(v) => setValue("salary_range", v)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select range (optional)" />
+                </SelectTrigger>
+                <SelectContent>
+                  {SALARY_RANGES.map((range) => (
+                    <SelectItem key={range} value={range}>
+                      {range}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </section>

@@ -38,7 +38,7 @@ export async function signUp(_prev: unknown, formData: FormData) {
     return { error: error.message };
   }
 
-  return { success: true };
+  redirect(`/check-email?email=${encodeURIComponent(parsed.data.email)}`);
 }
 
 /* ── Sign In ── */

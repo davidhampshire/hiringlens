@@ -1,3 +1,18 @@
+export const SALARY_RANGES = [
+  "Under £20k",
+  "£20-30k",
+  "£30-40k",
+  "£40-50k",
+  "£50-60k",
+  "£60-70k",
+  "£70-80k",
+  "£80-100k",
+  "£100-120k",
+  "£120-150k",
+  "£150k+",
+  "Prefer not to say",
+] as const;
+
 export const INDUSTRIES = [
   "Technology",
   "Finance & Banking",
