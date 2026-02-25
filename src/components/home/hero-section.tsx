@@ -23,7 +23,7 @@ export function HeroSection() {
         <div className="mx-auto max-w-2xl text-center">
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
             Interviews should be{" "}
-            <span className="text-primary">fair</span> for everyone
+            <span className="text-primary">fair</span> for <em>everyone</em>
           </h1>
           <p className="mt-4 text-base text-muted-foreground sm:text-lg">
             Candidates spend hours preparing, researching, and interviewing.

@@ -48,12 +48,65 @@ function getInitials(name: string): string {
     .toUpperCase();
 }
 
+/**
+ * Extract the domain from a logo_url stored in the DB.
+ * Handles:
+ *  - Direct domains: "deliveroo.co.uk"
+ *  - Clearbit URLs: "https://logo.clearbit.com/deliveroo.co.uk"
+ *  - Google URLs: "https://www.google.com/s2/favicons?domain=deliveroo.co.uk&sz=128"
+ *  - Any URL with a path: return null (custom uploaded logo)
+ */
+function extractDomain(logoUrl: string): string | null {
+  // If it looks like a bare domain (no protocol, no slashes)
+  if (!logoUrl.includes("/")) return logoUrl;
+
+  try {
+    const url = new URL(logoUrl);
+
+    // Clearbit-style: https://logo.clearbit.com/{domain}
+    if (url.hostname === "logo.clearbit.com") {
+      return url.pathname.replace(/^\//, "");
+    }
+
+    // Google favicon-style: already a working URL
+    if (url.hostname === "www.google.com" && url.pathname.includes("favicons")) {
+      return null; // already a full working Google URL, don't re-derive
+    }
+
+    return null;
+  } catch {
+    // Not a URL — treat as domain
+    return logoUrl;
+  }
+}
+
+/**
+ * Build a Google Favicon URL from a domain.
+ * Returns a 128px favicon which is good enough for card-sized logos.
+ */
+function googleFaviconUrl(domain: string): string {
+  return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=128`;
+}
+
 export function CompanyLogo({ name, logoUrl, size = "md", className }: CompanyLogoProps) {
   const [imgError, setImgError] = useState(false);
   const s = SIZES[size];
 
-  // If we have a logo URL and it hasn't errored, show the image
+  // Determine the actual image URL to use
+  let resolvedUrl: string | null = null;
+
   if (logoUrl && !imgError) {
+    const domain = extractDomain(logoUrl);
+    if (domain) {
+      // Convert any stored domain/Clearbit URL to Google Favicon
+      resolvedUrl = googleFaviconUrl(domain);
+    } else {
+      // Already a full working URL (Google favicon or custom)
+      resolvedUrl = logoUrl;
+    }
+  }
+
+  if (resolvedUrl) {
     return (
       <div
         className={cn(
@@ -63,7 +116,7 @@ export function CompanyLogo({ name, logoUrl, size = "md", className }: CompanyLo
         )}
       >
         <Image
-          src={logoUrl}
+          src={resolvedUrl}
           alt={`${name} logo`}
           width={s.px}
           height={s.px}
