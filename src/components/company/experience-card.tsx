@@ -21,12 +21,14 @@ import {
   RATING_LABELS,
 } from "@/lib/constants";
 import { useVotes } from "@/hooks/use-votes";
+import { CompanyLogo } from "@/components/shared/company-logo";
 import type { Interview } from "@/types";
 
 interface ExperienceCardProps {
   interview: Interview;
   companyName?: string;
   companySlug?: string;
+  companyLogoUrl?: string | null;
 }
 
 /* Characters beyond which we consider content "long" and show the expand link */
@@ -244,6 +246,7 @@ export function ExperienceCard({
   interview,
   companyName,
   companySlug,
+  companyLogoUrl,
 }: ExperienceCardProps) {
   const {
     userVote: vote,
@@ -272,9 +275,14 @@ export function ExperienceCard({
     <>
       <Card className="gap-0 p-0">
         <div className="p-5">
-          {/* Company name (shown on Recent Posts page) */}
+          {/* Company name + logo (shown on Recent Posts page) */}
           {companyName && companySlug && (
-            <div className="mb-2">
+            <div className="mb-3 flex items-center gap-2.5">
+              <CompanyLogo
+                name={companyName}
+                logoUrl={companyLogoUrl}
+                size="sm"
+              />
               <Link
                 href={`/company/${companySlug}`}
                 className="text-sm font-medium text-primary hover:underline"

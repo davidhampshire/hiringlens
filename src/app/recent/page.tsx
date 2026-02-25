@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export const revalidate = 300; // 5 min ISR
 
 type InterviewWithCompany = Interview & {
-  companies: { name: string; slug: string; industry: string | null } | null;
+  companies: { name: string; slug: string; industry: string | null; logo_url: string | null } | null;
 };
 
 export default async function RecentPostsPage() {
@@ -20,7 +20,7 @@ export default async function RecentPostsPage() {
 
   const { data, count } = await supabase
     .from("interviews")
-    .select("*, companies(name, slug, industry)", { count: "exact" })
+    .select("*, companies(name, slug, industry, logo_url)", { count: "exact" })
     .eq("status", "approved")
     .order("created_at", { ascending: false })
     .limit(30);

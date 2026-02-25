@@ -9,7 +9,7 @@ export async function TrendingCompanies() {
     .from("company_scores")
     .select("*")
     .order("total_reviews", { ascending: false })
-    .limit(8);
+    .limit(6);
 
   if (!companies || companies.length === 0) return null;
 
@@ -21,7 +21,7 @@ export async function TrendingCompanies() {
           Most reviewed interview experiences
         </p>
       </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {(companies as CompanyScore[]).map((company) => (
           <CompanyCard key={company.company_id} company={company} />
         ))}

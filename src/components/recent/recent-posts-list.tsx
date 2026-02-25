@@ -21,7 +21,7 @@ import {
 import type { Interview } from "@/types";
 
 type InterviewWithCompany = Interview & {
-  companies: { name: string; slug: string; industry: string | null } | null;
+  companies: { name: string; slug: string; industry: string | null; logo_url: string | null } | null;
 };
 
 interface RecentPostsListProps {
@@ -144,7 +144,7 @@ export function RecentPostsList({
       const supabase = createClient();
       const { data } = await supabase
         .from("interviews")
-        .select("*, companies(name, slug, industry)")
+        .select("*, companies(name, slug, industry, logo_url)")
         .eq("status", "approved")
         .order("created_at", { ascending: false })
         .range(posts.length, posts.length + PAGE_SIZE - 1);
@@ -292,6 +292,7 @@ export function RecentPostsList({
               interview={post}
               companyName={post.companies?.name}
               companySlug={post.companies?.slug}
+              companyLogoUrl={post.companies?.logo_url}
             />
           ))
         ) : (
