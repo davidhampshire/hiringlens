@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { StarRating } from "@/components/shared/star-rating";
 import { CompanyLogo } from "@/components/shared/company-logo";
-import { OUTCOME_LABELS } from "@/lib/constants";
+import { OUTCOME_LABELS, SENIORITY_LABELS } from "@/lib/constants";
 import { ArrowRight } from "lucide-react";
 import type { Interview } from "@/types";
 import Link from "next/link";
@@ -52,30 +52,42 @@ export async function RecentReviews() {
               review.fairness_rating) /
             4;
 
+          const date = new Date(review.created_at).toLocaleDateString("en-GB", {
+            month: "short",
+            year: "numeric",
+          });
+
           return (
             <Link key={review.id} href={`/company/${company?.slug ?? ""}`}>
-              <Card className="group gap-0 p-0 transition-all hover:shadow-md">
-                <div className="p-5">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex min-w-0 items-start gap-2.5">
-                      <CompanyLogo
-                        name={company?.name ?? "?"}
-                        logoUrl={company?.logo_url}
-                        size="sm"
-                      />
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-semibold group-hover:text-primary">
-                          {company?.name ?? "Unknown Company"}
-                        </p>
-                        <p className="mt-0.5 truncate text-sm text-muted-foreground">
-                          {review.role_title}
-                        </p>
-                      </div>
-                    </div>
-                    <StarRating rating={avgRating} size="sm" />
+              <Card className="group flex h-full flex-col gap-0 p-0 transition-all hover:shadow-md">
+                {/* Company header with prominent logo */}
+                <div className="flex items-center gap-3 border-b px-5 py-3">
+                  <CompanyLogo
+                    name={company?.name ?? "?"}
+                    logoUrl={company?.logo_url}
+                    size="md"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-semibold group-hover:text-primary">
+                      {company?.name ?? "Unknown Company"}
+                    </p>
+                    <p className="truncate text-xs text-muted-foreground">
+                      {review.seniority
+                        ? SENIORITY_LABELS[review.seniority]
+                        : null}
+                      {review.seniority && review.location ? " · " : ""}
+                      {review.location ?? ""}
+                      {!review.seniority && !review.location ? date : ""}
+                    </p>
                   </div>
+                  <StarRating rating={avgRating} size="sm" showValue />
+                </div>
 
-                  <div className="mt-3 flex flex-wrap gap-1.5">
+                {/* Card body */}
+                <div className="flex flex-1 flex-col p-5">
+                  <p className="font-medium">{review.role_title}</p>
+
+                  <div className="mt-2 flex flex-wrap gap-1.5">
                     {review.outcome && (
                       <Badge
                         variant={review.outcome === "offer" ? "default" : "secondary"}
@@ -94,12 +106,32 @@ export async function RecentReviews() {
                         {review.stages_count} stages
                       </Badge>
                     )}
+                    {review.total_duration_days && (
+                      <Badge variant="outline" className="text-xs font-normal">
+                        {review.total_duration_days} days
+                      </Badge>
+                    )}
                   </div>
 
-                  {review.candidate_tip && (
+                  {/* Comments preview */}
+                  {review.overall_comments && (
                     <p className="mt-3 line-clamp-2 text-sm text-muted-foreground">
-                      &ldquo;{review.candidate_tip}&rdquo;
+                      {review.overall_comments}
                     </p>
+                  )}
+
+                  {/* Tip */}
+                  {review.candidate_tip && (
+                    <div className="mt-auto pt-3">
+                      <div className="rounded-md bg-muted/30 px-3 py-2">
+                        <p className="text-xs font-medium text-muted-foreground">
+                          Tip for candidates:
+                        </p>
+                        <p className="mt-0.5 line-clamp-2 text-sm">
+                          &ldquo;{review.candidate_tip}&rdquo;
+                        </p>
+                      </div>
+                    </div>
                   )}
                 </div>
               </Card>

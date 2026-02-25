@@ -71,7 +71,7 @@ export default function HomePage() {
       <Suspense fallback={<ReviewsSkeleton />}>
         <RecentReviews />
       </Suspense>
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+      <div className="mx-auto max-w-6xl px-4 pb-12 sm:px-6">
         <AdPlaceholder variant="leaderboard" />
       </div>
       <ClosingCTA />
