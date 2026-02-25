@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { RecentPostsList } from "@/components/recent/recent-posts-list";
+import { AdPlaceholder } from "@/components/shared/ad-placeholder";
 import type { Interview } from "@/types";
 
 export const metadata: Metadata = {
@@ -36,6 +37,8 @@ export default async function RecentPostsPage() {
           companies and industries.
         </p>
       </div>
+
+      <AdPlaceholder variant="leaderboard" className="mb-6" />
 
       <div className="animate-in-view-d1">
         <RecentPostsList

@@ -16,6 +16,7 @@ import { ExperienceListSkeleton } from "@/components/company/company-page-skelet
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { ShareButton } from "@/components/shared/share-button";
 import { CompanyLogo } from "@/components/shared/company-logo";
+import { AdPlaceholder } from "@/components/shared/ad-placeholder";
 import { buildCompanyJsonLd } from "@/lib/json-ld";
 import type { CompanyScore, Interview } from "@/types";
 
@@ -204,6 +205,8 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
               </Link>
             </Button>
           </div>
+
+          <AdPlaceholder variant="sidebar" />
         </aside>
 
         {/* Main content — streams in */}
