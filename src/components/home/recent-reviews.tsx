@@ -1,13 +1,16 @@
 import { createClient } from "@/lib/supabase/server";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { StarRating } from "@/components/shared/star-rating";
+import { CompanyLogo } from "@/components/shared/company-logo";
 import { OUTCOME_LABELS } from "@/lib/constants";
+import { ArrowRight } from "lucide-react";
 import type { Interview } from "@/types";
 import Link from "next/link";
 
 type ReviewWithCompany = Interview & {
-  companies: { name: string; slug: string } | null;
+  companies: { name: string; slug: string; logo_url: string | null } | null;
 };
 
 export async function RecentReviews() {
@@ -16,9 +19,9 @@ export async function RecentReviews() {
   // RLS limits to approved interviews only
   const { data } = await supabase
     .from("interviews")
-    .select("*, companies(name, slug)")
+    .select("*, companies(name, slug, logo_url)")
     .order("created_at", { ascending: false })
-    .limit(6);
+    .limit(9);
 
   const reviews = (data ?? []) as unknown as ReviewWithCompany[];
 
@@ -26,11 +29,18 @@ export async function RecentReviews() {
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold">Recent Experiences</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Latest interview insights from candidates
-        </p>
+      <div className="mb-6 flex items-end justify-between">
+        <div>
+          <h2 className="text-xl font-semibold">Recent Experiences</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Latest interview insights from candidates
+          </p>
+        </div>
+        <Button variant="ghost" size="sm" asChild className="hidden sm:inline-flex">
+          <Link href="/recent">
+            All experiences <ArrowRight className="ml-1 h-4 w-4" />
+          </Link>
+        </Button>
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {reviews.map((review) => {
@@ -47,13 +57,20 @@ export async function RecentReviews() {
               <Card className="group gap-0 p-0 transition-all hover:shadow-md">
                 <div className="p-5">
                   <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold group-hover:text-primary">
-                        {company?.name ?? "Unknown Company"}
-                      </p>
-                      <p className="mt-0.5 truncate text-sm text-muted-foreground">
-                        {review.role_title}
-                      </p>
+                    <div className="flex min-w-0 items-start gap-2.5">
+                      <CompanyLogo
+                        name={company?.name ?? "?"}
+                        logoUrl={company?.logo_url}
+                        size="sm"
+                      />
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold group-hover:text-primary">
+                          {company?.name ?? "Unknown Company"}
+                        </p>
+                        <p className="mt-0.5 truncate text-sm text-muted-foreground">
+                          {review.role_title}
+                        </p>
+                      </div>
                     </div>
                     <StarRating rating={avgRating} size="sm" />
                   </div>
@@ -89,6 +106,13 @@ export async function RecentReviews() {
             </Link>
           );
         })}
+      </div>
+      <div className="mt-6 flex justify-center sm:hidden">
+        <Button variant="outline" asChild>
+          <Link href="/recent">
+            View all experiences <ArrowRight className="ml-1 h-4 w-4" />
+          </Link>
+        </Button>
       </div>
     </section>
   );

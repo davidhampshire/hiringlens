@@ -12,8 +12,8 @@ function CompanySkeleton() {
   return (
     <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
       <Skeleton className="mb-6 h-7 w-48" />
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {Array.from({ length: 4 }, (_, i) => (
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: 6 }, (_, i) => (
           <Skeleton key={i} className="h-32 rounded-lg" />
         ))}
       </div>
@@ -26,7 +26,7 @@ function ReviewsSkeleton() {
     <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
       <Skeleton className="mb-6 h-7 w-48" />
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {Array.from({ length: 3 }, (_, i) => (
+        {Array.from({ length: 9 }, (_, i) => (
           <Skeleton key={i} className="h-36 rounded-lg" />
         ))}
       </div>

@@ -9,7 +9,7 @@ import { UserMenu } from "@/components/auth/user-menu";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
-  { label: "Recent Posts", href: "/recent" },
+  { label: "All Experiences", href: "/recent" },
   { label: "Companies", href: "/companies" },
 ];
 
