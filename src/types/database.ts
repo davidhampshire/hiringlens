@@ -129,6 +129,7 @@ export type Database = {
           id: string;
           email: string;
           display_name: string | null;
+          is_admin: boolean;
           created_at: string;
           updated_at: string;
         };
@@ -136,6 +137,7 @@ export type Database = {
           id: string;
           email: string;
           display_name?: string | null;
+          is_admin?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -143,8 +145,32 @@ export type Database = {
           id?: string;
           email?: string;
           display_name?: string | null;
+          is_admin?: boolean;
           created_at?: string;
           updated_at?: string;
+        };
+      };
+      interview_votes: {
+        Row: {
+          id: string;
+          interview_id: string;
+          user_id: string;
+          vote_type: "helpful" | "unhelpful";
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          interview_id: string;
+          user_id: string;
+          vote_type: "helpful" | "unhelpful";
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          interview_id?: string;
+          user_id?: string;
+          vote_type?: "helpful" | "unhelpful";
+          created_at?: string;
         };
       };
       moderation_flags: {

@@ -5,6 +5,7 @@ export type CompanyInsert = Database["public"]["Tables"]["companies"]["Insert"];
 export type Interview = Database["public"]["Tables"]["interviews"]["Row"];
 export type InterviewInsert = Database["public"]["Tables"]["interviews"]["Insert"];
 export type ModerationFlag = Database["public"]["Tables"]["moderation_flags"]["Row"];
+export type InterviewVote = Database["public"]["Tables"]["interview_votes"]["Row"];
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 export type CompanyScore = Database["public"]["Views"]["company_scores"]["Row"];
 
