@@ -13,6 +13,7 @@ import { CandidateTips } from "@/components/company/candidate-tips";
 import { ExperienceList } from "@/components/company/experience-list";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { ShareButton } from "@/components/shared/share-button";
+import { CompanyLogo } from "@/components/shared/company-logo";
 import type { CompanyScore, Interview } from "@/types";
 
 export const revalidate = 3600;
@@ -106,19 +107,28 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
 
       {/* Company header */}
       <div className="animate-in-view-d1 mb-8">
-        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
-          <h1 className="text-2xl font-bold sm:text-3xl">{c.name}</h1>
-          {c.industry && (
-            <span className="text-sm text-muted-foreground">{c.industry}</span>
-          )}
-          <ShareButton
-            title={`${c.name} Interview Experience | HiringLens`}
-            text={`Check out interview experiences at ${c.name} on HiringLens`}
+        <div className="flex items-start gap-4">
+          <CompanyLogo
+            name={c.name}
+            logoUrl={c.logo_url}
+            size="lg"
           />
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
+              <h1 className="text-2xl font-bold sm:text-3xl">{c.name}</h1>
+              {c.industry && (
+                <span className="text-sm text-muted-foreground">{c.industry}</span>
+              )}
+              <ShareButton
+                title={`${c.name} Interview Experience | HiringLens`}
+                text={`Check out interview experiences at ${c.name} on HiringLens`}
+              />
+            </div>
+            {c.location && (
+              <p className="mt-1 text-sm text-muted-foreground">{c.location}</p>
+            )}
+          </div>
         </div>
-        {c.location && (
-          <p className="mt-1 text-sm text-muted-foreground">{c.location}</p>
-        )}
       </div>
 
       <div className="grid gap-8 lg:grid-cols-[280px_1fr]">

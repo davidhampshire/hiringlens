@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { CompanyLogo } from "@/components/shared/company-logo";
 import { cn, formatScore, getScoreColor, getScoreBgColor } from "@/lib/utils";
 import type { CompanyScore } from "@/types";
 
@@ -14,6 +15,11 @@ export function CompanyCard({ company }: CompanyCardProps) {
       <Card className="group gap-0 p-0 transition-all hover:shadow-md">
         <div className="p-5">
           <div className="flex items-start justify-between gap-3">
+            <CompanyLogo
+              name={company.name}
+              logoUrl={company.logo_url}
+              size="md"
+            />
             <div className="min-w-0 flex-1">
               <h3 className="truncate text-base font-semibold group-hover:text-primary">
                 {company.name}

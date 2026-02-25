@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/hooks/use-debounce";
 import { createClient } from "@/lib/supabase/client";
+import { CompanyLogo } from "@/components/shared/company-logo";
 import Link from "next/link";
 import type { SearchResult } from "@/types";
 
@@ -83,13 +84,18 @@ export function SearchBar() {
                 <li key={result.id}>
                   <Link
                     href={`/company/${result.slug}`}
-                    className="flex items-center justify-between px-4 py-2.5 text-sm hover:bg-accent"
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-accent"
                     onClick={() => {
                       setIsOpen(false);
                       setQuery("");
                     }}
                   >
-                    <div>
+                    <CompanyLogo
+                      name={result.name}
+                      logoUrl={result.logo_url}
+                      size="sm"
+                    />
+                    <div className="min-w-0 flex-1">
                       <span className="font-medium">{result.name}</span>
                       {result.industry && (
                         <span className="ml-2 text-muted-foreground">
@@ -98,7 +104,7 @@ export function SearchBar() {
                       )}
                     </div>
                     {result.total_reviews > 0 && (
-                      <span className="text-xs text-muted-foreground">
+                      <span className="shrink-0 text-xs text-muted-foreground">
                         {result.total_reviews} reviews
                       </span>
                     )}
