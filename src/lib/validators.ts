@@ -76,3 +76,14 @@ export const resetPasswordSchema = z
   });
 
 export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
+
+/* ── Contact Schema ── */
+
+export const contactSchema = z.object({
+  name: z.string().min(1, "Name is required").max(100),
+  email: z.string().email("Please enter a valid email address"),
+  subject: z.string().min(1, "Subject is required").max(200),
+  message: z.string().min(10, "Message must be at least 10 characters").max(5000),
+});
+
+export type ContactFormData = z.infer<typeof contactSchema>;

@@ -77,6 +77,22 @@ export default async function AdminPage() {
     );
   }
 
+  // Fetch contact messages
+  const { data: messagesData } = await supabase
+    .from("contact_messages")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(50);
+
+  const contactMessages = (messagesData ?? []) as Array<{
+    id: string;
+    name: string;
+    email: string;
+    subject: string;
+    message: string;
+    created_at: string;
+  }>;
+
   // Get counts
   const { count: totalPending } = await supabase
     .from("interviews")
@@ -93,9 +109,9 @@ export default async function AdminPage() {
       <div className="animate-in-view mb-8">
         <h1 className="text-2xl font-bold">Admin Dashboard</h1>
         <p className="mt-2 text-muted-foreground">
-          Manage submitted interview experiences and flagged content.
+          Manage submitted interview experiences, flagged content, and contact messages.
         </p>
-        <div className="mt-4 flex gap-4">
+        <div className="mt-4 flex flex-wrap gap-4">
           <div className="rounded-lg border bg-card px-4 py-3">
             <p className="text-2xl font-bold text-amber-600">{totalPending ?? 0}</p>
             <p className="text-xs text-muted-foreground">Pending review</p>
@@ -108,6 +124,10 @@ export default async function AdminPage() {
             <p className="text-2xl font-bold text-rose-600">{flaggedInterviews.length}</p>
             <p className="text-xs text-muted-foreground">Flagged</p>
           </div>
+          <div className="rounded-lg border bg-card px-4 py-3">
+            <p className="text-2xl font-bold text-blue-600">{contactMessages.length}</p>
+            <p className="text-xs text-muted-foreground">Messages</p>
+          </div>
         </div>
       </div>
 
@@ -115,6 +135,7 @@ export default async function AdminPage() {
         <AdminTabs
           pendingInterviews={pendingInterviews}
           flaggedInterviews={flaggedInterviews}
+          contactMessages={contactMessages}
         />
       </div>
     </div>
