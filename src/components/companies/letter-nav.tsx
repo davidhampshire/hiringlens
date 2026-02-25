@@ -24,7 +24,7 @@ export function LetterNav({ availableLetters, activeLetter }: LetterNavProps) {
   }
 
   return (
-    <div className="sticky top-16 z-30 -mx-4 border-b bg-background/95 px-4 py-2 backdrop-blur sm:-mx-6 sm:px-6">
+    <div className="sticky top-16 z-30 -mx-4 border-b px-4 py-2 backdrop-blur sm:-mx-6 sm:px-6">
       <div className="flex flex-wrap gap-1">
         {LETTERS.map((letter) => {
           const isAvailable = availableLetters.has(letter);

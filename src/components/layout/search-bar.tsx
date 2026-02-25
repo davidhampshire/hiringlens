@@ -63,7 +63,7 @@ export function SearchBar() {
   }
 
   return (
-    <div ref={wrapperRef} className="relative w-full max-w-md">
+    <div ref={wrapperRef} className="relative w-full max-w-xs">
       <Input
         type="search"
         placeholder="Search companies..."

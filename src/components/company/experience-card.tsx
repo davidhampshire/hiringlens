@@ -31,17 +31,6 @@ interface ExperienceCardProps {
   companyLogoUrl?: string | null;
 }
 
-/* Characters beyond which we consider content "long" and show the expand link */
-const LONG_COMMENT_THRESHOLD = 180;
-const LONG_TIP_THRESHOLD = 100;
-
-function isLongContent(interview: Interview) {
-  return (
-    (interview.overall_comments?.length ?? 0) > LONG_COMMENT_THRESHOLD ||
-    (interview.candidate_tip?.length ?? 0) > LONG_TIP_THRESHOLD
-  );
-}
-
 /* ── Rating Breakdown Grid ── */
 function RatingBreakdown({ interview }: { interview: Interview }) {
   const ratings = [
@@ -269,15 +258,16 @@ export function ExperienceCard({
     year: "numeric",
   });
 
-  const hasLongContent = isLongContent(interview);
-
   return (
     <>
-      <Card className="gap-0 p-0">
+      <Card
+        className="cursor-pointer gap-0 p-0 transition-all hover:shadow-md hover:ring-1 hover:ring-border"
+        onClick={() => setModalOpen(true)}
+      >
         <div className="p-5">
           {/* Company name + logo (shown on Recent Posts page) */}
           {companyName && companySlug && (
-            <div className="mb-3 flex items-center gap-2.5">
+            <div className="mb-3 flex items-center gap-2.5" onClick={(e) => e.stopPropagation()}>
               <CompanyLogo
                 name={companyName}
                 logoUrl={companyLogoUrl}
@@ -372,30 +362,9 @@ export function ExperienceCard({
             </div>
           )}
 
-          {/* Expand link */}
-          <button
-            type="button"
-            onClick={() => setModalOpen(true)}
-            className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
-          >
-            {hasLongContent ? "Read full experience" : "View details"}
-            <svg
-              className="h-3 w-3"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </button>
-
           {/* Actions — voting + report */}
-          <div className="mt-3 flex items-center justify-between border-t pt-3">
+          {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+          <div className="mt-3 flex items-center justify-between border-t pt-3" onClick={(e) => e.stopPropagation()}>
             {/* Helpfulness voting */}
             <div className="flex items-center gap-1">
               <span className="mr-1 text-xs text-muted-foreground">
