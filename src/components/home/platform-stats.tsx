@@ -28,7 +28,7 @@ export async function PlatformStats() {
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <div className="grid grid-cols-3 gap-4 rounded-xl border bg-muted/20 p-6">
+      <div className="animate-in-view-d1 grid grid-cols-3 gap-4 rounded-xl border bg-muted/20 p-6">
         <div className="text-center">
           <p className="text-2xl font-bold sm:text-3xl">
             {totalReviews.toLocaleString()}

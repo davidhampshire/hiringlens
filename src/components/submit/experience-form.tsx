@@ -655,6 +655,54 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
           </div>
         </section>
 
+        {/* Display name + anonymous toggle — right after company */}
+        <div className="rounded-lg border bg-muted/20 p-4">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <p className="text-sm font-medium">How should we display your name?</p>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                {isAnonymous
+                  ? "Your review will be shown as \"Anonymous\""
+                  : "Your name will be shown on your review"}
+              </p>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={!isAnonymous}
+              onClick={() => {
+                const newAnon = !isAnonymous;
+                setIsAnonymous(newAnon);
+                if (newAnon) {
+                  setValue("display_name", "");
+                }
+              }}
+              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ${
+                !isAnonymous ? "bg-primary" : "bg-muted-foreground/25"
+              }`}
+            >
+              <span
+                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition-transform ${
+                  !isAnonymous ? "translate-x-5" : "translate-x-0"
+                }`}
+              />
+            </button>
+          </div>
+          {!isAnonymous && (
+            <div className="mt-3">
+              <Input
+                placeholder="Your first name or nickname"
+                {...register("display_name")}
+              />
+              {errors.display_name && (
+                <p className="mt-1 text-xs text-destructive">
+                  {errors.display_name.message}
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+
         <Separator />
 
         {/* Outcome */}
@@ -917,54 +965,6 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
         <section id="step-advice" className="scroll-mt-28 lg:scroll-mt-20">
           <h2 className="mb-4 text-lg font-semibold">Your Advice</h2>
           <div className="space-y-4">
-            {/* Display name + anonymous toggle */}
-            <div className="rounded-lg border bg-muted/20 p-4">
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <p className="text-sm font-medium">How should we display your name?</p>
-                  <p className="mt-0.5 text-xs text-muted-foreground">
-                    {isAnonymous
-                      ? "Your review will be shown as \"Anonymous\""
-                      : "Your name will be shown on your review"}
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked={!isAnonymous}
-                  onClick={() => {
-                    const newAnon = !isAnonymous;
-                    setIsAnonymous(newAnon);
-                    if (newAnon) {
-                      setValue("display_name", "");
-                    }
-                  }}
-                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ${
-                    !isAnonymous ? "bg-primary" : "bg-muted-foreground/25"
-                  }`}
-                >
-                  <span
-                    className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition-transform ${
-                      !isAnonymous ? "translate-x-5" : "translate-x-0"
-                    }`}
-                  />
-                </button>
-              </div>
-              {!isAnonymous && (
-                <div className="mt-3">
-                  <Input
-                    placeholder="Your first name or nickname"
-                    {...register("display_name")}
-                  />
-                  {errors.display_name && (
-                    <p className="mt-1 text-xs text-destructive">
-                      {errors.display_name.message}
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
-
             <div>
               <label className="mb-1.5 block text-sm font-medium">
                 Tip for future candidates

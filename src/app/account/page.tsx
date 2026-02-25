@@ -47,7 +47,7 @@ export default async function AccountPage() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
       {/* Account Header */}
-      <div className="mb-8">
+      <div className="animate-in-view mb-8">
         <h1 className="text-2xl font-bold">My Account</h1>
         <p className="mt-1 text-muted-foreground">{user!.email}</p>
         {memberSince && (
@@ -59,7 +59,7 @@ export default async function AccountPage() {
 
       {/* Stats Bar */}
       {total > 0 && (
-        <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="animate-in-view-d1 mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {stats.map((stat) => (
             <Card key={stat.label} className="gap-0 p-4 text-center">
               <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
@@ -70,7 +70,7 @@ export default async function AccountPage() {
       )}
 
       {/* Submissions Section */}
-      <div className="mb-4 flex items-center justify-between">
+      <div className="animate-in-view-d2 mb-4 flex items-center justify-between">
         <h2 className="text-lg font-semibold">
           My Submissions
           {total > 0 && (
@@ -85,7 +85,7 @@ export default async function AccountPage() {
       </div>
 
       {interviews && interviews.length > 0 ? (
-        <div className="space-y-3">
+        <div className="animate-in-view-d3 space-y-3">
           {interviews.map((interview) => (
             <SubmissionCard
               key={interview.id}

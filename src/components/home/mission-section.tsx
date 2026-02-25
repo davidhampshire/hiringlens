@@ -47,7 +47,7 @@ const VALUES = [
 export function MissionSection() {
   return (
     <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-      <div className="mb-8 text-center">
+      <div className="animate-in-view mb-8 text-center">
         <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
           Why HiringLens exists
         </h2>
@@ -59,7 +59,7 @@ export function MissionSection() {
         </p>
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-2">
+      <div className="animate-in-view-d1 grid gap-6 sm:grid-cols-2">
         {VALUES.map((value) => (
           <div
             key={value.title}

@@ -18,7 +18,7 @@ export async function TrendingCompanies() {
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-      <div className="mb-6 flex items-end justify-between">
+      <div className="animate-in-view mb-6 flex items-end justify-between">
         <div>
           <h2 className="text-xl font-semibold">Trending Companies</h2>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -31,7 +31,7 @@ export async function TrendingCompanies() {
           </Link>
         </Button>
       </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="animate-in-view-d1 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {(companies as CompanyScore[]).map((company) => (
           <CompanyCard key={company.company_id} company={company} />
         ))}

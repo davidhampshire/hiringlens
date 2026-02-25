@@ -145,7 +145,7 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
           <CompanyLogo
             name={c.name}
             logoUrl={c.logo_url}
-            size="lg"
+            size="xl"
           />
           <div className="min-w-0 flex-1">
             <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
