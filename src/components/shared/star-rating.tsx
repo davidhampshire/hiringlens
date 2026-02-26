@@ -5,6 +5,7 @@ interface StarRatingProps {
   maxRating?: number;
   size?: "sm" | "md" | "lg";
   showValue?: boolean;
+  className?: string;
 }
 
 export function StarRating({
@@ -12,6 +13,7 @@ export function StarRating({
   maxRating = 5,
   size = "md",
   showValue = false,
+  className,
 }: StarRatingProps) {
   const sizeClasses = {
     sm: "h-3.5 w-3.5",
@@ -20,7 +22,7 @@ export function StarRating({
   };
 
   return (
-    <div className="flex items-center gap-1">
+    <div className={cn("flex items-center gap-1", className)}>
       <div className="flex gap-0.5">
         {Array.from({ length: maxRating }, (_, i) => {
           const filled = i < Math.round(rating);

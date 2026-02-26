@@ -336,13 +336,14 @@ export function ExperienceCard({
                 )}
               </div>
             </div>
-            <div className="flex flex-col items-end gap-1">
-              <div className="flex items-center gap-2 rounded-xl bg-amber-50 px-3 py-2 ring-1 ring-amber-200/60">
-                <span className="text-2xl font-extrabold text-amber-700">
+            <div className="flex shrink-0 flex-col items-end gap-1">
+              <div className="flex items-center gap-1.5 rounded-xl bg-amber-50 px-2 py-1.5 ring-1 ring-amber-200/60 sm:gap-2 sm:px-3 sm:py-2">
+                <span className="text-xl font-extrabold text-amber-700 sm:text-2xl">
                   {avgRating.toFixed(1)}
                 </span>
                 <div className="flex flex-col items-end">
-                  <StarRating rating={avgRating} size="lg" />
+                  <StarRating rating={avgRating} size="md" className="sm:hidden" />
+                  <StarRating rating={avgRating} size="lg" className="hidden sm:flex" />
                   <span className="mt-0.5 text-[10px] font-medium text-amber-600/70">
                     out of 5
                   </span>
