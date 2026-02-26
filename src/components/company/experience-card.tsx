@@ -337,7 +337,17 @@ export function ExperienceCard({
               </div>
             </div>
             <div className="flex flex-col items-end gap-1">
-              <StarRating rating={avgRating} size="sm" showValue />
+              <div className="flex items-center gap-2 rounded-xl bg-amber-50 px-3 py-2 ring-1 ring-amber-200/60">
+                <span className="text-2xl font-extrabold text-amber-700">
+                  {avgRating.toFixed(1)}
+                </span>
+                <div className="flex flex-col items-end">
+                  <StarRating rating={avgRating} size="lg" />
+                  <span className="mt-0.5 text-[10px] font-medium text-amber-600/70">
+                    out of 5
+                  </span>
+                </div>
+              </div>
               <span className="text-xs text-muted-foreground">{date}</span>
             </div>
           </div>
