@@ -796,7 +796,7 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
                     setValue("seniority", v as InterviewFormData["seniority"])
                   }
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select level" />
                   </SelectTrigger>
                   <SelectContent>
@@ -822,7 +822,7 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
                     )
                   }
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
                   <SelectContent>
@@ -844,7 +844,7 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
                 value={watch("salary_range") ?? ""}
                 onValueChange={(v) => setValue("salary_range", v)}
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select range (optional)" />
                 </SelectTrigger>
                 <SelectContent>
