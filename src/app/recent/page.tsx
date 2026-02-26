@@ -5,9 +5,9 @@ import { AdPlaceholder } from "@/components/shared/ad-placeholder";
 import type { Interview } from "@/types";
 
 export const metadata: Metadata = {
-  title: "All Interview Experiences",
+  title: "All Reviews",
   description:
-    "Browse every interview experience shared by candidates across all industries and companies. Filter by outcome, industry, seniority, and more.",
+    "Browse every interview review shared by candidates across all industries and companies. Filter by outcome, industry, seniority, and more.",
 };
 
 export const revalidate = 300; // 5 min ISR
@@ -31,9 +31,9 @@ export default async function RecentPostsPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
       <div className="animate-in-view mb-8">
-        <h1 className="text-2xl font-bold">All Interview Experiences</h1>
+        <h1 className="text-2xl font-bold">All Reviews</h1>
         <p className="mt-2 text-muted-foreground">
-          Browse every interview experience shared by candidates across all
+          Browse every interview review shared by candidates across all
           companies and industries.
         </p>
       </div>

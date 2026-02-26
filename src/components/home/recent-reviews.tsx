@@ -38,7 +38,7 @@ export async function RecentReviews() {
         </div>
         <Button variant="ghost" size="sm" asChild className="hidden sm:inline-flex">
           <Link href="/recent">
-            All experiences <ArrowRight className="ml-1 h-4 w-4" />
+            All reviews <ArrowRight className="ml-1 h-4 w-4" />
           </Link>
         </Button>
       </div>
@@ -156,7 +156,7 @@ export async function RecentReviews() {
       <div className="mt-6 flex justify-center sm:hidden">
         <Button variant="outline" asChild>
           <Link href="/recent">
-            View all experiences <ArrowRight className="ml-1 h-4 w-4" />
+            View all reviews <ArrowRight className="ml-1 h-4 w-4" />
           </Link>
         </Button>
       </div>

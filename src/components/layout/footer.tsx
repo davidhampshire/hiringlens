@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const EXPLORE_LINKS = [
   { label: "Home", href: "/" },
-  { label: "All Experiences", href: "/recent" },
+  { label: "All Reviews", href: "/recent" },
   { label: "Companies", href: "/companies" },
   { label: "Search", href: "/search" },
   { label: "Share Experience", href: "/submit" },
