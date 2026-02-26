@@ -932,12 +932,13 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
                 keyof typeof FLAG_LABELS,
                 (typeof FLAG_LABELS)[keyof typeof FLAG_LABELS],
               ][]
-            ).map(([key, { label, description, followUps }]) => (
+            ).map(([key, { label, description, positive, followUps }]) => (
               <FlagToggle
                 key={key}
                 id={key}
                 label={label}
                 description={description}
+                positive={positive}
                 checked={watch(key) as boolean}
                 onCheckedChange={(checked) => {
                   setValue(key, checked);
