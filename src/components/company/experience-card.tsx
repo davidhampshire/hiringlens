@@ -351,18 +351,21 @@ export function ExperienceCard({
         <div className="p-5">
           {/* Company name + logo (shown on All Experiences page) */}
           {companyName && companySlug && (
-            <div className="mb-3 flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
-              <CompanyLogo
-                name={companyName}
-                logoUrl={companyLogoUrl}
-                size="lg"
-              />
-              <Link
-                href={`/company/${companySlug}`}
-                className="font-semibold text-primary hover:underline"
-              >
-                {companyName}
-              </Link>
+            <div className="mb-3 flex items-center justify-between gap-3" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center gap-3">
+                <CompanyLogo
+                  name={companyName}
+                  logoUrl={companyLogoUrl}
+                  size="lg"
+                />
+                <Link
+                  href={`/company/${companySlug}`}
+                  className="font-semibold text-primary hover:underline"
+                >
+                  {companyName}
+                </Link>
+              </div>
+              <span className="shrink-0 text-xs text-muted-foreground">{date}</span>
             </div>
           )}
 
@@ -375,6 +378,10 @@ export function ExperienceCard({
                   <Badge className="bg-blue-100 text-[10px] font-semibold text-blue-700 hover:bg-blue-100">
                     New
                   </Badge>
+                )}
+                {/* Date shown here when no company row above */}
+                {!(companyName && companySlug) && (
+                  <span className="ml-auto shrink-0 text-xs text-muted-foreground">{date}</span>
                 )}
               </div>
               <div className="mt-0.5 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
@@ -414,12 +421,11 @@ export function ExperienceCard({
                   </span>
                 </div>
               </div>
-              <span className="text-xs text-muted-foreground">{date}</span>
             </div>
           </div>
 
           {/* Badges */}
-          <div className="mt-3 flex flex-wrap gap-1.5">
+          <div className="mt-2 flex flex-wrap gap-1.5">
             {interview.outcome && (
               <Badge
                 variant={
