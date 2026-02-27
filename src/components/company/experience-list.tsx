@@ -163,7 +163,7 @@ export function ExperienceList({
             value={sortBy}
             onValueChange={(v) => setSortBy(v as SortOption)}
           >
-            <SelectTrigger className="h-8 w-[140px] text-xs">
+            <SelectTrigger className="h-9 w-[140px] bg-white text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -179,7 +179,7 @@ export function ExperienceList({
             value={filterBy}
             onValueChange={(v) => setFilterBy(v as FilterOption)}
           >
-            <SelectTrigger className="h-8 w-[130px] text-xs">
+            <SelectTrigger className="h-9 w-[130px] bg-white text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -195,7 +195,7 @@ export function ExperienceList({
             value={seniorityFilter}
             onValueChange={setSeniorityFilter}
           >
-            <SelectTrigger className="h-8 w-[130px] text-xs">
+            <SelectTrigger className="h-9 w-[130px] bg-white text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -214,7 +214,7 @@ export function ExperienceList({
             value={typeFilter}
             onValueChange={setTypeFilter}
           >
-            <SelectTrigger className="h-8 w-[130px] text-xs">
+            <SelectTrigger className="h-9 w-[130px] bg-white text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

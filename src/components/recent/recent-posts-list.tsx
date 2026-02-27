@@ -170,7 +170,7 @@ export function RecentPostsList({
           value={sortBy}
           onValueChange={(v) => setSortBy(v as SortOption)}
         >
-          <SelectTrigger className="h-8 w-[140px] text-xs">
+          <SelectTrigger className="h-9 w-[140px] bg-white text-xs">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -183,7 +183,7 @@ export function RecentPostsList({
         </Select>
 
         <Select value={outcomeFilter} onValueChange={setOutcomeFilter}>
-          <SelectTrigger className="h-8 w-[130px] text-xs">
+          <SelectTrigger className="h-9 w-[130px] bg-white text-xs">
             <SelectValue placeholder="Outcome" />
           </SelectTrigger>
           <SelectContent>
@@ -199,7 +199,7 @@ export function RecentPostsList({
         </Select>
 
         <Select value={industryFilter} onValueChange={setIndustryFilter}>
-          <SelectTrigger className="h-8 w-[150px] text-xs">
+          <SelectTrigger className="h-9 w-[150px] bg-white text-xs">
             <SelectValue placeholder="Industry" />
           </SelectTrigger>
           <SelectContent>
@@ -215,7 +215,7 @@ export function RecentPostsList({
         </Select>
 
         <Select value={seniorityFilter} onValueChange={setSeniorityFilter}>
-          <SelectTrigger className="h-8 w-[130px] text-xs">
+          <SelectTrigger className="h-9 w-[130px] bg-white text-xs">
             <SelectValue placeholder="Seniority" />
           </SelectTrigger>
           <SelectContent>
@@ -231,7 +231,7 @@ export function RecentPostsList({
         </Select>
 
         <Select value={typeFilter} onValueChange={setTypeFilter}>
-          <SelectTrigger className="h-8 w-[130px] text-xs">
+          <SelectTrigger className="h-9 w-[130px] bg-white text-xs">
             <SelectValue placeholder="Type" />
           </SelectTrigger>
           <SelectContent>

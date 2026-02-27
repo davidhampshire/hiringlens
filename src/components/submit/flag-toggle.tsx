@@ -132,7 +132,7 @@ export function FlagToggle({
       }`}
     >
       {/* Header row: Icon · Label · Switch */}
-      <div className="flex items-start gap-3 p-3">
+      <div className="flex items-start gap-3 p-4">
         {/* Icon circle */}
         <div
           className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-colors ${
@@ -164,9 +164,9 @@ export function FlagToggle({
       {/* Follow-up questions (shown when toggled on) */}
       {checked && followUps && followUps.length > 0 && (
         <div
-          className={`rounded-bl-lg border-l-2 border-t px-3 pb-3 pt-2.5 ${colors.followUpBorderL} ${colors.followUpBg} ${colors.followUpBorderT}`}
+          className={`rounded-bl-lg border-l-2 border-t px-4 pb-4 pt-3 ${colors.followUpBorderL} ${colors.followUpBg} ${colors.followUpBorderT}`}
         >
-          <p className={`mb-2.5 flex items-center gap-1 text-xs font-medium ${colors.followUpLabel}`}>
+          <p className={`mb-3 flex items-center gap-1 text-xs font-medium ${colors.followUpLabel}`}>
             <svg
               className="h-3.5 w-3.5"
               fill="none"
@@ -183,7 +183,7 @@ export function FlagToggle({
             Help us understand more (optional)
           </p>
 
-          <div className="space-y-2.5">
+          <div className="space-y-3">
             {followUps.map((q) => (
               <div key={q.id}>
                 <label className="mb-1 block text-xs font-medium">
@@ -194,10 +194,10 @@ export function FlagToggle({
                     value={followUpValues[q.id] ?? ""}
                     onValueChange={(v) => onFollowUpChange?.(q.id, v)}
                   >
-                    <SelectTrigger className="h-8 text-xs">
+                    <SelectTrigger className="h-9 bg-white text-xs">
                       <SelectValue placeholder="Select..." />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-white">
                       {q.options.map((opt) => (
                         <SelectItem key={opt} value={opt} className="text-xs">
                           {opt}
@@ -207,7 +207,7 @@ export function FlagToggle({
                   </Select>
                 ) : (
                   <Input
-                    className="h-8 text-xs"
+                    className="h-9 bg-white text-xs"
                     placeholder={q.placeholder ?? ""}
                     value={followUpValues[q.id] ?? ""}
                     onChange={(e) =>
