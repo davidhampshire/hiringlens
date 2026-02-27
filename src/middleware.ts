@@ -41,6 +41,28 @@ function applySecurityHeaders(response: NextResponse) {
 }
 
 export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  /* ── Password Gate ── */
+  const sitePassword = process.env.SITE_PASSWORD;
+  if (sitePassword) {
+    const hasAccess = request.cookies.get("site_access")?.value === "granted";
+
+    // Allow the password page itself (and its server action) through
+    if (!hasAccess && !pathname.startsWith("/password")) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/password";
+      return applySecurityHeaders(NextResponse.redirect(url));
+    }
+
+    // If already authenticated, redirect away from password page
+    if (hasAccess && pathname.startsWith("/password")) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/";
+      return applySecurityHeaders(NextResponse.redirect(url));
+    }
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   });
@@ -73,8 +95,6 @@ export async function middleware(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
-  const { pathname } = request.nextUrl;
 
   // Redirect unauthenticated users away from protected routes
   if (!user && PROTECTED_ROUTES.some((route) => pathname.startsWith(route))) {

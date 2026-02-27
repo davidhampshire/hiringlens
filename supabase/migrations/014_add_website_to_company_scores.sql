@@ -1,5 +1,8 @@
 -- Add website_url to the company_scores view
-CREATE OR REPLACE VIEW company_scores AS
+-- Must DROP + CREATE because CREATE OR REPLACE cannot add columns in the middle
+DROP VIEW IF EXISTS company_scores;
+
+CREATE VIEW company_scores AS
 SELECT
   c.id AS company_id,
   c.name,
