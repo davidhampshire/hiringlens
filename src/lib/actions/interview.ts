@@ -110,6 +110,12 @@ export async function submitInterview(payload: SubmitPayload) {
     fairness_rating: data.fairness_rating,
     salary_range: data.salary_range || null,
     display_name: data.display_name?.trim() || null,
+    application_source: data.application_source ?? null,
+    recommend_applying: data.recommend_applying ?? null,
+    interview_questions: data.interview_questions || null,
+    interview_date: data.interview_date || null,
+    department: data.department?.trim() || null,
+    jd_accuracy: data.jd_accuracy ?? null,
     overall_comments: commentsPayload || null,
     candidate_tip: data.candidate_tip || null,
     submitted_by: user.id,
@@ -247,6 +253,12 @@ export async function updateInterview(
       fairness_rating: data.fairness_rating,
       salary_range: data.salary_range || null,
       display_name: data.display_name?.trim() || null,
+      application_source: data.application_source ?? null,
+      recommend_applying: data.recommend_applying ?? null,
+      interview_questions: data.interview_questions || null,
+      interview_date: data.interview_date || null,
+      department: data.department?.trim() || null,
+      jd_accuracy: data.jd_accuracy ?? null,
       overall_comments: commentsPayload || null,
       candidate_tip: data.candidate_tip || null,
       status: "pending",
@@ -315,4 +327,22 @@ export async function deleteInterview(interviewId: string) {
 
   revalidatePath("/account");
   return { success: true };
+}
+
+export async function getIndustryAverageDuration(industry: string) {
+  const supabase = await createClient();
+
+  const { data } = await supabase
+    .from("company_scores")
+    .select("avg_duration_days")
+    .eq("industry", industry)
+    .not("avg_duration_days", "is", null);
+
+  if (!data || data.length === 0) return null;
+
+  const total = data.reduce(
+    (sum, row) => sum + (row.avg_duration_days ?? 0),
+    0
+  );
+  return Math.round(total / data.length);
 }

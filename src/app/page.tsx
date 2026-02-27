@@ -3,6 +3,7 @@ import { HeroSection } from "@/components/home/hero-section";
 import { PlatformStats } from "@/components/home/platform-stats";
 import { MissionSection } from "@/components/home/mission-section";
 import { TrendingCompanies } from "@/components/home/trending-companies";
+import { WatchOutCompanies } from "@/components/home/watchout-companies";
 import { RecentReviews } from "@/components/home/recent-reviews";
 import { ClosingCTA } from "@/components/home/closing-cta";
 import { AdPlaceholder } from "@/components/shared/ad-placeholder";
@@ -64,6 +65,9 @@ export default function HomePage() {
       <MissionSection />
       <Suspense fallback={<CompanySkeleton />}>
         <TrendingCompanies />
+      </Suspense>
+      <Suspense fallback={<CompanySkeleton />}>
+        <WatchOutCompanies />
       </Suspense>
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <AdPlaceholder variant="leaderboard" />

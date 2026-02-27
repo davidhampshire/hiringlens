@@ -69,6 +69,12 @@ export type Database = {
           fairness_rating: number;
           salary_range: string | null;
           display_name: string | null;
+          application_source: string | null;
+          recommend_applying: string | null;
+          interview_questions: string | null;
+          interview_date: string | null;
+          department: string | null;
+          jd_accuracy: string | null;
           overall_comments: string | null;
           candidate_tip: string | null;
           status: Database["public"]["Enums"]["review_status"];
@@ -96,6 +102,12 @@ export type Database = {
           fairness_rating: number;
           salary_range?: string | null;
           display_name?: string | null;
+          application_source?: string | null;
+          recommend_applying?: string | null;
+          interview_questions?: string | null;
+          interview_date?: string | null;
+          department?: string | null;
+          jd_accuracy?: string | null;
           overall_comments?: string | null;
           candidate_tip?: string | null;
           status?: Database["public"]["Enums"]["review_status"];
@@ -123,6 +135,12 @@ export type Database = {
           fairness_rating?: number;
           salary_range?: string | null;
           display_name?: string | null;
+          application_source?: string | null;
+          recommend_applying?: string | null;
+          interview_questions?: string | null;
+          interview_date?: string | null;
+          department?: string | null;
+          jd_accuracy?: string | null;
           overall_comments?: string | null;
           candidate_tip?: string | null;
           status?: Database["public"]["Enums"]["review_status"];

@@ -17,7 +17,9 @@ import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { ShareButton } from "@/components/shared/share-button";
 import { CompanyLogo } from "@/components/shared/company-logo";
 import { AdPlaceholder } from "@/components/shared/ad-placeholder";
+import { TimelineComparison } from "@/components/company/timeline-comparison";
 import { buildCompanyJsonLd } from "@/lib/json-ld";
+import { getIndustryAverageDuration } from "@/lib/actions/interview";
 import type { CompanyScore, Interview } from "@/types";
 
 export const revalidate = 3600;
@@ -123,6 +125,11 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
   const jsonLdInterviews = (interviewData ?? []) as Interview[];
   const jsonLd = buildCompanyJsonLd(c, jsonLdInterviews, slug);
 
+  // Fetch industry average for timeline comparison
+  const industryAvgDuration = c.industry
+    ? await getIndustryAverageDuration(c.industry)
+    : null;
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
       <script
@@ -189,6 +196,14 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
             avgDurationDays={c.avg_duration_days}
             totalReviews={c.total_reviews}
           />
+
+          {c.industry && (
+            <TimelineComparison
+              companyAvgDays={c.avg_duration_days}
+              industryAvgDays={industryAvgDuration}
+              industry={c.industry}
+            />
+          )}
 
           <RedFlagIndicators
             pctGhosted={c.pct_ghosted}

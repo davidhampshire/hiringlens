@@ -29,6 +29,9 @@ import {
   OUTCOME_LABELS,
   FLAG_LABELS,
   RATING_LABELS,
+  APPLICATION_SOURCE_LABELS,
+  RECOMMEND_APPLYING_LABELS,
+  JD_ACCURACY_LABELS,
 } from "@/lib/constants";
 import { toast } from "sonner";
 
@@ -55,6 +58,12 @@ interface EditData {
   communication_rating: number;
   clarity_rating: number;
   fairness_rating: number;
+  application_source?: string;
+  recommend_applying?: string;
+  interview_questions?: string;
+  interview_date?: string;
+  department?: string;
+  jd_accuracy?: string;
   overall_comments?: string | null;
   candidate_tip?: string | null;
 }
@@ -190,6 +199,12 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
           communication_rating: editData.communication_rating,
           clarity_rating: editData.clarity_rating,
           fairness_rating: editData.fairness_rating,
+          application_source: (editData.application_source as InterviewFormData["application_source"]) ?? undefined,
+          recommend_applying: (editData.recommend_applying as InterviewFormData["recommend_applying"]) ?? undefined,
+          interview_questions: editData.interview_questions ?? "",
+          interview_date: editData.interview_date ?? "",
+          department: editData.department ?? "",
+          jd_accuracy: (editData.jd_accuracy as InterviewFormData["jd_accuracy"]) ?? undefined,
           overall_comments: cleanCommentsForEdit(editData.overall_comments ?? null),
           candidate_tip: editData.candidate_tip ?? "",
         }
@@ -215,6 +230,12 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
           communication_rating: 0,
           clarity_rating: 0,
           fairness_rating: 0,
+          application_source: undefined,
+          recommend_applying: undefined,
+          interview_questions: "",
+          interview_date: "",
+          department: "",
+          jd_accuracy: undefined,
           overall_comments: "",
           candidate_tip: "",
         },
@@ -652,6 +673,29 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
                 </Select>
               </div>
             )}
+
+            <div>
+              <label className="mb-1.5 block text-sm font-medium">
+                How did you find this role?
+              </label>
+              <Select
+                value={watch("application_source") ?? ""}
+                onValueChange={(v) =>
+                  setValue("application_source", v as InterviewFormData["application_source"])
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select source (optional)" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(APPLICATION_SOURCE_LABELS).map(([value, label]) => (
+                    <SelectItem key={value} value={value}>
+                      {label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </section>
 
@@ -755,6 +799,88 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
               {OUTCOME_CONTEXT_MESSAGES[currentOutcome]}
             </div>
           )}
+
+          {/* Recommend Applying */}
+          <div className="mt-6">
+            <label className="mb-2 block text-sm font-medium">
+              Would you recommend applying here?
+            </label>
+            <div className="flex gap-2">
+              {Object.entries(RECOMMEND_APPLYING_LABELS).map(([value, label]) => {
+                const isSelected = watch("recommend_applying") === value;
+                const colorClass =
+                  value === "yes"
+                    ? isSelected
+                      ? "border-emerald-300 bg-emerald-50 text-emerald-800"
+                      : "border-transparent bg-muted/30 hover:bg-emerald-50/50"
+                    : value === "maybe"
+                      ? isSelected
+                        ? "border-amber-300 bg-amber-50 text-amber-800"
+                        : "border-transparent bg-muted/30 hover:bg-amber-50/50"
+                      : isSelected
+                        ? "border-red-300 bg-red-50 text-red-800"
+                        : "border-transparent bg-muted/30 hover:bg-red-50/50";
+                return (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() =>
+                      setValue(
+                        "recommend_applying",
+                        isSelected
+                          ? undefined
+                          : (value as InterviewFormData["recommend_applying"])
+                      )
+                    }
+                    className={`flex-1 rounded-lg border-2 px-4 py-2 text-sm font-medium transition-all ${colorClass}`}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* JD Accuracy */}
+          <div className="mt-4">
+            <label className="mb-2 block text-sm font-medium">
+              Did the interview match the job description?
+            </label>
+            <div className="flex gap-2">
+              {Object.entries(JD_ACCURACY_LABELS).map(([value, label]) => {
+                const isSelected = watch("jd_accuracy") === value;
+                const colorClass =
+                  value === "yes"
+                    ? isSelected
+                      ? "border-emerald-300 bg-emerald-50 text-emerald-800"
+                      : "border-transparent bg-muted/30 hover:bg-emerald-50/50"
+                    : value === "somewhat"
+                      ? isSelected
+                        ? "border-amber-300 bg-amber-50 text-amber-800"
+                        : "border-transparent bg-muted/30 hover:bg-amber-50/50"
+                      : isSelected
+                        ? "border-red-300 bg-red-50 text-red-800"
+                        : "border-transparent bg-muted/30 hover:bg-red-50/50";
+                return (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() =>
+                      setValue(
+                        "jd_accuracy",
+                        isSelected
+                          ? undefined
+                          : (value as InterviewFormData["jd_accuracy"])
+                      )
+                    }
+                    className={`flex-1 rounded-lg border-2 px-4 py-2 text-sm font-medium transition-all ${colorClass}`}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </section>
 
         <Separator />
@@ -783,6 +909,16 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
                 Location
               </label>
               <Input placeholder="e.g. London, Remote" {...register("location")} />
+            </div>
+
+            <div>
+              <label className="mb-1.5 block text-sm font-medium">
+                Department / Team
+              </label>
+              <Input
+                placeholder="e.g. Engineering, Product, Marketing"
+                {...register("department")}
+              />
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
@@ -864,7 +1000,22 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
         {/* Process Metrics */}
         <section id="step-process" className="scroll-mt-28 lg:scroll-mt-20">
           <h2 className="mb-4 text-lg font-semibold">Process</h2>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-4">
+            <div>
+              <label className="mb-1.5 block text-sm font-medium">
+                Interview Date
+              </label>
+              <Input
+                type="date"
+                max={new Date().toISOString().split("T")[0]}
+                {...register("interview_date")}
+              />
+              <p className="mt-1 text-xs text-muted-foreground">
+                When did the interview take place?
+              </p>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label className="mb-1.5 block text-sm font-medium">
                 Number of Stages
@@ -888,6 +1039,7 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
                 placeholder="e.g. 21"
                 {...register("total_duration_days", { valueAsNumber: true })}
               />
+            </div>
             </div>
           </div>
         </section>
@@ -966,6 +1118,26 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
         <section id="step-advice" className="scroll-mt-28 lg:scroll-mt-20">
           <h2 className="mb-4 text-lg font-semibold">Your Advice</h2>
           <div className="space-y-4">
+            <div>
+              <label className="mb-1.5 block text-sm font-medium">
+                Questions asked during the interview
+              </label>
+              <Textarea
+                placeholder="e.g. &quot;Tell me about a time you disagreed with a team decision...&quot;, system design questions, take-home brief details"
+                rows={4}
+                className="min-h-[100px]"
+                {...register("interview_questions")}
+              />
+              {errors.interview_questions && (
+                <p className="mt-1 text-xs text-destructive">
+                  {errors.interview_questions.message}
+                </p>
+              )}
+              <p className="mt-1 text-xs text-muted-foreground">
+                Sharing questions helps future candidates prepare
+              </p>
+            </div>
+
             <div>
               <label className="mb-1.5 block text-sm font-medium">
                 Tip for future candidates

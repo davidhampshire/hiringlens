@@ -21,6 +21,9 @@ import {
   SENIORITY_LABELS,
   INTERVIEW_TYPE_LABELS,
   RATING_LABELS,
+  APPLICATION_SOURCE_LABELS,
+  RECOMMEND_APPLYING_LABELS,
+  JD_ACCURACY_LABELS,
 } from "@/lib/constants";
 import { useVotes } from "@/hooks/use-votes";
 import { CompanyLogo } from "@/components/shared/company-logo";
@@ -87,7 +90,8 @@ function ExperienceModal({
       interview.fairness_rating) /
     4;
 
-  const fullDate = new Date(interview.created_at).toLocaleDateString("en-GB", {
+  const displayDateSource = interview.interview_date || interview.created_at;
+  const fullDate = new Date(displayDateSource).toLocaleDateString("en-GB", {
     day: "numeric",
     month: "long",
     year: "numeric",
@@ -115,6 +119,7 @@ function ExperienceModal({
               {interview.seniority && (
                 <span>{SENIORITY_LABELS[interview.seniority]}</span>
               )}
+              {interview.department && <span>{interview.department}</span>}
               {interview.location && <span>{interview.location}</span>}
               <span>{fullDate}</span>
             </div>
@@ -189,6 +194,46 @@ function ExperienceModal({
             No feedback
           </Badge>
         )}
+        {interview.application_source && (
+          <Badge variant="outline" className="text-xs font-normal">
+            via {APPLICATION_SOURCE_LABELS[interview.application_source] ?? interview.application_source}
+          </Badge>
+        )}
+        {interview.recommend_applying && (
+          <Badge
+            variant="outline"
+            className={`text-xs font-normal ${
+              interview.recommend_applying === "yes"
+                ? "border-emerald-300 bg-emerald-50 text-emerald-700"
+                : interview.recommend_applying === "maybe"
+                  ? "border-amber-300 bg-amber-50 text-amber-700"
+                  : "border-red-300 bg-red-50 text-red-700"
+            }`}
+          >
+            {interview.recommend_applying === "yes"
+              ? "Recommends applying"
+              : interview.recommend_applying === "maybe"
+                ? "Maybe recommend"
+                : "Doesn't recommend"}
+          </Badge>
+        )}
+        {interview.jd_accuracy && interview.jd_accuracy !== "yes" && (
+          <Badge
+            variant="outline"
+            className={`text-xs font-normal ${
+              interview.jd_accuracy === "somewhat"
+                ? "border-amber-300 bg-amber-50 text-amber-700"
+                : "border-red-300 bg-red-50 text-red-700"
+            }`}
+          >
+            JD {interview.jd_accuracy === "somewhat" ? "somewhat accurate" : "inaccurate"}
+          </Badge>
+        )}
+        {interview.department && (
+          <Badge variant="outline" className="text-xs font-normal">
+            {interview.department}
+          </Badge>
+        )}
       </div>
 
       <Separator />
@@ -207,6 +252,19 @@ function ExperienceModal({
             <h4 className="mb-2 text-sm font-semibold">Experience Details</h4>
             <p className="whitespace-pre-wrap text-sm text-muted-foreground">
               {cleanComments(interview.overall_comments)}
+            </p>
+          </div>
+        </>
+      )}
+
+      {/* Interview Questions */}
+      {interview.interview_questions && (
+        <>
+          <Separator />
+          <div>
+            <h4 className="mb-2 text-sm font-semibold">Questions Asked</h4>
+            <p className="whitespace-pre-wrap text-sm text-muted-foreground">
+              {interview.interview_questions}
             </p>
           </div>
         </>
@@ -278,7 +336,8 @@ export function ExperienceCard({
       interview.fairness_rating) /
     4;
 
-  const date = new Date(interview.created_at).toLocaleDateString("en-GB", {
+  const cardDateSource = interview.interview_date || interview.created_at;
+  const date = new Date(cardDateSource).toLocaleDateString("en-GB", {
     month: "short",
     year: "numeric",
   });
@@ -326,6 +385,12 @@ export function ExperienceCard({
                   <>
                     <span className="text-muted-foreground/40">&middot;</span>
                     <span>{SENIORITY_LABELS[interview.seniority]}</span>
+                  </>
+                )}
+                {interview.department && (
+                  <>
+                    <span className="text-muted-foreground/40">&middot;</span>
+                    <span>{interview.department}</span>
                   </>
                 )}
                 {interview.location && (
@@ -398,6 +463,29 @@ export function ExperienceCard({
             {!interview.received_feedback && (
               <Badge variant="secondary" className="text-xs font-normal">
                 No feedback
+              </Badge>
+            )}
+            {interview.recommend_applying && (
+              <Badge
+                variant="outline"
+                className={`text-xs font-normal ${
+                  interview.recommend_applying === "yes"
+                    ? "border-emerald-300 bg-emerald-50 text-emerald-700"
+                    : interview.recommend_applying === "maybe"
+                      ? "border-amber-300 bg-amber-50 text-amber-700"
+                      : "border-red-300 bg-red-50 text-red-700"
+                }`}
+              >
+                {interview.recommend_applying === "yes"
+                  ? "Recommends"
+                  : interview.recommend_applying === "maybe"
+                    ? "Maybe"
+                    : "Doesn't recommend"}
+              </Badge>
+            )}
+            {interview.application_source && (
+              <Badge variant="outline" className="text-xs font-normal">
+                via {APPLICATION_SOURCE_LABELS[interview.application_source] ?? interview.application_source}
               </Badge>
             )}
           </div>

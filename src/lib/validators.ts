@@ -26,6 +26,14 @@ export const interviewSchema = z.object({
   fairness_rating: z.number().int().min(1, "Rating required").max(5),
   salary_range: z.string().optional(),
   display_name: z.string().max(50).optional(),
+  application_source: z
+    .enum(["job_board", "linkedin", "company_website", "referral", "recruiter", "career_fair", "internal", "other"])
+    .optional(),
+  recommend_applying: z.enum(["yes", "maybe", "no"]).optional(),
+  interview_questions: z.string().max(3000).optional(),
+  interview_date: z.string().optional(),
+  department: z.string().max(100).optional(),
+  jd_accuracy: z.enum(["yes", "somewhat", "no"]).optional(),
   overall_comments: z.string().max(2000).optional(),
   candidate_tip: z.string().max(1000).optional(),
 });

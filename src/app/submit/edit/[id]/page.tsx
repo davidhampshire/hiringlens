@@ -57,6 +57,12 @@ export default async function EditExperiencePage({ params }: EditPageProps) {
     communication_rating: interview.communication_rating,
     clarity_rating: interview.clarity_rating,
     fairness_rating: interview.fairness_rating,
+    application_source: interview.application_source ?? undefined,
+    recommend_applying: interview.recommend_applying ?? undefined,
+    interview_questions: interview.interview_questions ?? undefined,
+    interview_date: interview.interview_date ?? undefined,
+    department: interview.department ?? undefined,
+    jd_accuracy: interview.jd_accuracy ?? undefined,
     overall_comments: interview.overall_comments,
     candidate_tip: interview.candidate_tip,
   };

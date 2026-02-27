@@ -173,6 +173,29 @@ export const FLAG_LABELS = {
   },
 } as const;
 
+export const APPLICATION_SOURCE_LABELS: Record<string, string> = {
+  job_board: "Job Board",
+  linkedin: "LinkedIn",
+  company_website: "Company Website",
+  referral: "Referral",
+  recruiter: "Recruiter",
+  career_fair: "Career Fair",
+  internal: "Internal",
+  other: "Other",
+};
+
+export const RECOMMEND_APPLYING_LABELS: Record<string, string> = {
+  yes: "Yes",
+  maybe: "Maybe",
+  no: "No",
+};
+
+export const JD_ACCURACY_LABELS: Record<string, string> = {
+  yes: "Yes",
+  somewhat: "Somewhat",
+  no: "No",
+};
+
 export const MODERATION_REASONS = [
   "Inappropriate language",
   "Personal attack on individuals",
