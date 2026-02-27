@@ -17,7 +17,7 @@ export default async function SubmitPage({ searchParams }: SubmitPageProps) {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
-      <div className="animate-in-view mb-8">
+      <div className="animate-in-view mb-8 mt-10 lg:mt-0">
         <h1 className="text-2xl font-bold">Share Your Experience</h1>
         <p className="mt-2 text-muted-foreground">
           Help other candidates prepare by sharing honest feedback about the
@@ -25,7 +25,7 @@ export default async function SubmitPage({ searchParams }: SubmitPageProps) {
         </p>
       </div>
 
-      <div className="animate-in-view-d1">
+      <div>
         <ExperienceForm prefilledCompany={company} />
       </div>
     </div>

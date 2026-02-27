@@ -63,7 +63,7 @@ export default async function EditExperiencePage({ params }: EditPageProps) {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
-      <div className="animate-in-view mb-8">
+      <div className="animate-in-view mb-8 mt-10 lg:mt-0">
         <h1 className="text-2xl font-bold">Edit Your Experience</h1>
         <p className="mt-2 text-muted-foreground">
           Update your interview experience. Edited submissions will be
@@ -71,7 +71,7 @@ export default async function EditExperiencePage({ params }: EditPageProps) {
         </p>
       </div>
 
-      <div className="animate-in-view-d1">
+      <div>
         <ExperienceForm editData={editData} />
       </div>
     </div>

@@ -596,7 +596,7 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
       </aside>
 
       {/* Mobile progress bar */}
-      <div className="fixed left-0 right-0 top-[57px] z-30 bg-background/95 backdrop-blur px-4 py-2 border-b lg:hidden">
+      <div className="fixed left-0 right-0 top-[65px] z-30 bg-background/95 backdrop-blur px-4 py-2 border-b shadow-sm lg:hidden">
         <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
           <span>Step {activeStep + 1} of {FORM_STEPS.length}: {FORM_STEPS[activeStep].label}</span>
           <span>{completedCount}/{FORM_STEPS.length} complete</span>
@@ -612,7 +612,7 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit(onSubmit)} className="flex-1 min-w-0 space-y-8 pt-10 lg:pt-0">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex-1 min-w-0 space-y-8 pt-14 lg:pt-0">
         {/* Auth banner — top */}
         {isSignedIn === false && <AuthBanner isSignedIn={false} />}
 
