@@ -62,6 +62,14 @@ export async function submitInterview(payload: SubmitPayload) {
 
     if (existingCompany) {
       companyId = existingCompany.id;
+      // Backfill website_url if not already set
+      if (data.company_website) {
+        await supabase
+          .from("companies")
+          .update({ website_url: data.company_website })
+          .eq("id", companyId)
+          .is("website_url", null);
+      }
     } else {
       const { data: newCompany, error: companyError } = await supabase
         .from("companies")
@@ -69,6 +77,7 @@ export async function submitInterview(payload: SubmitPayload) {
           name: data.company_name.trim(),
           slug,
           industry: data.industry ?? null,
+          website_url: data.company_website || null,
         })
         .select("id")
         .single();
@@ -203,6 +212,14 @@ export async function updateInterview(
 
     if (existingCompany) {
       companyId = existingCompany.id;
+      // Backfill website_url if not already set
+      if (data.company_website) {
+        await supabase
+          .from("companies")
+          .update({ website_url: data.company_website })
+          .eq("id", companyId)
+          .is("website_url", null);
+      }
     } else {
       const { data: newCompany, error: companyError } = await supabase
         .from("companies")
@@ -210,6 +227,7 @@ export async function updateInterview(
           name: data.company_name.trim(),
           slug,
           industry: data.industry ?? null,
+          website_url: data.company_website || null,
         })
         .select("id")
         .single();

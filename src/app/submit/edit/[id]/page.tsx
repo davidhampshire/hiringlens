@@ -24,7 +24,7 @@ export default async function EditExperiencePage({ params }: EditPageProps) {
 
   const { data: interview } = await supabase
     .from("interviews")
-    .select("*, companies(name, slug)")
+    .select("*, companies(name, slug, website_url)")
     .eq("id", id)
     .single();
 
@@ -32,7 +32,7 @@ export default async function EditExperiencePage({ params }: EditPageProps) {
     notFound();
   }
 
-  const company = interview.companies as { name: string; slug: string } | null;
+  const company = interview.companies as { name: string; slug: string; website_url: string | null } | null;
 
   const editData = {
     id: interview.id,
@@ -57,6 +57,7 @@ export default async function EditExperiencePage({ params }: EditPageProps) {
     communication_rating: interview.communication_rating,
     clarity_rating: interview.clarity_rating,
     fairness_rating: interview.fairness_rating,
+    company_website: company?.website_url ?? undefined,
     application_source: interview.application_source ?? undefined,
     recommend_applying: interview.recommend_applying ?? undefined,
     interview_questions: interview.interview_questions ?? undefined,

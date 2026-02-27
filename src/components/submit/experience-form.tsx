@@ -58,6 +58,7 @@ interface EditData {
   communication_rating: number;
   clarity_rating: number;
   fairness_rating: number;
+  company_website?: string;
   application_source?: string;
   recommend_applying?: string;
   interview_questions?: string;
@@ -199,6 +200,7 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
           communication_rating: editData.communication_rating,
           clarity_rating: editData.clarity_rating,
           fairness_rating: editData.fairness_rating,
+          company_website: editData.company_website ?? "",
           application_source: (editData.application_source as InterviewFormData["application_source"]) ?? undefined,
           recommend_applying: (editData.recommend_applying as InterviewFormData["recommend_applying"]) ?? undefined,
           interview_questions: editData.interview_questions ?? "",
@@ -230,6 +232,7 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
           communication_rating: 0,
           clarity_rating: 0,
           fairness_rating: 0,
+          company_website: "",
           application_source: undefined,
           recommend_applying: undefined,
           interview_questions: "",
@@ -673,6 +676,20 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
                 </Select>
               </div>
             )}
+
+            <div>
+              <label className="mb-1.5 block text-sm font-medium">
+                Company Website
+              </label>
+              <Input
+                type="url"
+                placeholder="https://example.com"
+                {...register("company_website")}
+              />
+              {errors.company_website && (
+                <p className="mt-1 text-xs text-destructive">{errors.company_website.message}</p>
+              )}
+            </div>
 
             <div>
               <label className="mb-1.5 block text-sm font-medium">

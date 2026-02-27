@@ -165,9 +165,22 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
                 text={`Check out interview experiences at ${c.name} on HiringLens`}
               />
             </div>
-            {c.location && (
-              <p className="mt-1 text-sm text-muted-foreground">{c.location}</p>
-            )}
+            <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-sm text-muted-foreground">
+              {c.location && <span>{c.location}</span>}
+              {c.website_url && (
+                <a
+                  href={c.website_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-primary hover:underline"
+                >
+                  <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                  {new URL(c.website_url).hostname.replace(/^www\./, "")}
+                </a>
+              )}
+            </div>
           </div>
         </div>
       </div>

@@ -256,6 +256,7 @@ export type Database = {
           industry: string | null;
           location: string | null;
           logo_url: string | null;
+          website_url: string | null;
           total_reviews: number;
           avg_professionalism: number | null;
           avg_communication: number | null;

@@ -51,6 +51,45 @@ function isNew(createdAt: string): boolean {
   return diff < 7 * 24 * 60 * 60 * 1000;
 }
 
+/** Color classes for rating badge — 5 tiers for clear visual distinction */
+function getRatingColors(rating: number) {
+  if (rating >= 4.5) return {
+    bg: "bg-emerald-100",
+    ring: "ring-emerald-300/60",
+    text: "text-emerald-800",
+    sub: "text-emerald-700/70",
+    star: "text-emerald-600",
+  };
+  if (rating >= 3.5) return {
+    bg: "bg-emerald-50",
+    ring: "ring-emerald-200/60",
+    text: "text-emerald-700",
+    sub: "text-emerald-600/70",
+    star: "text-emerald-500",
+  };
+  if (rating >= 2.5) return {
+    bg: "bg-amber-50",
+    ring: "ring-amber-200/60",
+    text: "text-amber-700",
+    sub: "text-amber-600/70",
+    star: "text-amber-500",
+  };
+  if (rating >= 1.5) return {
+    bg: "bg-orange-50",
+    ring: "ring-orange-200/60",
+    text: "text-orange-700",
+    sub: "text-orange-600/70",
+    star: "text-orange-500",
+  };
+  return {
+    bg: "bg-red-50",
+    ring: "ring-red-200/60",
+    text: "text-red-700",
+    sub: "text-red-600/70",
+    star: "text-red-500",
+  };
+}
+
 /* ── Rating Breakdown Grid ── */
 function RatingBreakdown({ interview }: { interview: Interview }) {
   const ratings = [
@@ -342,6 +381,8 @@ export function ExperienceCard({
     year: "numeric",
   });
 
+  const colors = getRatingColors(avgRating);
+
   return (
     <>
       <Card
@@ -351,21 +392,18 @@ export function ExperienceCard({
         <div className="p-5">
           {/* Company name + logo (shown on All Experiences page) */}
           {companyName && companySlug && (
-            <div className="mb-3 flex items-center justify-between gap-3" onClick={(e) => e.stopPropagation()}>
-              <div className="flex items-center gap-3">
-                <CompanyLogo
-                  name={companyName}
-                  logoUrl={companyLogoUrl}
-                  size="lg"
-                />
-                <Link
-                  href={`/company/${companySlug}`}
-                  className="font-semibold text-primary hover:underline"
-                >
-                  {companyName}
-                </Link>
-              </div>
-              <span className="shrink-0 text-xs text-muted-foreground">{date}</span>
+            <div className="mb-3 flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
+              <CompanyLogo
+                name={companyName}
+                logoUrl={companyLogoUrl}
+                size="lg"
+              />
+              <Link
+                href={`/company/${companySlug}`}
+                className="font-semibold text-primary hover:underline"
+              >
+                {companyName}
+              </Link>
             </div>
           )}
 
@@ -378,10 +416,6 @@ export function ExperienceCard({
                   <Badge className="bg-blue-100 text-[10px] font-semibold text-blue-700 hover:bg-blue-100">
                     New
                   </Badge>
-                )}
-                {/* Date shown here when no company row above */}
-                {!(companyName && companySlug) && (
-                  <span className="ml-auto shrink-0 text-xs text-muted-foreground">{date}</span>
                 )}
               </div>
               <div className="mt-0.5 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
@@ -409,14 +443,15 @@ export function ExperienceCard({
               </div>
             </div>
             <div className="flex shrink-0 flex-col items-end gap-1">
-              <div className="flex items-center gap-1.5 rounded-xl bg-amber-50 px-2 py-1.5 ring-1 ring-amber-200/60 sm:gap-2 sm:px-3 sm:py-2">
-                <span className="text-xl font-extrabold text-amber-700 sm:text-2xl">
+              <span className="text-sm text-muted-foreground">{date}</span>
+              <div className={`flex items-center gap-1.5 rounded-xl px-2 py-1.5 ring-1 sm:gap-2 sm:px-3 sm:py-2 ${colors.bg} ${colors.ring}`}>
+                <span className={`text-xl font-extrabold sm:text-2xl ${colors.text}`}>
                   {avgRating.toFixed(1)}
                 </span>
                 <div className="flex flex-col items-end">
                   <StarRating rating={avgRating} size="md" className="sm:hidden" />
                   <StarRating rating={avgRating} size="lg" className="hidden sm:flex" />
-                  <span className="mt-0.5 text-[10px] font-medium text-amber-600/70">
+                  <span className={`mt-0.5 text-[10px] font-medium ${colors.sub}`}>
                     out of 5
                   </span>
                 </div>
@@ -425,7 +460,7 @@ export function ExperienceCard({
           </div>
 
           {/* Badges */}
-          <div className="mt-2 flex flex-wrap gap-1.5">
+          <div className="mt-1.5 flex flex-wrap gap-1.5">
             {interview.outcome && (
               <Badge
                 variant={

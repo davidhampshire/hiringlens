@@ -4,6 +4,7 @@ export const interviewSchema = z.object({
   company_name: z.string().min(1, "Company name is required"),
   company_id: z.string().uuid().optional(),
   industry: z.string().optional(),
+  company_website: z.string().url().or(z.literal("")).optional(),
   role_title: z.string().min(1, "Role title is required"),
   seniority: z
     .enum(["intern", "junior", "mid", "senior", "staff", "principal", "director", "vp", "c_level"])
