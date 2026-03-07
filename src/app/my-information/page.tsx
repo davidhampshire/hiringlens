@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { createClient } from "@/lib/supabase/server";
+import { DataExportButton } from "@/components/account/data-export-button";
 
 export const metadata: Metadata = {
   title: "My Information",
@@ -6,7 +8,12 @@ export const metadata: Metadata = {
     "Manage your data rights on HiringLens. Request access to, correction of, or deletion of your personal data.",
 };
 
-export default function MyInformationPage() {
+export default async function MyInformationPage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
       <div className="mb-8">
@@ -15,6 +22,19 @@ export default function MyInformationPage() {
           Manage your data and exercise your privacy rights.
         </p>
       </div>
+
+      {user && (
+        <div className="mb-8 rounded-lg border bg-muted/30 p-6">
+          <h2 className="font-semibold">Download Your Data</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Download a JSON file containing all the personal data we hold about
+            you, including your submitted reviews and profile information.
+          </p>
+          <div className="mt-4">
+            <DataExportButton />
+          </div>
+        </div>
+      )}
 
       <div className="space-y-8">
         <section>
@@ -135,8 +155,9 @@ export default function MyInformationPage() {
             >
               privacy@hiringlens.com
             </a>{" "}
-            with your request. We will respond within 30 days. A self-service
-            data management portal is on our roadmap.
+            with your request. We will respond within 30 days. If you are signed
+            in, you can also use the &quot;Download My Data&quot; button above to
+            instantly export your data.
           </p>
         </section>
       </div>
