@@ -390,26 +390,26 @@ export function ExperienceCard({
         onClick={() => setModalOpen(true)}
       >
         <div className="p-4">
-          {/* Company name + logo (shown on All Experiences page) */}
-          {companyName && companySlug && (
-            <div className="mb-2 flex items-center gap-2.5" onClick={(e) => e.stopPropagation()}>
-              <CompanyLogo
-                name={companyName}
-                logoUrl={companyLogoUrl}
-                size="md"
-              />
-              <Link
-                href={`/company/${companySlug}`}
-                className="text-sm font-semibold text-primary hover:underline"
-              >
-                {companyName}
-              </Link>
-            </div>
-          )}
-
-          {/* Header */}
+          {/* Header — score aligns with company name */}
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0 flex-1">
+              {/* Company name + logo (shown on All Experiences page) */}
+              {companyName && companySlug && (
+                <div className="mb-2 flex items-center gap-2.5" onClick={(e) => e.stopPropagation()}>
+                  <CompanyLogo
+                    name={companyName}
+                    logoUrl={companyLogoUrl}
+                    size="md"
+                  />
+                  <Link
+                    href={`/company/${companySlug}`}
+                    className="text-sm font-semibold text-primary hover:underline"
+                  >
+                    {companyName}
+                  </Link>
+                </div>
+              )}
+
               <div className="flex items-center gap-2">
                 <p className="font-semibold">{interview.role_title}</p>
                 {isNew(interview.created_at) && (
@@ -417,6 +417,7 @@ export function ExperienceCard({
                     New
                   </Badge>
                 )}
+                <span className="ml-auto shrink-0 text-xs text-muted-foreground">{date}</span>
               </div>
               <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground">
                 <span>
@@ -442,7 +443,7 @@ export function ExperienceCard({
                 )}
               </div>
             </div>
-            <div className="flex shrink-0 flex-col items-end gap-1">
+            <div className="shrink-0">
               <div className={`flex items-center gap-1.5 rounded-xl px-2 py-1 ring-1 ${colors.bg} ${colors.ring}`}>
                 <span className={`text-lg font-extrabold ${colors.text}`}>
                   {avgRating.toFixed(1)}
@@ -454,7 +455,6 @@ export function ExperienceCard({
                   </span>
                 </div>
               </div>
-              <span className="text-xs text-muted-foreground">{date}</span>
             </div>
           </div>
 

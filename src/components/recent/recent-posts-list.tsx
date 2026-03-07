@@ -55,6 +55,7 @@ export function RecentPostsList({
   const [industryFilter, setIndustryFilter] = useState("all");
   const [seniorityFilter, setSeniorityFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const hasMore = posts.length < totalCount;
 
@@ -235,6 +236,29 @@ export function RecentPostsList({
         <span className="text-sm text-muted-foreground">
           {isPending ? "Loading..." : `Showing ${posts.length} of ${totalCount} experiences`}
         </span>
+        {/* Grid / List toggle — desktop & tablet only */}
+        <div className="ml-auto hidden items-center rounded-lg border bg-muted/30 p-0.5 sm:flex">
+          <button
+            onClick={() => setViewMode("grid")}
+            className={`rounded-md p-1.5 transition-colors ${viewMode === "grid" ? "bg-background shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+            aria-label="Grid view"
+            title="Grid view"
+          >
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
+            </svg>
+          </button>
+          <button
+            onClick={() => setViewMode("list")}
+            className={`rounded-md p-1.5 transition-colors ${viewMode === "list" ? "bg-background shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+            aria-label="List view"
+            title="List view"
+          >
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
         {outcomeFilter !== "all" && (
           <Badge variant="secondary" className="text-xs">{OUTCOME_LABELS[outcomeFilter]}</Badge>
         )}
@@ -250,7 +274,7 @@ export function RecentPostsList({
       </div>
 
       {/* Posts */}
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className={`grid gap-3 ${viewMode === "grid" ? "sm:grid-cols-2" : ""}`}>
         {isPending ? (
           Array.from({ length: 4 }, (_, i) => (
             <div key={i} className="h-48 animate-pulse rounded-lg border bg-muted/30" />

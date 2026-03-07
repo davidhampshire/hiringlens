@@ -53,6 +53,7 @@ export function ExperienceList({
   const [filterBy, setFilterBy] = useState<FilterOption>("all");
   const [seniorityFilter, setSeniorityFilter] = useState<string>("all");
   const [typeFilter, setTypeFilter] = useState<string>("all");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const hasMore = interviews.length < totalCount;
   const hasActiveFilters =
@@ -133,16 +134,41 @@ export function ExperienceList({
           <h3 className="text-sm font-semibold">
             Interview Experiences ({totalCount})
           </h3>
-          {hasActiveFilters && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={clearFilters}
-              className="h-7 text-xs text-muted-foreground"
-            >
-              Clear filters
-            </Button>
-          )}
+          <div className="flex items-center gap-2">
+            {hasActiveFilters && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={clearFilters}
+                className="h-7 text-xs text-muted-foreground"
+              >
+                Clear filters
+              </Button>
+            )}
+            {/* Grid / List toggle — desktop & tablet only */}
+            <div className="hidden items-center rounded-lg border bg-muted/30 p-0.5 sm:flex">
+              <button
+                onClick={() => setViewMode("grid")}
+                className={`rounded-md p-1.5 transition-colors ${viewMode === "grid" ? "bg-background shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+                aria-label="Grid view"
+                title="Grid view"
+              >
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
+                </svg>
+              </button>
+              <button
+                onClick={() => setViewMode("list")}
+                className={`rounded-md p-1.5 transition-colors ${viewMode === "list" ? "bg-background shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+                aria-label="List view"
+                title="List view"
+              >
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+            </div>
+          </div>
         </div>
         <div className="flex flex-wrap gap-2">
           <Select
@@ -214,7 +240,7 @@ export function ExperienceList({
       </div>
 
       {/* Experience cards */}
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className={`grid gap-3 ${viewMode === "grid" ? "sm:grid-cols-2" : ""}`}>
         {isPending ? (
           Array.from({ length: 4 }, (_, i) => (
             <div key={i} className="h-48 animate-pulse rounded-lg border bg-muted/30" />
