@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ExperienceCard } from "./experience-card";
-import { createClient } from "@/lib/supabase/client";
+import { fetchFilteredInterviews } from "@/lib/actions/recent";
 import { SENIORITY_LABELS, INTERVIEW_TYPE_LABELS } from "@/lib/constants";
 import type { Interview } from "@/types";
 
@@ -42,10 +42,13 @@ const PAGE_SIZE = 10;
 export function ExperienceList({
   companyId,
   initialInterviews,
-  totalCount,
+  totalCount: initialTotal,
 }: ExperienceListProps) {
   const [interviews, setInterviews] = useState<Interview[]>(initialInterviews);
-  const [isLoading, setIsLoading] = useState(false);
+  const [totalCount, setTotalCount] = useState(initialTotal);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [isPending, startTransition] = useTransition();
+
   const [sortBy, setSortBy] = useState<SortOption>("newest");
   const [filterBy, setFilterBy] = useState<FilterOption>("all");
   const [seniorityFilter, setSeniorityFilter] = useState<string>("all");
@@ -55,83 +58,66 @@ export function ExperienceList({
   const hasActiveFilters =
     filterBy !== "all" || seniorityFilter !== "all" || typeFilter !== "all";
 
-  function clearFilters() {
-    setFilterBy("all");
-    setSeniorityFilter("all");
-    setTypeFilter("all");
+  function refetch(
+    sort: SortOption,
+    outcome: string,
+    seniority: string,
+    type: string
+  ) {
+    startTransition(async () => {
+      const result = await fetchFilteredInterviews({
+        offset: 0,
+        limit: PAGE_SIZE,
+        sortBy: sort,
+        outcome,
+        seniority,
+        interviewType: type,
+        companyId,
+      });
+      setInterviews(result.data as unknown as Interview[]);
+      setTotalCount(result.count);
+    });
   }
 
-  // Sort and filter the loaded interviews
-  const displayedInterviews = useMemo(() => {
-    let filtered = [...interviews];
+  function updateFilter(
+    newSort: SortOption,
+    newOutcome: string,
+    newSeniority: string,
+    newType: string
+  ) {
+    setSortBy(newSort);
+    setFilterBy(newOutcome as FilterOption);
+    setSeniorityFilter(newSeniority);
+    setTypeFilter(newType);
+    refetch(newSort, newOutcome, newSeniority, newType);
+  }
 
-    // Filter by outcome
-    if (filterBy !== "all") {
-      filtered = filtered.filter((i) => i.outcome === filterBy);
-    }
-
-    // Filter by seniority
-    if (seniorityFilter !== "all") {
-      filtered = filtered.filter((i) => i.seniority === seniorityFilter);
-    }
-
-    // Filter by interview type
-    if (typeFilter !== "all") {
-      filtered = filtered.filter((i) => i.interview_type === typeFilter);
-    }
-
-    // Sort
-    filtered.sort((a, b) => {
-      switch (sortBy) {
-        case "newest":
-          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-        case "oldest":
-          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-        case "highest": {
-          const avgA =
-            (a.professionalism_rating + a.communication_rating + a.clarity_rating + a.fairness_rating) / 4;
-          const avgB =
-            (b.professionalism_rating + b.communication_rating + b.clarity_rating + b.fairness_rating) / 4;
-          return avgB - avgA;
-        }
-        case "lowest": {
-          const avgA2 =
-            (a.professionalism_rating + a.communication_rating + a.clarity_rating + a.fairness_rating) / 4;
-          const avgB2 =
-            (b.professionalism_rating + b.communication_rating + b.clarity_rating + b.fairness_rating) / 4;
-          return avgA2 - avgB2;
-        }
-        default:
-          return 0;
-      }
-    });
-
-    return filtered;
-  }, [interviews, sortBy, filterBy, seniorityFilter, typeFilter]);
+  function clearFilters() {
+    updateFilter("newest", "all", "all", "all");
+  }
 
   async function loadMore() {
-    setIsLoading(true);
+    setIsLoadingMore(true);
     try {
-      const supabase = createClient();
-      const { data } = await supabase
-        .from("interviews")
-        .select("*")
-        .eq("company_id", companyId)
-        .eq("status", "approved")
-        .order("created_at", { ascending: false })
-        .range(interviews.length, interviews.length + PAGE_SIZE - 1);
-
-      if (data) {
-        setInterviews((prev) => [...prev, ...data]);
-      }
+      const result = await fetchFilteredInterviews({
+        offset: interviews.length,
+        limit: PAGE_SIZE,
+        sortBy,
+        outcome: filterBy,
+        seniority: seniorityFilter,
+        interviewType: typeFilter,
+        companyId,
+      });
+      setInterviews((prev) => [...prev, ...(result.data as unknown as Interview[])]);
+      setTotalCount(result.count);
     } catch {
       // Silently handle - user can retry
     } finally {
-      setIsLoading(false);
+      setIsLoadingMore(false);
     }
   }
 
-  if (interviews.length === 0) {
+  if (initialInterviews.length === 0) {
     return (
       <div className="py-8 text-center text-sm text-muted-foreground">
         No approved reviews yet. Be the first to share your experience!
@@ -161,70 +147,66 @@ export function ExperienceList({
         <div className="flex flex-wrap gap-2">
           <Select
             value={sortBy}
-            onValueChange={(v) => setSortBy(v as SortOption)}
+            onValueChange={(v) =>
+              updateFilter(v as SortOption, filterBy, seniorityFilter, typeFilter)
+            }
           >
             <SelectTrigger className="h-9 w-[140px] bg-white text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               {Object.entries(SORT_OPTIONS).map(([value, label]) => (
-                <SelectItem key={value} value={value} className="text-xs">
-                  {label}
-                </SelectItem>
+                <SelectItem key={value} value={value} className="text-xs">{label}</SelectItem>
               ))}
             </SelectContent>
           </Select>
 
           <Select
             value={filterBy}
-            onValueChange={(v) => setFilterBy(v as FilterOption)}
+            onValueChange={(v) =>
+              updateFilter(sortBy, v, seniorityFilter, typeFilter)
+            }
           >
             <SelectTrigger className="h-9 w-[130px] bg-white text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               {Object.entries(FILTER_OPTIONS).map(([value, label]) => (
-                <SelectItem key={value} value={value} className="text-xs">
-                  {label}
-                </SelectItem>
+                <SelectItem key={value} value={value} className="text-xs">{label}</SelectItem>
               ))}
             </SelectContent>
           </Select>
 
           <Select
             value={seniorityFilter}
-            onValueChange={setSeniorityFilter}
+            onValueChange={(v) =>
+              updateFilter(sortBy, filterBy, v, typeFilter)
+            }
           >
             <SelectTrigger className="h-9 w-[130px] bg-white text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all" className="text-xs">
-                All levels
-              </SelectItem>
+              <SelectItem value="all" className="text-xs">All levels</SelectItem>
               {Object.entries(SENIORITY_LABELS).map(([value, label]) => (
-                <SelectItem key={value} value={value} className="text-xs">
-                  {label}
-                </SelectItem>
+                <SelectItem key={value} value={value} className="text-xs">{label}</SelectItem>
               ))}
             </SelectContent>
           </Select>
 
           <Select
             value={typeFilter}
-            onValueChange={setTypeFilter}
+            onValueChange={(v) =>
+              updateFilter(sortBy, filterBy, seniorityFilter, v)
+            }
           >
             <SelectTrigger className="h-9 w-[130px] bg-white text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all" className="text-xs">
-                All types
-              </SelectItem>
+              <SelectItem value="all" className="text-xs">All types</SelectItem>
               {Object.entries(INTERVIEW_TYPE_LABELS).map(([value, label]) => (
-                <SelectItem key={value} value={value} className="text-xs">
-                  {label}
-                </SelectItem>
+                <SelectItem key={value} value={value} className="text-xs">{label}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -233,8 +215,12 @@ export function ExperienceList({
 
       {/* Experience cards */}
       <div className="space-y-3">
-        {displayedInterviews.length > 0 ? (
-          displayedInterviews.map((interview) => (
+        {isPending ? (
+          Array.from({ length: 3 }, (_, i) => (
+            <div key={i} className="h-48 animate-pulse rounded-lg border bg-muted/30" />
+          ))
+        ) : interviews.length > 0 ? (
+          interviews.map((interview) => (
             <ExperienceCard key={interview.id} interview={interview} />
           ))
         ) : (
@@ -244,14 +230,11 @@ export function ExperienceList({
         )}
       </div>
 
-      {hasMore && !hasActiveFilters && (
+      {/* Load more — now works with filters */}
+      {hasMore && !isPending && (
         <div className="flex justify-center pt-2">
-          <Button
-            variant="outline"
-            onClick={loadMore}
-            disabled={isLoading}
-          >
-            {isLoading ? "Loading..." : "Load More"}
+          <Button variant="outline" onClick={loadMore} disabled={isLoadingMore}>
+            {isLoadingMore ? "Loading..." : "Load More"}
           </Button>
         </div>
       )}
