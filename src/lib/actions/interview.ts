@@ -4,6 +4,12 @@ import { createClient } from "@/lib/supabase/server";
 import { interviewSchema } from "@/lib/validators";
 import { slugify } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
+import {
+  sendEmail,
+  sendAdminEmail,
+  submissionReceivedEmail,
+  adminNewPendingEmail,
+} from "@/lib/email";
 
 const MAX_SUBMISSIONS_PER_DAY = 3;
 
@@ -138,6 +144,19 @@ export async function submitInterview(payload: SubmitPayload) {
   revalidatePath("/");
   revalidatePath("/recent");
   revalidatePath("/admin");
+
+  // Send notification emails (non-blocking)
+  const companyName = data.company_name;
+  const roleTitle = data.role_title;
+
+  const userEmail = user.email;
+  if (userEmail) {
+    const { subject, html } = submissionReceivedEmail(companyName, roleTitle);
+    sendEmail({ to: userEmail, subject, html }).catch(() => {});
+  }
+
+  const { subject: adminSubject, html: adminHtml } = adminNewPendingEmail(companyName, roleTitle);
+  sendAdminEmail(adminSubject, adminHtml).catch(() => {});
 
   return { success: true };
 }
