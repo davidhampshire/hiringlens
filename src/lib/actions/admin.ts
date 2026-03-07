@@ -74,6 +74,38 @@ export async function rejectInterview(interviewId: string) {
   return { success: true };
 }
 
+export async function bulkApproveInterviews(ids: string[]) {
+  const { supabase } = await requireAdmin();
+
+  const { error } = await supabase
+    .from("interviews")
+    .update({ status: "approved" })
+    .in("id", ids);
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/");
+  revalidatePath("/recent");
+  revalidatePath("/admin");
+
+  return { success: true, count: ids.length };
+}
+
+export async function bulkRejectInterviews(ids: string[]) {
+  const { supabase } = await requireAdmin();
+
+  const { error } = await supabase
+    .from("interviews")
+    .update({ status: "rejected" })
+    .in("id", ids);
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/admin");
+
+  return { success: true, count: ids.length };
+}
+
 export async function deleteInterviewAdmin(interviewId: string) {
   const { supabase } = await requireAdmin();
 
