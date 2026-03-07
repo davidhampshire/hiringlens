@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useEffect, useTransition, useCallback } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -44,18 +45,31 @@ export function RecentPostsList({
   initialPosts,
   totalCount: initialTotal,
 }: RecentPostsListProps) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const [posts, setPosts] = useState<InterviewWithCompany[]>(initialPosts);
   const [totalCount, setTotalCount] = useState(initialTotal);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isPending, startTransition] = useTransition();
 
-  // Filters
-  const [sortBy, setSortBy] = useState<SortOption>("newest");
-  const [outcomeFilter, setOutcomeFilter] = useState("all");
-  const [industryFilter, setIndustryFilter] = useState("all");
-  const [seniorityFilter, setSeniorityFilter] = useState("all");
-  const [typeFilter, setTypeFilter] = useState("all");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  // Read initial filters from URL params
+  const [sortBy, setSortBy] = useState<SortOption>(
+    (searchParams.get("sort") as SortOption) || "newest"
+  );
+  const [outcomeFilter, setOutcomeFilter] = useState(searchParams.get("outcome") || "all");
+  const [industryFilter, setIndustryFilter] = useState(searchParams.get("industry") || "all");
+  const [seniorityFilter, setSeniorityFilter] = useState(searchParams.get("seniority") || "all");
+  const [typeFilter, setTypeFilter] = useState(searchParams.get("type") || "all");
+  const [viewMode, setViewMode] = useState<"grid" | "list">(() => {
+    if (typeof window !== "undefined") {
+      return (localStorage.getItem("hl-view-mode") as "grid" | "list") || "grid";
+    }
+    return "grid";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("hl-view-mode", viewMode);
+  }, [viewMode]);
 
   const hasMore = posts.length < totalCount;
 
@@ -88,6 +102,31 @@ export function RecentPostsList({
     });
   }
 
+  // Sync filters to URL params
+  const syncUrlParams = useCallback(
+    (sort: string, outcome: string, industry: string, seniority: string, type: string) => {
+      const params = new URLSearchParams();
+      if (sort !== "newest") params.set("sort", sort);
+      if (outcome !== "all") params.set("outcome", outcome);
+      if (industry !== "all") params.set("industry", industry);
+      if (seniority !== "all") params.set("seniority", seniority);
+      if (type !== "all") params.set("type", type);
+      const qs = params.toString();
+      router.replace(qs ? `/recent?${qs}` : "/recent", { scroll: false });
+    },
+    [router]
+  );
+
+  // Fetch filtered data on mount if URL params were set
+  useEffect(() => {
+    const hasUrlFilters = sortBy !== "newest" || outcomeFilter !== "all" || industryFilter !== "all" || seniorityFilter !== "all" || typeFilter !== "all";
+    if (hasUrlFilters) {
+      refetch(sortBy, outcomeFilter, industryFilter, seniorityFilter, typeFilter);
+    }
+    // Only run on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   function updateFilter(
     newSort: SortOption,
     newOutcome: string,
@@ -101,6 +140,7 @@ export function RecentPostsList({
     setSeniorityFilter(newSeniority);
     setTypeFilter(newType);
     refetch(newSort, newOutcome, newIndustry, newSeniority, newType);
+    syncUrlParams(newSort, newOutcome, newIndustry, newSeniority, newType);
   }
 
   function clearFilters() {

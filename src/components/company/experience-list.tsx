@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -53,7 +53,16 @@ export function ExperienceList({
   const [filterBy, setFilterBy] = useState<FilterOption>("all");
   const [seniorityFilter, setSeniorityFilter] = useState<string>("all");
   const [typeFilter, setTypeFilter] = useState<string>("all");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [viewMode, setViewMode] = useState<"grid" | "list">(() => {
+    if (typeof window !== "undefined") {
+      return (localStorage.getItem("hl-view-mode") as "grid" | "list") || "grid";
+    }
+    return "grid";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("hl-view-mode", viewMode);
+  }, [viewMode]);
 
   const hasMore = interviews.length < totalCount;
   const hasActiveFilters =

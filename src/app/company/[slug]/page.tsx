@@ -18,7 +18,7 @@ import { ShareButton } from "@/components/shared/share-button";
 import { CompanyLogo } from "@/components/shared/company-logo";
 import { AdPlaceholder } from "@/components/shared/ad-placeholder";
 import { TimelineComparison } from "@/components/company/timeline-comparison";
-import { buildCompanyJsonLd } from "@/lib/json-ld";
+import { buildCompanyJsonLd, buildBreadcrumbJsonLd } from "@/lib/json-ld";
 import { getIndustryAverageDuration } from "@/lib/actions/interview";
 import type { CompanyScore, Interview } from "@/types";
 
@@ -58,12 +58,19 @@ export async function generateMetadata({ params }: CompanyPageProps): Promise<Me
 
   const c = company as CompanyScore;
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hiringlens.com";
+  const companyUrl = `${siteUrl}/company/${slug}`;
+
   return {
     title: `${c.name} Interview Experience`,
     description: `Read ${c.total_reviews} interview experiences at ${c.name}. Reality Score: ${c.reality_score ? Math.round(c.reality_score) : "N/A"}/100. See ratings, process timeline, and candidate tips.`,
     openGraph: {
       title: `${c.name} Interview Experience | HiringLens`,
       description: `${c.total_reviews} real interview reviews. Reality Score: ${c.reality_score ? Math.round(c.reality_score) : "N/A"}/100.`,
+      url: companyUrl,
+    },
+    alternates: {
+      canonical: companyUrl,
     },
   };
 }
@@ -123,7 +130,13 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
     .limit(5);
 
   const jsonLdInterviews = (interviewData ?? []) as Interview[];
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hiringlens.com";
   const jsonLd = buildCompanyJsonLd(c, jsonLdInterviews, slug);
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: "Home", url: siteUrl },
+    { name: "Companies", url: `${siteUrl}/companies` },
+    { name: c.name, url: `${siteUrl}/company/${slug}` },
+  ]);
 
   // Fetch industry average for timeline comparison
   const industryAvgDuration = c.industry
@@ -135,6 +148,10 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <div className="animate-in-view">
         <Breadcrumbs

@@ -14,7 +14,10 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hiringlens.com";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
     default: "HiringLens - See How Companies Really Hire",
     template: "%s | HiringLens",
@@ -28,12 +31,19 @@ export const metadata: Metadata = {
     title: "HiringLens - See How Companies Really Hire",
     description:
       "Real interview experiences from real candidates. Know the process, prepare smarter, and interview with confidence.",
+    url: siteUrl,
   },
   twitter: {
     card: "summary_large_image",
     title: "HiringLens - See How Companies Really Hire",
     description:
       "Real interview experiences from real candidates. Know the process, prepare smarter, and interview with confidence.",
+  },
+  alternates: {
+    canonical: siteUrl,
+    types: {
+      "application/rss+xml": `${siteUrl}/feed.xml`,
+    },
   },
 };
 

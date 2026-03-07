@@ -1,6 +1,6 @@
 import type { CompanyScore, Interview } from "@/types";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hiringlens.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hiringlens.com";
 
 /**
  * Sanitise a string for safe embedding inside a <script type="application/ld+json"> tag.
@@ -39,6 +39,21 @@ export function buildHomepageJsonLd() {
       },
     },
   ];
+}
+
+export function buildBreadcrumbJsonLd(
+  items: { name: string; url: string }[]
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: sanitizeJsonLdString(item.name),
+      item: item.url,
+    })),
+  };
 }
 
 export function buildCompanyJsonLd(
