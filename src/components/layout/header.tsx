@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { cn } from "@/lib/utils";
-import { SearchBar } from "./search-bar";
+import { SearchTrigger, MobileSearchButton } from "./search-dialog";
 import { UserMenu } from "@/components/auth/user-menu";
 
 const NAV_LINKS = [
@@ -60,19 +60,14 @@ export function Header() {
           <span className="text-lg font-semibold tracking-tight">HiringLens</span>
         </Link>
 
-        {/* Search - centre, hidden on mobile */}
-        <div className="hidden flex-1 justify-center px-8 md:flex">
-          <SearchBar />
-        </div>
-
         {/* Desktop nav */}
-        <nav aria-label="Main" className="hidden items-center gap-4 md:flex">
+        <nav aria-label="Main" className="hidden items-center gap-1 md:flex">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               className={cn(
-                "text-sm font-medium transition-colors",
+                "rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors",
                 isActive(link.href)
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground"
@@ -82,6 +77,7 @@ export function Header() {
               {link.label}
             </Link>
           ))}
+          <SearchTrigger />
           <UserMenu />
           <Link
             href="/submit"
@@ -133,10 +129,8 @@ export function Header() {
       {/* Mobile menu */}
       {mobileMenuOpen && (
         <div id="mobile-menu" ref={menuRef} className="border-t px-4 pb-4 pt-2 md:hidden">
-          <div className="mb-3">
-            <SearchBar />
-          </div>
           <nav aria-label="Mobile" className="flex flex-col gap-1">
+            <MobileSearchButton />
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
