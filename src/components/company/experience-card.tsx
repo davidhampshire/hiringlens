@@ -417,7 +417,6 @@ export function ExperienceCard({
                     New
                   </Badge>
                 )}
-                <span className="ml-auto shrink-0 text-xs text-muted-foreground">{date}</span>
               </div>
               <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground">
                 <span>
@@ -443,7 +442,7 @@ export function ExperienceCard({
                 )}
               </div>
             </div>
-            <div className="shrink-0">
+            <div className="flex shrink-0 flex-col items-end gap-1">
               <div className={`flex items-center gap-1.5 rounded-xl px-2 py-1 ring-1 ${colors.bg} ${colors.ring}`}>
                 <span className={`text-lg font-extrabold ${colors.text}`}>
                   {avgRating.toFixed(1)}
@@ -455,6 +454,7 @@ export function ExperienceCard({
                   </span>
                 </div>
               </div>
+              <span className="text-xs text-muted-foreground">{date}</span>
             </div>
           </div>
 
