@@ -121,9 +121,9 @@ export function CompanyLogo({ name, logoUrl, size = "md", className }: CompanyLo
           alt={`${name} logo`}
           width={s.px}
           height={s.px}
+          sizes={`${s.px}px`}
           className="h-full w-full object-contain p-1"
           onError={() => setImgError(true)}
-          unoptimized
         />
       </div>
     );

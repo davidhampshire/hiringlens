@@ -21,6 +21,7 @@ export function CompanySearchInput({
 }: CompanySearchInputProps) {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const debouncedValue = useDebounce(value, 300);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -28,10 +29,12 @@ export function CompanySearchInput({
     if (debouncedValue.length < 2 || selectedId) {
       setResults([]);
       setIsOpen(false);
+      setIsSearching(false);
       return;
     }
 
     async function search() {
+      setIsSearching(true);
       try {
         const supabase = createClient();
         const { data } = await supabase.rpc("search_companies", {
@@ -42,6 +45,8 @@ export function CompanySearchInput({
         setIsOpen(true);
       } catch {
         setResults([]);
+      } finally {
+        setIsSearching(false);
       }
     }
 
@@ -75,7 +80,10 @@ export function CompanySearchInput({
       {selectedId && (
         <p className="mt-1 text-xs text-emerald-600">Existing company selected</p>
       )}
-      {!selectedId && value.length >= 2 && !isOpen && results.length === 0 && (
+      {isSearching && (
+        <p className="mt-1 text-xs text-muted-foreground">Searching...</p>
+      )}
+      {!selectedId && !isSearching && value.length >= 2 && !isOpen && results.length === 0 && (
         <p className="mt-1 text-xs text-muted-foreground">
           New company - will be added when you submit
         </p>
