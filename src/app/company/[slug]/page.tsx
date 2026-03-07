@@ -226,10 +226,15 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
             totalReviews={c.total_reviews}
           />
 
-          <div className="pt-2">
+          <div className="space-y-2 pt-2">
             <Button asChild className="w-full">
               <Link href={`/submit?company=${encodeURIComponent(c.name)}`}>
                 Share Your Experience
+              </Link>
+            </Button>
+            <Button variant="outline" asChild className="w-full">
+              <Link href={`/company/${slug}/widget`}>
+                Embed Widget
               </Link>
             </Button>
           </div>
