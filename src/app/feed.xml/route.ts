@@ -22,7 +22,7 @@ export async function GET() {
     .order("created_at", { ascending: false })
     .limit(50);
 
-  const items = (data ?? []) as Array<{
+  const items = (data ?? []) as unknown as Array<{
     id: string;
     role_title: string;
     overall_comments: string | null;

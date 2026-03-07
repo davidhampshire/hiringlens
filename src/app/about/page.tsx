@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { buildBreadcrumbJsonLd } from "@/lib/json-ld";
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hiringlens.com";
 
 export const metadata: Metadata = {
   title: "About HiringLens",
   description:
     "HiringLens champions transparency in hiring. We spotlight great companies, flag the red flags, and help candidates support each other through the interview process.",
+  alternates: {
+    canonical: `${siteUrl}/about`,
+  },
 };
 
 const VALUES = [
@@ -52,8 +58,17 @@ const VALUES = [
 ];
 
 export default function AboutPage() {
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: "Home", url: siteUrl },
+    { name: "About", url: `${siteUrl}/about` },
+  ]);
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <div className="mb-8">
         <h1 className="text-2xl font-bold">About HiringLens</h1>
         <p className="mt-2 text-lg text-muted-foreground">
@@ -169,6 +184,49 @@ export default function AboutPage() {
                 </div>
               )
             )}
+          </div>
+        </section>
+
+        {/* Explore */}
+        <section>
+          <h2 className="text-lg font-semibold">Explore HiringLens</h2>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <Link
+              href="/companies"
+              className="group rounded-lg border p-4 transition-colors hover:border-primary/30 hover:bg-primary/5"
+            >
+              <h3 className="font-medium group-hover:text-primary">Company Directory</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Browse all rated companies and their Reality Scores.
+              </p>
+            </Link>
+            <Link
+              href="/recent"
+              className="group rounded-lg border p-4 transition-colors hover:border-primary/30 hover:bg-primary/5"
+            >
+              <h3 className="font-medium group-hover:text-primary">Latest Reviews</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Read the most recent interview experiences from candidates.
+              </p>
+            </Link>
+            <Link
+              href="/insights"
+              className="group rounded-lg border p-4 transition-colors hover:border-primary/30 hover:bg-primary/5"
+            >
+              <h3 className="font-medium group-hover:text-primary">Industry Insights</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                See how different industries compare on interview practices.
+              </p>
+            </Link>
+            <Link
+              href="/compare"
+              className="group rounded-lg border p-4 transition-colors hover:border-primary/30 hover:bg-primary/5"
+            >
+              <h3 className="font-medium group-hover:text-primary">Compare Companies</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Compare interview experiences at different companies side by side.
+              </p>
+            </Link>
           </div>
         </section>
 

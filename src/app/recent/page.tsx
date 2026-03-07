@@ -4,10 +4,15 @@ import { RecentPostsList } from "@/components/recent/recent-posts-list";
 import { AdPlaceholder } from "@/components/shared/ad-placeholder";
 import type { Interview } from "@/types";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hiringlens.com";
+
 export const metadata: Metadata = {
   title: "All Reviews",
   description:
     "Browse every interview review shared by candidates across all industries and companies. Filter by outcome, industry, seniority, and more.",
+  alternates: {
+    canonical: `${siteUrl}/recent`,
+  },
 };
 
 export const revalidate = 300; // 5 min ISR

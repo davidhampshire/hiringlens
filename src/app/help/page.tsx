@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Card } from "@/components/ui/card";
+import { buildFaqJsonLd, buildBreadcrumbJsonLd } from "@/lib/json-ld";
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hiringlens.com";
 
 export const metadata: Metadata = {
   title: "Help Centre",
   description:
     "Frequently asked questions about HiringLens. Learn how to submit reviews, understand Reality Scores, and get the most out of the platform.",
+  alternates: {
+    canonical: `${siteUrl}/help`,
+  },
 };
 
 const FAQ_ITEMS = [
@@ -61,8 +68,22 @@ const FAQ_ITEMS = [
 ];
 
 export default function HelpPage() {
+  const faqJsonLd = buildFaqJsonLd(FAQ_ITEMS);
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: "Home", url: siteUrl },
+    { name: "Help Centre", url: `${siteUrl}/help` },
+  ]);
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <div className="mb-8">
         <h1 className="text-2xl font-bold">Help Centre</h1>
         <p className="mt-2 text-muted-foreground">
@@ -79,7 +100,37 @@ export default function HelpPage() {
         ))}
       </div>
 
-      <div className="mt-8 rounded-lg bg-muted/30 p-6 text-center">
+      <div className="mt-8 grid gap-3 sm:grid-cols-3">
+        <Link
+          href="/guidelines"
+          className="group rounded-lg border p-4 transition-colors hover:border-primary/30 hover:bg-primary/5"
+        >
+          <h3 className="text-sm font-medium group-hover:text-primary">Review Guidelines</h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            What we look for when moderating submissions.
+          </p>
+        </Link>
+        <Link
+          href="/about"
+          className="group rounded-lg border p-4 transition-colors hover:border-primary/30 hover:bg-primary/5"
+        >
+          <h3 className="text-sm font-medium group-hover:text-primary">About HiringLens</h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Our mission and how Reality Scores work.
+          </p>
+        </Link>
+        <Link
+          href="/contact"
+          className="group rounded-lg border p-4 transition-colors hover:border-primary/30 hover:bg-primary/5"
+        >
+          <h3 className="text-sm font-medium group-hover:text-primary">Contact Us</h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Get in touch with the HiringLens team.
+          </p>
+        </Link>
+      </div>
+
+      <div className="mt-6 rounded-lg bg-muted/30 p-6 text-center">
         <h2 className="font-semibold">Still have questions?</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           Contact us at{" "}

@@ -5,10 +5,15 @@ import { LetterNav } from "@/components/companies/letter-nav";
 import { EmptyState } from "@/components/shared/empty-state";
 import type { CompanyScore } from "@/types";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hiringlens.com";
+
 export const metadata: Metadata = {
   title: "Company Directory",
   description:
     "Browse all rated companies alphabetically. Find interview experiences, Reality Scores, and candidate tips for companies across every industry.",
+  alternates: {
+    canonical: `${siteUrl}/companies`,
+  },
 };
 
 export const revalidate = 3600; // 1 hour ISR

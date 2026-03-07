@@ -4,10 +4,15 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AdPlaceholder } from "@/components/shared/ad-placeholder";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hiringlens.com";
+
 export const metadata: Metadata = {
   title: "Industry Insights",
   description:
     "See how different industries compare on interview practices. Average stages, duration, ghosting rates, and more.",
+  alternates: {
+    canonical: `${siteUrl}/insights`,
+  },
 };
 
 export const revalidate = 3600; // 1 hour ISR
