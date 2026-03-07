@@ -11,6 +11,7 @@ const NAV_LINKS = [
   { label: "Home", href: "/" },
   { label: "All Reviews", href: "/recent" },
   { label: "Companies", href: "/companies" },
+  { label: "Insights", href: "/insights" },
   { label: "Compare", href: "/compare" },
 ];
 
