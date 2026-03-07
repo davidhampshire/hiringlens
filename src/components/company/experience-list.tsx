@@ -214,9 +214,9 @@ export function ExperienceList({
       </div>
 
       {/* Experience cards */}
-      <div className="space-y-3">
+      <div className="grid gap-3 sm:grid-cols-2">
         {isPending ? (
-          Array.from({ length: 3 }, (_, i) => (
+          Array.from({ length: 4 }, (_, i) => (
             <div key={i} className="h-48 animate-pulse rounded-lg border bg-muted/30" />
           ))
         ) : interviews.length > 0 ? (
@@ -224,7 +224,7 @@ export function ExperienceList({
             <ExperienceCard key={interview.id} interview={interview} />
           ))
         ) : (
-          <div className="py-6 text-center text-sm text-muted-foreground">
+          <div className="col-span-2 py-6 text-center text-sm text-muted-foreground">
             No experiences match these filters.
           </div>
         )}

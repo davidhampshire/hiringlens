@@ -389,18 +389,18 @@ export function ExperienceCard({
         className="cursor-pointer gap-0 p-0 transition-all hover:shadow-md hover:ring-1 hover:ring-border"
         onClick={() => setModalOpen(true)}
       >
-        <div className="p-5">
+        <div className="p-4">
           {/* Company name + logo (shown on All Experiences page) */}
           {companyName && companySlug && (
-            <div className="mb-3 flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
+            <div className="mb-2 flex items-center gap-2.5" onClick={(e) => e.stopPropagation()}>
               <CompanyLogo
                 name={companyName}
                 logoUrl={companyLogoUrl}
-                size="lg"
+                size="md"
               />
               <Link
                 href={`/company/${companySlug}`}
-                className="font-semibold text-primary hover:underline"
+                className="text-sm font-semibold text-primary hover:underline"
               >
                 {companyName}
               </Link>
@@ -418,8 +418,8 @@ export function ExperienceCard({
                   </Badge>
                 )}
               </div>
-              <div className="mt-0.5 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-                <span className="text-xs">
+              <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground">
+                <span>
                   by {interview.display_name || "Anonymous"}
                 </span>
                 {interview.seniority && (
@@ -443,19 +443,18 @@ export function ExperienceCard({
               </div>
             </div>
             <div className="flex shrink-0 flex-col items-end gap-1">
-              <span className="text-sm text-muted-foreground">{date}</span>
-              <div className={`flex items-center gap-1.5 rounded-xl px-2 py-1.5 ring-1 sm:gap-2 sm:px-3 sm:py-2 ${colors.bg} ${colors.ring}`}>
-                <span className={`text-xl font-extrabold sm:text-2xl ${colors.text}`}>
+              <div className={`flex items-center gap-1.5 rounded-xl px-2 py-1 ring-1 ${colors.bg} ${colors.ring}`}>
+                <span className={`text-lg font-extrabold ${colors.text}`}>
                   {avgRating.toFixed(1)}
                 </span>
                 <div className="flex flex-col items-end">
-                  <StarRating rating={avgRating} size="md" className="sm:hidden" />
-                  <StarRating rating={avgRating} size="lg" className="hidden sm:flex" />
-                  <span className={`mt-0.5 text-[10px] font-medium ${colors.sub}`}>
+                  <StarRating rating={avgRating} size="sm" />
+                  <span className={`text-[10px] font-medium ${colors.sub}`}>
                     out of 5
                   </span>
                 </div>
               </div>
+              <span className="text-xs text-muted-foreground">{date}</span>
             </div>
           </div>
 
@@ -533,7 +532,7 @@ export function ExperienceCard({
 
           {/* Comments (truncated) */}
           {cleanComments(interview.overall_comments) && (
-            <p className="mt-3 line-clamp-3 text-sm text-muted-foreground">
+            <p className="mt-3 line-clamp-2 text-sm text-muted-foreground">
               {cleanComments(interview.overall_comments)}
             </p>
           )}
