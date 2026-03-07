@@ -442,7 +442,7 @@ export function ExperienceCard({
                 )}
               </div>
             </div>
-            <div className="flex shrink-0 flex-col items-end gap-1">
+            <div className="flex shrink-0 flex-col items-end">
               <div className={`flex items-center gap-1.5 rounded-xl px-2 py-1 ring-1 ${colors.bg} ${colors.ring}`}>
                 <span className={`text-lg font-extrabold ${colors.text}`}>
                   {avgRating.toFixed(1)}
@@ -454,7 +454,7 @@ export function ExperienceCard({
                   </span>
                 </div>
               </div>
-              <span className="text-xs text-muted-foreground">{date}</span>
+              <span className={`text-xs text-muted-foreground ${companyName ? "mt-3" : "mt-1"}`}>{date}</span>
             </div>
           </div>
 
