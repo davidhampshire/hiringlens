@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export default function Error({
@@ -16,6 +17,7 @@ export default function Error({
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
+          aria-hidden="true"
         >
           <path
             strokeLinecap="round"
@@ -29,9 +31,12 @@ export default function Error({
       <p className="mt-1 text-sm text-muted-foreground">
         An unexpected error occurred. Please try again.
       </p>
-      <Button onClick={reset} className="mt-4">
-        Try Again
-      </Button>
+      <div className="mt-4 flex gap-3">
+        <Button variant="outline" asChild>
+          <Link href="/">Go Home</Link>
+        </Button>
+        <Button onClick={reset}>Try Again</Button>
+      </div>
     </div>
   );
 }

@@ -22,8 +22,12 @@ export function StarRating({
   };
 
   return (
-    <div className={cn("flex items-center gap-1", className)}>
-      <div className="flex gap-0.5">
+    <div
+      className={cn("flex items-center gap-1", className)}
+      role="img"
+      aria-label={`Rating: ${rating.toFixed(1)} out of ${maxRating}`}
+    >
+      <div className="flex gap-0.5" aria-hidden="true">
         {Array.from({ length: maxRating }, (_, i) => {
           const filled = i < Math.round(rating);
           return (

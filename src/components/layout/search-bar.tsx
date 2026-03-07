@@ -9,12 +9,15 @@ import { CompanyLogo } from "@/components/shared/company-logo";
 import Link from "next/link";
 import type { SearchResult } from "@/types";
 
+const LISTBOX_ID = "search-results-listbox";
+
 export function SearchBar() {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
   const debouncedQuery = useDebounce(query, 300);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -35,6 +38,7 @@ export function SearchBar() {
         });
         setResults(data ?? []);
         setIsOpen(true);
+        setActiveIndex(-1);
       } catch {
         setResults([]);
       } finally {
@@ -49,6 +53,7 @@ export function SearchBar() {
     function handleClickOutside(event: MouseEvent) {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
         setIsOpen(false);
+        setActiveIndex(-1);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -56,14 +61,49 @@ export function SearchBar() {
   }, []);
 
   function handleKeyDown(e: React.KeyboardEvent) {
-    if (e.key === "Enter" && query.trim()) {
+    if (e.key === "Escape") {
       setIsOpen(false);
-      router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+      setActiveIndex(-1);
+      return;
+    }
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (!isOpen && results.length > 0) setIsOpen(true);
+      setActiveIndex((prev) => (prev < results.length - 1 ? prev + 1 : 0));
+      return;
+    }
+
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActiveIndex((prev) => (prev > 0 ? prev - 1 : results.length - 1));
+      return;
+    }
+
+    if (e.key === "Enter") {
+      if (activeIndex >= 0 && activeIndex < results.length) {
+        const result = results[activeIndex];
+        setIsOpen(false);
+        setQuery("");
+        setActiveIndex(-1);
+        router.push(`/company/${result.slug}`);
+      } else if (query.trim()) {
+        setIsOpen(false);
+        setActiveIndex(-1);
+        router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+      }
     }
   }
 
   return (
-    <div ref={wrapperRef} className="relative w-full max-w-xs">
+    <div
+      ref={wrapperRef}
+      className="relative w-full max-w-xs"
+      role="combobox"
+      aria-expanded={isOpen}
+      aria-haspopup="listbox"
+      aria-owns={LISTBOX_ID}
+    >
       <Input
         type="search"
         placeholder="Search companies..."
@@ -72,23 +112,35 @@ export function SearchBar() {
         onKeyDown={handleKeyDown}
         onFocus={() => results.length > 0 && setIsOpen(true)}
         className="h-9"
+        aria-autocomplete="list"
+        aria-controls={LISTBOX_ID}
+        aria-activedescendant={activeIndex >= 0 ? `search-result-${activeIndex}` : undefined}
       />
 
       {isOpen && (
         <div className="absolute top-full z-50 mt-1 w-full rounded-md border bg-popover shadow-md">
           {isLoading ? (
-            <div className="px-4 py-3 text-sm text-muted-foreground">Searching...</div>
+            <div className="px-4 py-3 text-sm text-muted-foreground" role="status">
+              Searching...
+            </div>
           ) : results.length > 0 ? (
-            <ul className="py-1">
-              {results.map((result) => (
-                <li key={result.id}>
+            <ul id={LISTBOX_ID} role="listbox" aria-label="Search results" className="py-1">
+              {results.map((result, index) => (
+                <li
+                  key={result.id}
+                  id={`search-result-${index}`}
+                  role="option"
+                  aria-selected={index === activeIndex}
+                >
                   <Link
                     href={`/company/${result.slug}`}
-                    className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-accent"
+                    className={`flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-accent ${index === activeIndex ? "bg-accent" : ""}`}
                     onClick={() => {
                       setIsOpen(false);
                       setQuery("");
+                      setActiveIndex(-1);
                     }}
+                    tabIndex={-1}
                   >
                     <CompanyLogo
                       name={result.name}
@@ -113,7 +165,7 @@ export function SearchBar() {
               ))}
             </ul>
           ) : (
-            <div className="px-4 py-3 text-sm text-muted-foreground">
+            <div className="px-4 py-3 text-sm text-muted-foreground" role="status">
               No companies found
             </div>
           )}

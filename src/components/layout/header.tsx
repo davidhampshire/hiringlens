@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { SearchBar } from "./search-bar";
 import { UserMenu } from "@/components/auth/user-menu";
@@ -17,11 +17,36 @@ const NAV_LINKS = [
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   function isActive(href: string) {
     if (href === "/") return pathname === "/";
     return pathname.startsWith(href);
   }
+
+  const closeMenu = useCallback(() => {
+    setMobileMenuOpen(false);
+    menuButtonRef.current?.focus();
+  }, []);
+
+  // Close on Escape
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") closeMenu();
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [mobileMenuOpen, closeMenu]);
+
+  // Focus first link when menu opens
+  useEffect(() => {
+    if (mobileMenuOpen && menuRef.current) {
+      const firstLink = menuRef.current.querySelector("a");
+      firstLink?.focus();
+    }
+  }, [mobileMenuOpen]);
 
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -40,7 +65,7 @@ export function Header() {
         </div>
 
         {/* Desktop nav */}
-        <nav className="hidden items-center gap-4 md:flex">
+        <nav aria-label="Main" className="hidden items-center gap-4 md:flex">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
@@ -51,6 +76,7 @@ export function Header() {
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground"
               )}
+              aria-current={isActive(link.href) ? "page" : undefined}
             >
               {link.label}
             </Link>
@@ -62,6 +88,7 @@ export function Header() {
               "inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90",
               isActive("/submit") && "ring-2 ring-primary/30"
             )}
+            aria-current={isActive("/submit") ? "page" : undefined}
           >
             Share Experience
           </Link>
@@ -69,15 +96,19 @@ export function Header() {
 
         {/* Mobile hamburger */}
         <button
+          ref={menuButtonRef}
           className="flex h-10 w-10 items-center justify-center rounded-md md:hidden"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label="Toggle menu"
+          aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={mobileMenuOpen}
+          aria-controls="mobile-menu"
         >
           <svg
             className="h-5 w-5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
+            aria-hidden="true"
           >
             {mobileMenuOpen ? (
               <path
@@ -100,11 +131,11 @@ export function Header() {
 
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="border-t px-4 pb-4 pt-2 md:hidden">
+        <div id="mobile-menu" ref={menuRef} className="border-t px-4 pb-4 pt-2 md:hidden">
           <div className="mb-3">
             <SearchBar />
           </div>
-          <nav className="flex flex-col gap-1">
+          <nav aria-label="Mobile" className="flex flex-col gap-1">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
@@ -115,7 +146,8 @@ export function Header() {
                     ? "bg-accent text-foreground"
                     : "text-muted-foreground hover:bg-accent hover:text-foreground"
                 )}
-                onClick={() => setMobileMenuOpen(false)}
+                aria-current={isActive(link.href) ? "page" : undefined}
+                onClick={closeMenu}
               >
                 {link.label}
               </Link>
@@ -123,11 +155,11 @@ export function Header() {
             <Link
               href="/submit"
               className="mt-1 rounded-md bg-primary px-3 py-2 text-center text-sm font-medium text-primary-foreground"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={closeMenu}
             >
               Share Experience
             </Link>
-            <UserMenu variant="mobile" onAction={() => setMobileMenuOpen(false)} />
+            <UserMenu variant="mobile" onAction={closeMenu} />
           </nav>
         </div>
       )}
