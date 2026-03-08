@@ -48,8 +48,8 @@ export function HeroSection() {
           {/* Right: Description + Search, offset */}
           <div className="animate-in-view-d1 lg:pb-3">
             <p className="max-w-sm text-base leading-relaxed text-muted-foreground sm:text-lg">
-              Real interview experiences from real candidates. Know the process,
-              prepare smarter, and interview with confidence.
+              Real interview experiences from real candidates. Holding companies
+              accountable and helping you prepare for what&apos;s actually ahead.
             </p>
 
             <form

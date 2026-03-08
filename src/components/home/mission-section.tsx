@@ -52,10 +52,10 @@ export function MissionSection() {
           Why HiringLens exists
         </h2>
         <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
-          Interviewing is stressful. People invest real time and emotional energy
-          into every application. We believe they deserve to know what
-          they&apos;re walking into, and companies should be held to a
-          higher standard.
+          Candidates invest real time and energy into every application. They
+          deserve to know what they&apos;re walking into. Companies should be
+          held accountable for how they treat people throughout the hiring
+          process, and the good ones deserve recognition.
         </p>
       </div>
 
@@ -87,7 +87,8 @@ export function MissionSection() {
           >
             Share your experience
           </Link>{" "}
-          . It only takes a few minutes and it helps everyone.
+
+          and help make hiring fairer for everyone.
         </p>
       </div>
 

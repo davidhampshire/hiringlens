@@ -17,27 +17,27 @@ interface MetricRow {
 }
 
 function formatScore(v: number | null): string {
-  if (v === null) return "—";
+  if (v === null) return "-";
   return Math.round(v).toString();
 }
 
 function formatRating(v: number | null): string {
-  if (v === null) return "—";
+  if (v === null) return "-";
   return v.toFixed(1);
 }
 
 function formatPct(v: number | null): string {
-  if (v === null) return "—";
+  if (v === null) return "-";
   return `${Math.round(v)}%`;
 }
 
 function formatDays(v: number | null): string {
-  if (v === null) return "—";
+  if (v === null) return "-";
   return `${Math.round(v)} days`;
 }
 
 function formatStages(v: number | null): string {
-  if (v === null) return "—";
+  if (v === null) return "-";
   return v.toFixed(1);
 }
 
@@ -115,7 +115,7 @@ const METRICS: MetricRow[] = [
   {
     label: "Total Reviews",
     getValue: (c) => c.total_reviews,
-    format: (v) => (v === null ? "—" : v.toString()),
+    format: (v) => (v === null ? "-" : v.toString()),
     higherIsBetter: true,
   },
 ];
@@ -188,7 +188,7 @@ export function ComparisonTable({ companies }: ComparisonTableProps) {
                   const numVal = typeof raw === "number" ? raw : null;
                   const formatted = metric.format
                     ? metric.format(numVal)
-                    : (numVal?.toString() ?? "—");
+                    : (numVal?.toString() ?? "-");
                   const isBest = bestIdx === i;
 
                   return (

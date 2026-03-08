@@ -3,8 +3,8 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { AdPlaceholder } from "@/components/shared/ad-placeholder";
+import { PromoBanner } from "@/components/shared/promo-banner";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hiringlens.com";
 
@@ -218,7 +218,7 @@ export default async function InsightsPage() {
               </>
             ) : (
               <>
-                <p className="text-2xl font-bold">—</p>
+                <p className="text-2xl font-bold">-</p>
                 <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
                   Best Industry
                 </p>
@@ -340,16 +340,9 @@ export default async function InsightsPage() {
             </Link>
           </div>
 
-          {/* CTA */}
-          <div className="animate-in-view mt-8 rounded-lg bg-muted/30 p-6 text-center">
-            <h2 className="font-semibold">Help improve these insights</h2>
-            <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">
-              Every review makes this data more accurate. Share your interview
-              experience and help other candidates.
-            </p>
-            <Button asChild className="mt-4">
-              <Link href="/submit">Share Your Experience</Link>
-            </Button>
+          {/* Promo */}
+          <div className="animate-in-view mt-8">
+            <PromoBanner />
           </div>
         </>
       )}

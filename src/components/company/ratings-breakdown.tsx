@@ -28,7 +28,7 @@ function RatingBar({ label, value }: { label: string; value: number | null }) {
         />
       </div>
       <span className="w-8 text-right text-sm font-medium">
-        {value !== null ? value.toFixed(1) : "—"}
+        {value !== null ? value.toFixed(1) : "-"}
       </span>
     </div>
   );

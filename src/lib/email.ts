@@ -53,7 +53,7 @@ export function submissionReceivedEmail(companyName: string, roleTitle: string) 
         </p>
         <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0;" />
         <p style="color: #999; font-size: 13px;">
-          — The HiringLens Team
+          The HiringLens Team
         </p>
       </div>
     `,
@@ -82,7 +82,7 @@ export function submissionApprovedEmail(companyName: string, companySlug: string
         </p>
         <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0;" />
         <p style="color: #999; font-size: 13px;">
-          — The HiringLens Team
+          The HiringLens Team
         </p>
       </div>
     `,
@@ -106,7 +106,7 @@ export function submissionRejectedEmail(companyName: string) {
         </p>
         <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0;" />
         <p style="color: #999; font-size: 13px;">
-          — The HiringLens Team
+          The HiringLens Team
         </p>
       </div>
     `,
@@ -116,7 +116,7 @@ export function submissionRejectedEmail(companyName: string) {
 export function adminNewPendingEmail(companyName: string, roleTitle: string) {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hiringlens.vercel.app";
   return {
-    subject: `[HiringLens] New submission: ${companyName} — ${roleTitle}`,
+    subject: `[HiringLens] New submission: ${companyName} - ${roleTitle}`,
     html: `
       <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; padding: 24px;">
         <h2 style="color: #111; margin-bottom: 16px;">New pending review</h2>
@@ -132,7 +132,7 @@ export function adminNewPendingEmail(companyName: string, roleTitle: string) {
         </p>
         <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0;" />
         <p style="color: #999; font-size: 13px;">
-          — HiringLens Notifications
+          HiringLens Notifications
         </p>
       </div>
     `,

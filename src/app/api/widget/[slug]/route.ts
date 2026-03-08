@@ -77,7 +77,7 @@ export async function GET(
 </head>
 <body>
   <a href="${siteUrl}/company/${slug}" target="_blank" rel="noopener noreferrer" class="widget">
-    <div class="score">${score ?? "—"}</div>
+    <div class="score">${score ?? "-"}</div>
     <div class="info">
       <div class="name">${escapeHtml(c.name)}</div>
       <div class="meta">${c.total_reviews} review${c.total_reviews === 1 ? "" : "s"} on HiringLens</div>

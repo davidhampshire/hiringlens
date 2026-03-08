@@ -5,14 +5,14 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import type { CompanyScore } from "@/types";
 
-export async function WatchOutCompanies() {
+export async function TopCompanies() {
   const supabase = await createClient();
 
   const { data: companies } = await supabase
     .from("company_scores")
     .select("*")
     .gte("total_reviews", 2)
-    .order("reality_score", { ascending: true })
+    .order("reality_score", { ascending: false })
     .limit(3);
 
   if (!companies || companies.length === 0) return null;
@@ -21,9 +21,9 @@ export async function WatchOutCompanies() {
     <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
       <div className="animate-in-view mb-6 flex items-end justify-between">
         <div>
-          <h2 className="text-xl font-bold tracking-tight sm:text-2xl">Companies to Watch Out For</h2>
+          <h2 className="text-xl font-bold tracking-tight sm:text-2xl">Companies Doing It Right</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Lowest-rated interview experiences. Know before you apply
+            Highest-rated interview experiences from real candidates
           </p>
         </div>
         <Button
