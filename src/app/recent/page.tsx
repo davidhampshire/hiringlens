@@ -36,7 +36,9 @@ export default async function RecentPostsPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
       <div className="animate-in-view mb-8">
-        <h1 className="text-2xl font-bold">All Reviews</h1>
+        <h1 className="text-3xl font-black uppercase tracking-tighter sm:text-4xl">
+          All <span className="text-foreground/25">Reviews</span>
+        </h1>
         <p className="mt-2 text-muted-foreground">
           Browse every interview review shared by candidates across all
           companies and industries.

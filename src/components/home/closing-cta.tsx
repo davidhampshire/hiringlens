@@ -8,8 +8,10 @@ export function ClosingCTA() {
         <div className="animate-in-view grid items-center gap-10 lg:grid-cols-2">
           {/* Text column */}
           <div>
-            <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
-              Your experience matters
+            <h2 className="text-2xl font-black uppercase tracking-tighter sm:text-4xl">
+              Your experience
+              <br />
+              <span className="text-foreground/25">matters</span>
             </h2>
             <p className="mt-3 max-w-md text-muted-foreground">
               Every review helps someone prepare better, avoid red flags, and

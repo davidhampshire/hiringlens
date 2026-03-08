@@ -6,6 +6,7 @@ import { TrendingCompanies } from "@/components/home/trending-companies";
 import { WatchOutCompanies } from "@/components/home/watchout-companies";
 import { RecentReviews } from "@/components/home/recent-reviews";
 import { ClosingCTA } from "@/components/home/closing-cta";
+import { PartnersStrip } from "@/components/home/partners-strip";
 import { AdPlaceholder } from "@/components/shared/ad-placeholder";
 import { Skeleton } from "@/components/ui/skeleton";
 import { buildHomepageJsonLd } from "@/lib/json-ld";
@@ -62,6 +63,7 @@ export default function HomePage() {
       <Suspense fallback={<StatsSkeleton />}>
         <PlatformStats />
       </Suspense>
+      <PartnersStrip />
       <MissionSection />
       <Suspense fallback={<CompanySkeleton />}>
         <TrendingCompanies />
