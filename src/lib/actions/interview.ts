@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { interviewSchema } from "@/lib/validators";
-import { slugify } from "@/lib/utils";
+import { slugify, logoUrlFromWebsite } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 import {
   sendEmail,
@@ -68,11 +68,16 @@ export async function submitInterview(payload: SubmitPayload) {
 
     if (existingCompany) {
       companyId = existingCompany.id;
-      // Backfill website_url if not already set
+      // Backfill website_url and logo_url if not already set
       if (data.company_website) {
+        const backfill: Record<string, string> = {};
+        backfill.website_url = data.company_website;
+        const logo = logoUrlFromWebsite(data.company_website);
+        if (logo) backfill.logo_url = logo;
+
         await supabase
           .from("companies")
-          .update({ website_url: data.company_website })
+          .update(backfill)
           .eq("id", companyId)
           .is("website_url", null);
       }
@@ -84,6 +89,7 @@ export async function submitInterview(payload: SubmitPayload) {
           slug,
           industry: data.industry ?? null,
           website_url: data.company_website || null,
+          logo_url: logoUrlFromWebsite(data.company_website),
         })
         .select("id")
         .single();
@@ -231,11 +237,16 @@ export async function updateInterview(
 
     if (existingCompany) {
       companyId = existingCompany.id;
-      // Backfill website_url if not already set
+      // Backfill website_url and logo_url if not already set
       if (data.company_website) {
+        const backfill: Record<string, string> = {};
+        backfill.website_url = data.company_website;
+        const logo = logoUrlFromWebsite(data.company_website);
+        if (logo) backfill.logo_url = logo;
+
         await supabase
           .from("companies")
-          .update({ website_url: data.company_website })
+          .update(backfill)
           .eq("id", companyId)
           .is("website_url", null);
       }
@@ -247,6 +258,7 @@ export async function updateInterview(
           slug,
           industry: data.industry ?? null,
           website_url: data.company_website || null,
+          logo_url: logoUrlFromWebsite(data.company_website),
         })
         .select("id")
         .single();
