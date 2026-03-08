@@ -43,14 +43,14 @@ export async function PlatformStats() {
   ];
 
   return (
-    <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <div className="animate-in-view-d1 grid grid-cols-2 gap-4 rounded-xl border bg-muted/20 p-6 sm:grid-cols-4">
+    <section className="relative z-10 mx-auto -mt-14 max-w-5xl px-4 sm:-mt-16 sm:px-6">
+      <div className="animate-in-view-d2 grid grid-cols-2 divide-x divide-border rounded-2xl border bg-card p-5 shadow-xl sm:grid-cols-4 sm:p-7">
         {stats.map((stat) => (
-          <div key={stat.label} className="text-center">
-            <p className="text-2xl font-bold sm:text-3xl">
+          <div key={stat.label} className="px-3 text-center sm:px-4">
+            <p className="text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">
               <AnimatedCounter value={stat.value} />
             </p>
-            <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
+            <p className="mt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground sm:text-xs">
               {stat.label}
             </p>
           </div>
