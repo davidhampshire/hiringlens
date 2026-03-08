@@ -315,7 +315,8 @@ export async function updateInterview(
     .eq("id", interviewId);
 
   if (updateError) {
-    return { error: "Failed to update experience. Please try again." };
+    console.error("Interview update failed:", JSON.stringify(updateError));
+    return { error: `Failed to update experience: ${updateError.message}` };
   }
 
   revalidatePath("/");
