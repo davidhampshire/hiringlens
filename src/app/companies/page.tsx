@@ -4,6 +4,7 @@ import { CompanyCard } from "@/components/shared/company-card";
 import { LetterNav } from "@/components/companies/letter-nav";
 import { EmptyState } from "@/components/shared/empty-state";
 import type { CompanyScore } from "@/types";
+import { PartnersStrip } from "@/components/home/partners-strip";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hiringlens.com";
 
@@ -106,6 +107,8 @@ export default async function CompaniesPage() {
           </section>
         ))}
       </div>
+
+      <PartnersStrip />
     </div>
   );
 }
