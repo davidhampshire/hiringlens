@@ -5,7 +5,6 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AdPlaceholder } from "@/components/shared/ad-placeholder";
 import { PromoBanner } from "@/components/shared/promo-banner";
-import { PartnersStrip } from "@/components/home/partners-strip";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hiringlens.com";
 
@@ -348,7 +347,6 @@ export default async function InsightsPage() {
         </>
       )}
 
-      <PartnersStrip />
     </div>
   );
 }

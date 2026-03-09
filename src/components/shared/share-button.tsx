@@ -1,14 +1,16 @@
 "use client";
 
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 interface ShareButtonProps {
   title: string;
   text?: string;
   url?: string;
+  variant?: "inline" | "cta";
 }
 
-export function ShareButton({ title, text, url: urlProp }: ShareButtonProps) {
+export function ShareButton({ title, text, url: urlProp, variant = "inline" }: ShareButtonProps) {
   async function handleShare() {
     const url = urlProp ?? window.location.href;
 
@@ -34,11 +36,16 @@ export function ShareButton({ title, text, url: urlProp }: ShareButtonProps) {
   return (
     <button
       onClick={handleShare}
-      className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+      className={cn(
+        "inline-flex items-center gap-1.5 font-medium transition-colors",
+        variant === "cta"
+          ? "mt-3 w-full justify-center rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90"
+          : "rounded-md border px-3 py-1.5 text-xs text-muted-foreground hover:bg-accent hover:text-foreground"
+      )}
       title="Share this page"
     >
       <svg
-        className="h-3.5 w-3.5"
+        className={cn(variant === "cta" ? "h-4 w-4" : "h-3.5 w-3.5")}
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -50,7 +57,7 @@ export function ShareButton({ title, text, url: urlProp }: ShareButtonProps) {
           d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
         />
       </svg>
-      Share
+      {variant === "cta" ? "Share This Page" : "Share"}
     </button>
   );
 }

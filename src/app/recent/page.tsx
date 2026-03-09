@@ -3,7 +3,6 @@ import { createClient } from "@/lib/supabase/server";
 import { RecentPostsList } from "@/components/recent/recent-posts-list";
 import { AdPlaceholder } from "@/components/shared/ad-placeholder";
 import { PromoBanner } from "@/components/shared/promo-banner";
-import { PartnersStrip } from "@/components/home/partners-strip";
 import type { Interview } from "@/types";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hiringlens.com";
@@ -60,7 +59,6 @@ export default async function RecentPostsPage() {
         <PromoBanner />
       </div>
 
-      <PartnersStrip />
     </div>
   );
 }

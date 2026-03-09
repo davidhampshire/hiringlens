@@ -256,6 +256,25 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
             </Button>
           </div>
 
+          {/* Share CTA — drives virality */}
+          <div className="rounded-lg border border-dashed border-primary/20 bg-primary/[0.03] p-4">
+            <p className="text-sm font-semibold">
+              {c.total_reviews < 3
+                ? "Be one of the first to review"
+                : "Know someone who interviewed here?"}
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {c.total_reviews < 3
+                ? `${c.name} only has ${c.total_reviews} ${c.total_reviews === 1 ? "review" : "reviews"}. Share this page to help build a fuller picture.`
+                : "Share this page so they can add their experience and help other candidates."}
+            </p>
+            <ShareButton
+              variant="cta"
+              title={`${c.name} Interview Experience | HiringLens`}
+              text={`Have you interviewed at ${c.name}? Share your experience on HiringLens to help other candidates know what to expect.`}
+            />
+          </div>
+
           <AdPlaceholder variant="sidebar" />
         </aside>
 

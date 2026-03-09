@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { ExperienceForm } from "@/components/submit/experience-form";
-import { PartnersStrip } from "@/components/home/partners-strip";
 
 export const metadata: Metadata = {
   title: "Share Your Interview Experience",
@@ -30,7 +29,6 @@ export default async function SubmitPage({ searchParams }: SubmitPageProps) {
         <ExperienceForm prefilledCompany={company} />
       </div>
 
-      <PartnersStrip />
     </div>
   );
 }
