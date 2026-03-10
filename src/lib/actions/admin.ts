@@ -148,6 +148,34 @@ async function notifySubmitter(
   }
 }
 
+export async function getPasswordGateEnabled(): Promise<boolean> {
+  const { supabase } = await requireAdmin();
+
+  const { data } = await supabase
+    .from("site_settings")
+    .select("value")
+    .eq("key", "password_gate_enabled")
+    .single();
+
+  // Default to true if no setting exists
+  return data?.value === true;
+}
+
+export async function togglePasswordGate(enabled: boolean) {
+  const { supabase } = await requireAdmin();
+
+  const { error } = await supabase
+    .from("site_settings")
+    .update({ value: enabled, updated_at: new Date().toISOString() })
+    .eq("key", "password_gate_enabled");
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/admin");
+
+  return { success: true, enabled };
+}
+
 export async function deleteInterviewAdmin(interviewId: string) {
   const { supabase } = await requireAdmin();
 

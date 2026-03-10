@@ -43,26 +43,6 @@ function applySecurityHeaders(response: NextResponse) {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  /* ── Password Gate ── */
-  const sitePassword = process.env.SITE_PASSWORD;
-  if (sitePassword) {
-    const hasAccess = request.cookies.get("site_access")?.value === "granted";
-
-    // Allow the password page itself (and its server action) through
-    if (!hasAccess && !pathname.startsWith("/password")) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/password";
-      return applySecurityHeaders(NextResponse.redirect(url));
-    }
-
-    // If already authenticated, redirect away from password page
-    if (hasAccess && pathname.startsWith("/password")) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/";
-      return applySecurityHeaders(NextResponse.redirect(url));
-    }
-  }
-
   let supabaseResponse = NextResponse.next({
     request,
   });
@@ -89,6 +69,37 @@ export async function middleware(request: NextRequest) {
       },
     }
   );
+
+  /* ── Password Gate ── */
+  const sitePassword = process.env.SITE_PASSWORD;
+  if (sitePassword) {
+    // Check if the gate is enabled in the database
+    const { data: setting } = await supabase
+      .from("site_settings")
+      .select("value")
+      .eq("key", "password_gate_enabled")
+      .single();
+
+    const gateEnabled = setting?.value === true;
+
+    if (gateEnabled) {
+      const hasAccess = request.cookies.get("site_access")?.value === "granted";
+
+      // Allow the password page itself (and its server action) through
+      if (!hasAccess && !pathname.startsWith("/password")) {
+        const url = request.nextUrl.clone();
+        url.pathname = "/password";
+        return applySecurityHeaders(NextResponse.redirect(url));
+      }
+
+      // If already authenticated, redirect away from password page
+      if (hasAccess && pathname.startsWith("/password")) {
+        const url = request.nextUrl.clone();
+        url.pathname = "/";
+        return applySecurityHeaders(NextResponse.redirect(url));
+      }
+    }
+  }
 
   // IMPORTANT: Use getUser() instead of getSession() — it validates the JWT
   // server-side rather than just reading the session cookie (which can be spoofed).

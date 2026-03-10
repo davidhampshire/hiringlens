@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AdminTabs } from "@/components/admin/admin-tabs";
+import { SiteSettings } from "@/components/admin/site-settings";
 import type { Interview } from "@/types";
 
 export const metadata: Metadata = {
@@ -35,6 +36,15 @@ export default async function AdminPage() {
     .single();
 
   if (!profile?.is_admin) redirect("/");
+
+  // Fetch site settings
+  const { data: passwordGateSetting } = await supabase
+    .from("site_settings")
+    .select("value")
+    .eq("key", "password_gate_enabled")
+    .single();
+
+  const passwordGateEnabled = passwordGateSetting?.value === true;
 
   // Fetch pending interviews
   const { data: pendingData } = await supabase
@@ -131,7 +141,11 @@ export default async function AdminPage() {
         </div>
       </div>
 
-      <div className="animate-in-view-d1">
+      <div className="animate-in-view-d1 mb-6">
+        <SiteSettings passwordGateEnabled={passwordGateEnabled} />
+      </div>
+
+      <div className="animate-in-view-d2">
         <AdminTabs
           pendingInterviews={pendingInterviews}
           flaggedInterviews={flaggedInterviews}
