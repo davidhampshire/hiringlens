@@ -46,12 +46,12 @@ const VALUES = [
 
 export function MissionSection() {
   return (
-    <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-      <div className="animate-in-view mb-8 text-center">
+    <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
+      <div className="animate-in-view mb-12 text-center sm:mb-14">
         <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
           Why HiringLens exists
         </h2>
-        <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
+        <p className="mx-auto mt-4 max-w-2xl text-muted-foreground sm:mt-5">
           Candidates invest real time and energy into every application. They
           deserve to know what they&apos;re walking into. Companies should be
           held accountable for how they treat people throughout the hiring
@@ -59,11 +59,11 @@ export function MissionSection() {
         </p>
       </div>
 
-      <div className="animate-in-view-d1 grid gap-6 sm:grid-cols-2">
+      <div className="animate-in-view-d1 grid gap-5 sm:grid-cols-2 sm:gap-6">
         {VALUES.map((value) => (
           <div
             key={value.title}
-            className="flex gap-4 rounded-lg border bg-card p-5"
+            className="flex gap-4 rounded-lg border bg-card p-6"
           >
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
               {value.icon}
