@@ -36,7 +36,7 @@ export function HeroSection() {
         <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:items-start lg:gap-12">
           {/* Left: Massive headline */}
           <div className="animate-in-view text-center lg:text-left">
-            <h1 className="text-[2.75rem] font-black uppercase leading-[0.9] tracking-tighter text-foreground sm:text-7xl lg:text-[5.5rem]">
+            <h1 className="text-5xl font-black uppercase leading-[0.9] tracking-tighter text-foreground sm:text-7xl lg:text-[5.5rem]">
               See how
               <br />
               companies
@@ -46,7 +46,7 @@ export function HeroSection() {
           </div>
 
           {/* Right: Description + Search + Share link */}
-          <div className="animate-in-view-d1 text-center lg:text-left">
+          <div className="animate-in-view-d2 text-center lg:text-left">
             <p className="mx-auto max-w-sm text-base leading-relaxed text-muted-foreground sm:text-lg lg:mx-0">
               Real interview experiences from real candidates. Holding companies
               accountable and helping you prepare for what&apos;s actually ahead.

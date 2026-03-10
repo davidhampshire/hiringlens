@@ -9,6 +9,7 @@ import { RecentReviews } from "@/components/home/recent-reviews";
 import { ClosingCTA } from "@/components/home/closing-cta";
 import { GetInvolved } from "@/components/home/get-involved";
 import { AdPlaceholder } from "@/components/shared/ad-placeholder";
+import { ScrollReveal } from "@/components/shared/scroll-reveal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { buildHomepageJsonLd } from "@/lib/json-ld";
 
@@ -60,31 +61,46 @@ export default function HomePage() {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
         />
       ))}
+      <ScrollReveal />
       <HeroSection />
       <Suspense fallback={<StatsSkeleton />}>
         <PlatformStats />
       </Suspense>
-      <MissionSection />
-      <Suspense fallback={<CompanySkeleton />}>
-        <TrendingCompanies />
-      </Suspense>
-      <Suspense fallback={<CompanySkeleton />}>
-        <TopCompanies />
-      </Suspense>
-      <Suspense fallback={<CompanySkeleton />}>
-        <WatchOutCompanies />
-      </Suspense>
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+      <div className="reveal">
+        <MissionSection />
+      </div>
+      <div className="reveal">
+        <Suspense fallback={<CompanySkeleton />}>
+          <TrendingCompanies />
+        </Suspense>
+      </div>
+      <div className="reveal">
+        <Suspense fallback={<CompanySkeleton />}>
+          <TopCompanies />
+        </Suspense>
+      </div>
+      <div className="reveal">
+        <Suspense fallback={<CompanySkeleton />}>
+          <WatchOutCompanies />
+        </Suspense>
+      </div>
+      <div className="reveal mx-auto max-w-6xl px-4 sm:px-6">
         <AdPlaceholder variant="leaderboard" />
       </div>
-      <Suspense fallback={<ReviewsSkeleton />}>
-        <RecentReviews />
-      </Suspense>
-      <div className="mx-auto max-w-6xl px-4 pb-12 sm:px-6">
+      <div className="reveal">
+        <Suspense fallback={<ReviewsSkeleton />}>
+          <RecentReviews />
+        </Suspense>
+      </div>
+      <div className="reveal mx-auto max-w-6xl px-4 pb-12 sm:px-6">
         <AdPlaceholder variant="leaderboard" />
       </div>
-      <ClosingCTA />
-      <GetInvolved />
+      <div className="reveal">
+        <ClosingCTA />
+      </div>
+      <div className="reveal">
+        <GetInvolved />
+      </div>
     </>
   );
 }
