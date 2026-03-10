@@ -140,6 +140,7 @@ export function CompanyCard({ company }: CompanyCardProps) {
                 avgClarity={company.avg_clarity}
                 avgFairness={company.avg_fairness}
                 compact
+                animate
               />
             </div>
 
