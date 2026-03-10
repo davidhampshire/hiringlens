@@ -176,7 +176,7 @@ function SearchOverlay({ onClose }: { onClose: () => void }) {
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-[100] flex items-start justify-center bg-black/50 pt-[15vh] backdrop-blur-sm sm:pt-[20vh]"
+      className="fixed inset-0 z-[100] flex items-start justify-center bg-black/60 pt-[15vh] backdrop-blur-md sm:pt-[20vh]"
       onClick={(e) => {
         if (e.target === overlayRef.current) onClose();
       }}
