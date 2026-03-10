@@ -44,17 +44,22 @@ export async function PlatformStats() {
 
   return (
     <section className="relative z-10 mx-auto -mt-14 max-w-5xl px-4 sm:-mt-16 sm:px-6">
-      <div className="animate-in-view-d2 grid grid-cols-2 divide-x divide-border rounded-2xl border bg-card p-5 shadow-xl sm:grid-cols-4 sm:p-7">
-        {stats.map((stat) => (
-          <div key={stat.label} className="px-3 text-center sm:px-4">
-            <p className="text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">
-              <AnimatedCounter value={stat.value} />
-            </p>
-            <p className="mt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground sm:text-xs">
-              {stat.label}
-            </p>
-          </div>
-        ))}
+      <div className="animate-in-view-d2 rounded-2xl border bg-card shadow-xl">
+        <div className="grid grid-cols-2 divide-x divide-border p-5 sm:grid-cols-4 sm:p-7">
+          {stats.map((stat) => (
+            <div key={stat.label} className="px-3 text-center sm:px-4">
+              <p className="text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">
+                <AnimatedCounter value={stat.value} />
+              </p>
+              <p className="mt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground sm:text-xs">
+                {stat.label}
+              </p>
+            </div>
+          ))}
+        </div>
+        <p className="border-t px-5 py-2.5 text-center text-xs font-medium text-muted-foreground/70">
+          And growing — powered by real candidates like you
+        </p>
       </div>
     </section>
   );
