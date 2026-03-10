@@ -35,7 +35,7 @@ export function HeroSection() {
       <div className="relative mx-auto max-w-6xl px-4 pb-20 pt-16 sm:px-6 sm:pb-24 sm:pt-20 lg:pb-28 lg:pt-24">
         <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:items-start lg:gap-12">
           {/* Left: Massive headline */}
-          <div className="animate-in-view">
+          <div className="animate-in-view text-center lg:text-left">
             <h1 className="text-[2.75rem] font-black uppercase leading-[0.9] tracking-tighter text-foreground sm:text-7xl lg:text-[5.5rem]">
               See how
               <br />
@@ -46,15 +46,15 @@ export function HeroSection() {
           </div>
 
           {/* Right: Description + Search + Share link */}
-          <div className="animate-in-view-d1">
-            <p className="max-w-sm text-base leading-relaxed text-muted-foreground sm:text-lg">
+          <div className="animate-in-view-d1 text-center lg:text-left">
+            <p className="mx-auto max-w-sm text-base leading-relaxed text-muted-foreground sm:text-lg lg:mx-0">
               Real interview experiences from real candidates. Holding companies
               accountable and helping you prepare for what&apos;s actually ahead.
             </p>
 
             <form
               onSubmit={handleSearch}
-              className="mt-6 flex max-w-md gap-2"
+              className="mx-auto mt-6 flex max-w-md gap-2 lg:mx-0"
             >
               <Input
                 type="search"
