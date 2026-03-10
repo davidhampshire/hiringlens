@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { Header } from "@/components/layout/header";
+import { AnnouncementBar } from "@/components/layout/announcement-bar";
 import { Footer } from "@/components/layout/footer";
 import { BackgroundGlow } from "@/components/layout/background-glow";
 import { ScrollToTop } from "@/components/layout/scroll-to-top";
@@ -67,6 +68,7 @@ export default function RootLayout({
         <div className="relative flex min-h-screen flex-col">
           <ScrollToTop />
           <BackgroundGlow />
+          <AnnouncementBar />
           <Header />
           <main id="main-content" className="flex-1">{children}</main>
           <Footer />

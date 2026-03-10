@@ -185,11 +185,11 @@ function SearchOverlay({ onClose }: { onClose: () => void }) {
       aria-label="Search companies"
       aria-modal="true"
     >
-      <div className="w-full max-w-lg mx-4 overflow-hidden rounded-xl border bg-background shadow-2xl">
+      <div className="w-full max-w-2xl mx-4 overflow-hidden rounded-2xl border bg-background shadow-2xl">
         {/* Search input */}
-        <div className="flex items-center gap-3 border-b px-4">
+        <div className="flex items-center gap-4 border-b px-5">
           <svg
-            className="h-4 w-4 shrink-0 text-muted-foreground"
+            className="h-6 w-6 shrink-0 text-muted-foreground"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -209,16 +209,33 @@ function SearchOverlay({ onClose }: { onClose: () => void }) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="h-12 border-0 bg-transparent px-0 text-base shadow-none focus-visible:ring-0"
+            className="h-16 border-0 bg-transparent px-0 text-xl shadow-none focus-visible:ring-0"
             aria-autocomplete="list"
             aria-controls="search-dialog-results"
             aria-activedescendant={
               activeIndex >= 0 ? `search-dialog-result-${activeIndex}` : undefined
             }
           />
-          <kbd className="hidden shrink-0 rounded border bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground sm:inline-block">
-            ESC
-          </kbd>
+          <button
+            onClick={onClose}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border bg-muted text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+            aria-label="Close search"
+          >
+            <svg
+              className="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
         </div>
 
         {/* Results */}

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AdminTabs } from "@/components/admin/admin-tabs";
 import { SiteSettings } from "@/components/admin/site-settings";
+import { AnnouncementSettings } from "@/components/admin/announcement-settings";
 import type { Interview } from "@/types";
 
 export const metadata: Metadata = {
@@ -45,6 +46,18 @@ export default async function AdminPage() {
     .single();
 
   const passwordGateEnabled = passwordGateSetting?.value === true;
+
+  // Fetch announcements
+  const { data: announcementsSetting } = await supabase
+    .from("site_settings")
+    .select("value")
+    .eq("key", "announcements")
+    .single();
+
+  const announcements: string[] =
+    announcementsSetting?.value && Array.isArray(announcementsSetting.value)
+      ? (announcementsSetting.value as string[])
+      : [];
 
   // Fetch pending interviews
   const { data: pendingData } = await supabase
@@ -141,8 +154,9 @@ export default async function AdminPage() {
         </div>
       </div>
 
-      <div className="animate-in-view-d1 mb-6">
+      <div className="animate-in-view-d1 mb-6 space-y-4">
         <SiteSettings passwordGateEnabled={passwordGateEnabled} />
+        <AnnouncementSettings initialMessages={announcements} />
       </div>
 
       <div className="animate-in-view-d2">
