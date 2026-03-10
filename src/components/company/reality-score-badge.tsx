@@ -6,9 +6,14 @@ import { useEffect, useState } from "react";
 interface RealityScoreBadgeProps {
   score: number | null;
   totalReviews: number;
+  size?: "default" | "sm";
 }
 
-export function RealityScoreBadge({ score, totalReviews }: RealityScoreBadgeProps) {
+export function RealityScoreBadge({
+  score,
+  totalReviews,
+  size = "default",
+}: RealityScoreBadgeProps) {
   const [animatedScore, setAnimatedScore] = useState(0);
 
   useEffect(() => {
@@ -41,9 +46,11 @@ export function RealityScoreBadge({ score, totalReviews }: RealityScoreBadgeProp
     return "#ef4444";
   }
 
+  const isSmall = size === "sm";
+
   return (
-    <div className="flex flex-col items-center gap-2">
-      <div className="relative h-32 w-32">
+    <div className="flex flex-col items-center gap-1.5">
+      <div className={cn("relative", isSmall ? "h-20 w-20" : "h-32 w-32")}>
         <svg className="h-full w-full -rotate-90" viewBox="0 0 120 120">
           <circle
             cx="60"
@@ -51,7 +58,7 @@ export function RealityScoreBadge({ score, totalReviews }: RealityScoreBadgeProp
             r="54"
             fill="none"
             stroke="currentColor"
-            strokeWidth="8"
+            strokeWidth={isSmall ? 10 : 8}
             className="text-muted/30"
           />
           <circle
@@ -60,7 +67,7 @@ export function RealityScoreBadge({ score, totalReviews }: RealityScoreBadgeProp
             r="54"
             fill="none"
             stroke={getStrokeColor(score)}
-            strokeWidth="8"
+            strokeWidth={isSmall ? 10 : 8}
             strokeLinecap="round"
             strokeDasharray={circumference}
             strokeDashoffset={strokeDashoffset}
@@ -68,16 +75,26 @@ export function RealityScoreBadge({ score, totalReviews }: RealityScoreBadgeProp
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className={cn("text-3xl font-bold", getScoreColor(score))}>
+          <span
+            className={cn(
+              "font-bold leading-none",
+              isSmall ? "text-xl" : "text-3xl",
+              getScoreColor(score)
+            )}
+          >
             {score !== null ? formatScore(score) : "N/A"}
           </span>
         </div>
       </div>
       <div className="text-center">
-        <p className="text-sm font-medium">Reality Score</p>
-        <p className="text-xs text-muted-foreground">
-          Based on {totalReviews} {totalReviews === 1 ? "review" : "reviews"}
+        <p className={cn("font-medium", isSmall ? "text-xs" : "text-sm")}>
+          Reality Score
         </p>
+        {!isSmall && (
+          <p className="text-xs text-muted-foreground">
+            Based on {totalReviews} {totalReviews === 1 ? "review" : "reviews"}
+          </p>
+        )}
       </div>
     </div>
   );
