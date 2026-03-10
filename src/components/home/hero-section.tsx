@@ -36,7 +36,7 @@ export function HeroSection() {
         <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:items-start lg:gap-12">
           {/* Left: Massive headline */}
           <div className="animate-in-view text-center lg:text-left">
-            <h1 className="text-5xl font-black uppercase leading-[0.9] tracking-tighter text-foreground sm:text-7xl lg:text-[5.5rem]">
+            <h1 className="text-6xl font-black uppercase leading-[0.9] tracking-tighter text-foreground sm:text-8xl lg:text-[7rem]">
               See how
               <br />
               companies
