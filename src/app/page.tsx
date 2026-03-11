@@ -7,6 +7,7 @@ import { TopCompanies } from "@/components/home/top-companies";
 import { WatchOutCompanies } from "@/components/home/watchout-companies";
 import { RecentReviews } from "@/components/home/recent-reviews";
 import { ClosingCTA } from "@/components/home/closing-cta";
+import { CompanyEngageSection } from "@/components/home/company-engage-section";
 import { GetInvolved } from "@/components/home/get-involved";
 import { AdPlaceholder } from "@/components/shared/ad-placeholder";
 import { CompanyPromo } from "@/components/shared/company-promo";
@@ -101,6 +102,9 @@ export default function HomePage() {
       </div>
       <div className="reveal">
         <ClosingCTA />
+      </div>
+      <div className="reveal">
+        <CompanyEngageSection />
       </div>
       <div className="reveal">
         <GetInvolved />
