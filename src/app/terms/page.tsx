@@ -41,15 +41,35 @@ export default function TermsPage() {
 
         <section>
           <h2 className="text-lg font-semibold text-foreground">
-            3. User Content
+            3. User Content and Accuracy
           </h2>
           <p className="mt-2">
             By submitting content to HiringLens, you grant us a non-exclusive,
             royalty-free, worldwide licence to display, distribute, and
             reproduce your content in connection with the Service. You retain
-            ownership of your content. You represent that your submissions are
-            truthful, based on genuine experiences, and do not violate our
-            Community Guidelines.
+            ownership of your content.
+          </p>
+          <p className="mt-2">
+            By submitting a review, you explicitly confirm that:
+          </p>
+          <ul className="mt-2 list-disc space-y-1 pl-6">
+            <li>
+              The content is based on your own genuine, first-hand experience
+            </li>
+            <li>
+              The information provided is truthful and accurate to the best of
+              your knowledge
+            </li>
+            <li>
+              You accept sole responsibility for the accuracy of the content you
+              submit
+            </li>
+          </ul>
+          <p className="mt-2">
+            HiringLens is a neutral hosting platform and is not the author or
+            publisher of user-submitted reviews. Reviews that are found to
+            contain demonstrably false statements of fact may be amended or
+            removed at HiringLens&apos;s sole discretion.
           </p>
         </section>
 
@@ -104,7 +124,59 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-foreground">8. Contact</h2>
+          <h2 className="text-lg font-semibold text-foreground">
+            8. Governing Law
+          </h2>
+          <p className="mt-2">
+            These Terms shall be governed by and construed in accordance with
+            the laws of England and Wales, without regard to conflict of law
+            principles.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-lg font-semibold text-foreground">
+            9. Company Content Review Process
+          </h2>
+          <p className="mt-2">
+            If you believe a review on HiringLens contains false statements of
+            fact about your organisation, you may submit a formal content review
+            request to{" "}
+            <a
+              href="mailto:legal@hiringlens.com"
+              className="text-primary hover:underline"
+            >
+              legal@hiringlens.com
+            </a>{" "}
+            with the subject line &quot;Content Review Request&quot;.
+          </p>
+          <p className="mt-2">Your request must include:</p>
+          <ul className="mt-2 list-disc space-y-1 pl-6">
+            <li>Your full name and role</li>
+            <li>The company you represent</li>
+            <li>A link to the specific review</li>
+            <li>
+              The specific statement(s) you believe to be factually incorrect
+            </li>
+            <li>Supporting evidence</li>
+          </ul>
+          <p className="mt-2">
+            HiringLens will assess requests in good faith and aims to respond
+            within 10 working days. Reviews will not be removed solely on the
+            basis of being negative or critical. Verified company representatives
+            may also apply for a right of response — contact us at{" "}
+            <a
+              href="mailto:legal@hiringlens.com"
+              className="text-primary hover:underline"
+            >
+              legal@hiringlens.com
+            </a>{" "}
+            for details.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-lg font-semibold text-foreground">10. Contact</h2>
           <p className="mt-2">
             For questions about these Terms, contact us at{" "}
             <a

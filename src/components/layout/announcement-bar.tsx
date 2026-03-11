@@ -1,14 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 
+type AnnouncementData = {
+  messages: string[];
+  intervalSeconds: number;
+};
+
 export function AnnouncementBar() {
-  const [messages, setMessages] = useState<string[]>([]);
+  const [config, setConfig] = useState<AnnouncementData | null>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [visible, setVisible] = useState(true);
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
-    // Check if already dismissed this session
     if (sessionStorage.getItem("announcement_dismissed") === "1") {
       setDismissed(true);
       return;
@@ -23,43 +29,66 @@ export function AnnouncementBar() {
           .eq("key", "announcements")
           .single();
 
-        if (data?.value && Array.isArray(data.value) && data.value.length > 0) {
-          setMessages(data.value as string[]);
+        if (!data?.value) return;
+
+        const raw = data.value;
+
+        // Support both old format (string[]) and new format ({ messages, intervalSeconds })
+        if (
+          typeof raw === "object" &&
+          !Array.isArray(raw) &&
+          "messages" in (raw as Record<string, unknown>)
+        ) {
+          const cfg = raw as unknown as AnnouncementData;
+          if (cfg.messages.length > 0) setConfig(cfg);
+        } else if (Array.isArray(raw) && raw.length > 0) {
+          setConfig({ messages: raw as string[], intervalSeconds: 5 });
         }
       } catch {
-        // Silently fail — announcement bar is non-critical
+        // Silently fail
       }
     }
 
     fetchAnnouncements();
   }, []);
 
+  // Rotate messages with fade
+  const rotate = useCallback(() => {
+    if (!config || config.messages.length <= 1) return;
+    setVisible(false);
+    setTimeout(() => {
+      setCurrentIndex((prev) => (prev + 1) % config.messages.length);
+      setVisible(true);
+    }, 400);
+  }, [config]);
+
+  useEffect(() => {
+    if (!config || config.messages.length <= 1) return;
+    const timer = setInterval(rotate, config.intervalSeconds * 1000);
+    return () => clearInterval(timer);
+  }, [config, rotate]);
+
   function handleDismiss() {
     setDismissed(true);
     sessionStorage.setItem("announcement_dismissed", "1");
   }
 
-  if (dismissed || messages.length === 0) return null;
-
-  // Build the scrolling text: repeat messages with separator
-  const scrollText = [...messages, ...messages, ...messages]
-    .join("     ✦     ")
-    .concat("     ✦     ");
+  if (dismissed || !config || config.messages.length === 0) return null;
 
   return (
-    <div className="relative z-50 overflow-hidden bg-primary text-primary-foreground">
-      <div className="flex items-center">
-        {/* Scrolling marquee */}
-        <div className="flex-1 overflow-hidden">
-          <div className="animate-marquee whitespace-nowrap py-2 text-sm font-medium">
-            {scrollText}
-          </div>
-        </div>
+    <div className="relative z-50 bg-primary text-primary-foreground">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-2 sm:px-6">
+        <p
+          className={`flex-1 text-center text-sm font-medium transition-opacity duration-300 ${
+            visible ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          {config.messages[currentIndex]}
+        </p>
 
-        {/* Dismiss button */}
         <button
           onClick={handleDismiss}
-          className="shrink-0 px-3 py-2 text-primary-foreground/70 transition-colors hover:text-primary-foreground"
+          className="ml-3 shrink-0 rounded p-1 text-primary-foreground/70 transition-colors hover:text-primary-foreground"
           aria-label="Dismiss announcement"
         >
           <svg

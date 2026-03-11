@@ -20,6 +20,30 @@ export default function GuidelinesPage() {
 
       <div className="space-y-8">
         <section>
+          <h2 className="text-lg font-semibold">Our Honesty Standard</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Every review on HiringLens represents someone&apos;s real experience.
+            When you submit, you&apos;re confirming that your review is truthful,
+            first-hand, and based on genuine interactions with the company.
+          </p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            You don&apos;t need to be perfect — you can share frustrations,
+            criticism, and nuance freely. What we ask is that you don&apos;t
+            knowingly post false information, impersonate others, or review
+            companies you haven&apos;t genuinely dealt with.
+          </p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Reviews found to violate this standard may be removed. If you believe
+            a review about your company contains false statements of fact, you can
+            submit a content review request via our{" "}
+            <a href="/contact" className="text-primary hover:underline">
+              Contact page
+            </a>
+            .
+          </p>
+        </section>
+
+        <section>
           <h2 className="text-lg font-semibold text-emerald-600">
             What makes a great review
           </h2>

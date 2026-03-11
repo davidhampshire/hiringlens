@@ -176,25 +176,17 @@ export async function togglePasswordGate(enabled: boolean) {
   return { success: true, enabled };
 }
 
-export async function getAnnouncements(): Promise<string[]> {
-  const { supabase } = await requireAdmin();
+export type AnnouncementConfig = {
+  messages: string[];
+  intervalSeconds: number;
+};
 
-  const { data } = await supabase
-    .from("site_settings")
-    .select("value")
-    .eq("key", "announcements")
-    .single();
-
-  if (!data?.value || !Array.isArray(data.value)) return [];
-  return data.value as string[];
-}
-
-export async function updateAnnouncements(messages: string[]) {
+export async function updateAnnouncements(config: AnnouncementConfig) {
   const { supabase } = await requireAdmin();
 
   const { error } = await supabase
     .from("site_settings")
-    .update({ value: messages, updated_at: new Date().toISOString() })
+    .update({ value: config as unknown as Record<string, unknown>, updated_at: new Date().toISOString() })
     .eq("key", "announcements");
 
   if (error) throw new Error(error.message);

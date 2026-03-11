@@ -54,10 +54,17 @@ export default async function AdminPage() {
     .eq("key", "announcements")
     .single();
 
-  const announcements: string[] =
-    announcementsSetting?.value && Array.isArray(announcementsSetting.value)
-      ? (announcementsSetting.value as string[])
-      : [];
+  // Support both old format (string[]) and new format ({ messages, intervalSeconds })
+  const rawAnnouncements = announcementsSetting?.value;
+  const announcementConfig = rawAnnouncements &&
+    typeof rawAnnouncements === "object" &&
+    !Array.isArray(rawAnnouncements) &&
+    "messages" in (rawAnnouncements as Record<string, unknown>)
+      ? (rawAnnouncements as unknown as { messages: string[]; intervalSeconds: number })
+      : {
+          messages: Array.isArray(rawAnnouncements) ? (rawAnnouncements as string[]) : [],
+          intervalSeconds: 5,
+        };
 
   // Fetch pending interviews
   const { data: pendingData } = await supabase
@@ -156,7 +163,7 @@ export default async function AdminPage() {
 
       <div className="animate-in-view-d1 mb-6 space-y-4">
         <SiteSettings passwordGateEnabled={passwordGateEnabled} />
-        <AnnouncementSettings initialMessages={announcements} />
+        <AnnouncementSettings initialConfig={announcementConfig} />
       </div>
 
       <div className="animate-in-view-d2">

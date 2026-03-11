@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { Checkbox } from "@/components/ui/checkbox";
 import { CompanySearchInput } from "./company-search-input";
 import { RatingInput } from "./rating-input";
 import { FlagToggle } from "./flag-toggle";
@@ -163,6 +164,7 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
     Record<string, Record<string, string>>
   >({});
   const [activeStep, setActiveStep] = useState(0);
+  const [truthfulnessConfirmed, setTruthfulnessConfirmed] = useState(false);
   const [isAnonymous, setIsAnonymous] = useState(
     editData ? !editData.display_name : true
   );
@@ -1200,13 +1202,45 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
         {/* Auth banner — bottom */}
         {!isEditMode && isSignedIn === false && <AuthBanner isSignedIn={false} />}
 
+        {/* Truthfulness confirmation */}
+        {!isEditMode && (
+          <div className="flex min-h-[44px] items-start gap-3">
+            <Checkbox
+              id="truthfulness"
+              checked={truthfulnessConfirmed}
+              onCheckedChange={(checked) =>
+                setTruthfulnessConfirmed(checked === true)
+              }
+              className="mt-0.5"
+            />
+            <label
+              htmlFor="truthfulness"
+              className="cursor-pointer text-sm leading-relaxed text-muted-foreground"
+            >
+              This review is based on my genuine, first-hand experience and is
+              truthful to the best of my knowledge. Read our{" "}
+              <Link
+                href="/guidelines"
+                className="text-primary underline underline-offset-2 hover:text-primary/80"
+              >
+                Community Guidelines
+              </Link>
+            </label>
+          </div>
+        )}
+
         {/* Submit */}
         <div className="sticky bottom-0 border-t bg-background py-4 sm:static sm:border-0 sm:py-0">
           <Button
             type="submit"
             size="lg"
             className="w-full sm:w-auto"
-            disabled={isSubmitting}
+            disabled={isSubmitting || (!isEditMode && !truthfulnessConfirmed)}
+            title={
+              !isEditMode && !truthfulnessConfirmed
+                ? "Please confirm your review is truthful to continue"
+                : undefined
+            }
           >
             {isSubmitting
               ? isEditMode
