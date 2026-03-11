@@ -176,7 +176,7 @@ export default async function InsightsPage() {
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
       {/* Header */}
       <div className="animate-in-view mb-8">
-        <h1 className="text-3xl font-black uppercase tracking-tighter sm:text-4xl">
+        <h1 className="text-4xl font-black uppercase tracking-tighter sm:text-5xl">
           Industry <span className="text-foreground/25">Insights</span>
         </h1>
         <p className="mt-2 max-w-lg text-muted-foreground">

@@ -11,23 +11,15 @@ export default function ContactPage() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
       <div className="animate-in-view mb-8">
-        <h1 className="text-2xl font-bold">Contact Us</h1>
+        <h1 className="text-4xl font-black uppercase tracking-tighter sm:text-5xl">Contact <span className="text-foreground/25">Us</span></h1>
         <p className="mt-2 text-muted-foreground">
           Have a question, suggestion, or issue? We&apos;d love to hear from
-          you.
+          you. Fill out the form below and we&apos;ll get back to you within 2 business days.
         </p>
       </div>
 
-      <div className="animate-in-view-d1 grid gap-8 md:grid-cols-2">
-        <div className="space-y-6">
-          <section>
-            <h2 className="text-lg font-semibold">Get In Touch</h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Fill out the form and we&apos;ll get back to you within 2 business
-              days. You can also reach us directly by email.
-            </p>
-          </section>
-
+      <div className="animate-in-view-d1 space-y-8">
+        <div className="flex flex-wrap gap-x-8 gap-y-4">
           <section>
             <h3 className="font-medium">General Enquiries</h3>
             <p className="mt-1 text-sm text-muted-foreground">
@@ -45,9 +37,7 @@ export default function ContactPage() {
           <section>
             <h3 className="font-medium">Report an Issue</h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              If you&apos;ve found a bug or need to report content, email us at
-              support@hiringlens.com or use the &quot;Report&quot; button on any
-              review.
+              support@hiringlens.com
             </p>
           </section>
         </div>
