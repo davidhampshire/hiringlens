@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { CompanyCard } from "@/components/shared/company-card";
 import { LetterNav } from "@/components/companies/letter-nav";
 import { EmptyState } from "@/components/shared/empty-state";
+import { CompanyPromo } from "@/components/shared/company-promo";
 import type { CompanyScore } from "@/types";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hiringlens.com";
@@ -79,6 +80,10 @@ export default async function CompaniesPage() {
 
       <div className="animate-in-view-d1">
         <LetterNav availableLetters={availableLetters} />
+      </div>
+
+      <div className="mt-6">
+        <CompanyPromo variant="directory" />
       </div>
 
       <div className="animate-in-view-d2 mt-6 space-y-10">

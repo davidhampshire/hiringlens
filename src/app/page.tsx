@@ -9,6 +9,7 @@ import { RecentReviews } from "@/components/home/recent-reviews";
 import { ClosingCTA } from "@/components/home/closing-cta";
 import { GetInvolved } from "@/components/home/get-involved";
 import { AdPlaceholder } from "@/components/shared/ad-placeholder";
+import { CompanyPromo } from "@/components/shared/company-promo";
 import { ScrollReveal } from "@/components/shared/scroll-reveal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { buildHomepageJsonLd } from "@/lib/json-ld";
@@ -83,6 +84,9 @@ export default function HomePage() {
         <Suspense fallback={<CompanySkeleton />}>
           <WatchOutCompanies />
         </Suspense>
+      </div>
+      <div className="reveal mx-auto max-w-6xl px-4 py-8 sm:px-6">
+        <CompanyPromo variant="homepage" />
       </div>
       <div className="reveal mx-auto max-w-6xl px-4 sm:px-6">
         <AdPlaceholder variant="leaderboard" />
