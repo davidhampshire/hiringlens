@@ -139,6 +139,64 @@ export function adminNewPendingEmail(companyName: string, roleTitle: string) {
   };
 }
 
+// ── Company Representative Email Templates ──────────
+
+export function repVerifiedEmail(companyName: string) {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hiringlens.vercel.app";
+  return {
+    subject: `You're verified as a representative for ${escapeHtml(companyName)}`,
+    html: `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; padding: 24px;">
+        <h2 style="color: #111; margin-bottom: 16px;">Welcome to HiringLens!</h2>
+        <p style="color: #555; line-height: 1.6;">
+          You've been verified as a representative for <strong>${escapeHtml(companyName)}</strong>.
+          You can now respond to candidate reviews about your company.
+        </p>
+        <p style="margin: 24px 0;">
+          <a href="${siteUrl}/company-dashboard"
+             style="background: #111; color: #fff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-size: 14px;">
+            Open Company Dashboard
+          </a>
+        </p>
+        <p style="color: #555; line-height: 1.6;">
+          Your responses will be reviewed by our team before being published.
+          Please keep replies professional and constructive.
+        </p>
+        <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0;" />
+        <p style="color: #999; font-size: 13px;">
+          The HiringLens Team
+        </p>
+      </div>
+    `,
+  };
+}
+
+export function adminNewResponseEmail(companyName: string, roleTitle: string) {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hiringlens.vercel.app";
+  return {
+    subject: `[HiringLens] New company response: ${companyName}`,
+    html: `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; padding: 24px;">
+        <h2 style="color: #111; margin-bottom: 16px;">New company response pending review</h2>
+        <p style="color: #555; line-height: 1.6;">
+          A representative from <strong>${escapeHtml(companyName)}</strong> has responded to a review
+          for the <strong>${escapeHtml(roleTitle)}</strong> role.
+        </p>
+        <p style="margin: 24px 0;">
+          <a href="${siteUrl}/admin"
+             style="background: #111; color: #fff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-size: 14px;">
+            Review in Admin
+          </a>
+        </p>
+        <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0;" />
+        <p style="color: #999; font-size: 13px;">
+          HiringLens Notifications
+        </p>
+      </div>
+    `,
+  };
+}
+
 function escapeHtml(str: string): string {
   return str
     .replace(/&/g, "&amp;")

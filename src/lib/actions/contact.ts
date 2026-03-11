@@ -6,11 +6,28 @@ import { headers } from "next/headers";
 
 const MAX_CONTACT_PER_HOUR = 3;
 
+const SUBJECT_LABELS: Record<string, string> = {
+  general: "General enquiry",
+  feedback: "Feedback or suggestion",
+  report: "Report an issue",
+  company_rep: "[Company Rep]",
+  other: "Other",
+};
+
 export async function submitContactMessage(_prev: unknown, formData: FormData) {
+  const subjectKey = (formData.get("subject") as string) ?? "";
+  const companyName = (formData.get("company_name") as string)?.trim() ?? "";
+
+  // Build a human-readable subject line
+  let subjectLine = SUBJECT_LABELS[subjectKey] ?? subjectKey;
+  if (subjectKey === "company_rep" && companyName) {
+    subjectLine = `[Company Rep] ${companyName}`;
+  }
+
   const rawData = {
     name: formData.get("name") as string,
     email: formData.get("email") as string,
-    subject: formData.get("subject") as string,
+    subject: subjectLine,
     message: formData.get("message") as string,
   };
 

@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PROTECTED_ROUTES = ["/account", "/admin"];
+const PROTECTED_ROUTES = ["/account", "/admin", "/company-dashboard"];
 const AUTH_ROUTES = ["/sign-in", "/sign-up"];
 
 /* ── Security Headers ── */

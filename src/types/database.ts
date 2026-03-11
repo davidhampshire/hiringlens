@@ -223,6 +223,64 @@ export type Database = {
           created_at?: string;
         };
       };
+      company_representatives: {
+        Row: {
+          id: string;
+          user_id: string;
+          company_id: string;
+          email: string;
+          role: "admin" | "responder";
+          verified_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          company_id: string;
+          email: string;
+          role?: "admin" | "responder";
+          verified_at?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          company_id?: string;
+          email?: string;
+          role?: "admin" | "responder";
+          verified_at?: string | null;
+          created_at?: string;
+        };
+      };
+      company_responses: {
+        Row: {
+          id: string;
+          interview_id: string;
+          representative_id: string;
+          body: string;
+          status: "pending" | "published" | "hidden";
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          interview_id: string;
+          representative_id: string;
+          body: string;
+          status?: "pending" | "published" | "hidden";
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          interview_id?: string;
+          representative_id?: string;
+          body?: string;
+          status?: "pending" | "published" | "hidden";
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
       moderation_flags: {
         Row: {
           id: string;

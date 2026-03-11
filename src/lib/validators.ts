@@ -98,3 +98,23 @@ export const contactSchema = z.object({
 });
 
 export type ContactFormData = z.infer<typeof contactSchema>;
+
+/* ── Company Representative Schemas ── */
+
+export const createRepresentativeSchema = z.object({
+  user_email: z.string().email("Valid email required"),
+  company_id: z.string().uuid("Company ID required"),
+  role: z.enum(["admin", "responder"]).default("responder"),
+});
+
+export type CreateRepresentativeData = z.infer<typeof createRepresentativeSchema>;
+
+export const companyResponseSchema = z.object({
+  interview_id: z.string().uuid("Interview ID required"),
+  body: z
+    .string()
+    .min(20, "Response must be at least 20 characters")
+    .max(2000, "Response must be under 2,000 characters"),
+});
+
+export type CompanyResponseData = z.infer<typeof companyResponseSchema>;

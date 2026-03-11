@@ -123,6 +123,51 @@ export default async function AdminPage() {
     created_at: string;
   }>;
 
+  // Fetch company representatives
+  const { data: repsData } = await supabase
+    .from("company_representatives")
+    .select("*, companies(name, slug)")
+    .order("created_at", { ascending: false });
+
+  const companyReps = (repsData ?? []) as Array<{
+    id: string;
+    user_id: string;
+    company_id: string;
+    email: string;
+    role: "admin" | "responder";
+    verified_at: string | null;
+    created_at: string;
+    companies: { name: string; slug: string } | null;
+  }>;
+
+  // Fetch pending company responses
+  const { data: responsesData } = await supabase
+    .from("company_responses")
+    .select("*, company_representatives(email, companies(name, slug)), interviews(role_title)")
+    .eq("status", "pending")
+    .order("created_at", { ascending: true });
+
+  const pendingResponses = (responsesData ?? []) as Array<{
+    id: string;
+    interview_id: string;
+    representative_id: string;
+    body: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+    company_representatives: {
+      email: string;
+      companies: { name: string; slug: string } | null;
+    } | null;
+    interviews: { role_title: string } | null;
+  }>;
+
+  // Fetch all companies for the add-rep form
+  const { data: allCompanies } = await supabase
+    .from("companies")
+    .select("id, name")
+    .order("name", { ascending: true });
+
   // Get counts
   const { count: totalPending } = await supabase
     .from("interviews")
@@ -158,6 +203,14 @@ export default async function AdminPage() {
             <p className="text-2xl font-bold text-blue-600">{contactMessages.length}</p>
             <p className="text-xs text-muted-foreground">Messages</p>
           </div>
+          <div className="rounded-lg border bg-card px-4 py-3">
+            <p className="text-2xl font-bold text-purple-600">{companyReps.length}</p>
+            <p className="text-xs text-muted-foreground">Company Reps</p>
+          </div>
+          <div className="rounded-lg border bg-card px-4 py-3">
+            <p className="text-2xl font-bold text-indigo-600">{pendingResponses.length}</p>
+            <p className="text-xs text-muted-foreground">Pending Responses</p>
+          </div>
         </div>
       </div>
 
@@ -171,6 +224,9 @@ export default async function AdminPage() {
           pendingInterviews={pendingInterviews}
           flaggedInterviews={flaggedInterviews}
           contactMessages={contactMessages}
+          companyReps={companyReps}
+          pendingResponses={pendingResponses}
+          allCompanies={(allCompanies ?? []) as Array<{ id: string; name: string }>}
         />
       </div>
     </div>

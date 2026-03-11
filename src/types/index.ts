@@ -14,4 +14,7 @@ export type InterviewType = Database["public"]["Enums"]["interview_type"];
 export type SeniorityLevel = Database["public"]["Enums"]["seniority_level"];
 export type ReviewStatus = Database["public"]["Enums"]["review_status"];
 
+export type CompanyRepresentative = Database["public"]["Tables"]["company_representatives"]["Row"];
+export type CompanyResponse = Database["public"]["Tables"]["company_responses"]["Row"];
+
 export type SearchResult = Database["public"]["Functions"]["search_companies"]["Returns"][number];

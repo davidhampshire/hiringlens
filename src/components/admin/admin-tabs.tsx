@@ -7,7 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { AdminInterviewRow } from "@/components/admin/admin-interview-row";
+import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/shared/empty-state";
+import { AddRepForm } from "@/components/admin/add-rep-form";
+import { AdminRepRow } from "@/components/admin/admin-rep-row";
+import { AdminResponseRow } from "@/components/admin/admin-response-row";
 import { bulkApproveInterviews, bulkRejectInterviews } from "@/lib/actions/admin";
 import { toast } from "sonner";
 import type { Interview } from "@/types";
@@ -29,18 +33,49 @@ type ContactMessage = {
   created_at: string;
 };
 
+type CompanyRep = {
+  id: string;
+  user_id: string;
+  company_id: string;
+  email: string;
+  role: "admin" | "responder";
+  verified_at: string | null;
+  created_at: string;
+  companies: { name: string; slug: string } | null;
+};
+
+type PendingResponse = {
+  id: string;
+  interview_id: string;
+  representative_id: string;
+  body: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+  company_representatives: {
+    email: string;
+    companies: { name: string; slug: string } | null;
+  } | null;
+  interviews: { role_title: string } | null;
+};
+
 interface AdminTabsProps {
   pendingInterviews: InterviewWithCompany[];
   flaggedInterviews: InterviewWithFlags[];
   contactMessages: ContactMessage[];
+  companyReps: CompanyRep[];
+  pendingResponses: PendingResponse[];
+  allCompanies: Array<{ id: string; name: string }>;
 }
 
-type Tab = "pending" | "flagged" | "messages";
+type Tab = "pending" | "flagged" | "messages" | "reps" | "responses";
 
 const TAB_BADGE_COLORS: Record<Tab, string> = {
   pending: "bg-amber-100 text-amber-700",
   flagged: "bg-rose-100 text-rose-700",
   messages: "bg-blue-100 text-blue-700",
+  reps: "bg-purple-100 text-purple-700",
+  responses: "bg-indigo-100 text-indigo-700",
 };
 
 function matchesSearch(interview: InterviewWithCompany, query: string): boolean {
@@ -58,6 +93,9 @@ export function AdminTabs({
   pendingInterviews,
   flaggedInterviews,
   contactMessages,
+  companyReps,
+  pendingResponses,
+  allCompanies,
 }: AdminTabsProps) {
   const [activeTab, setActiveTab] = useState<Tab>("pending");
   const [searchQuery, setSearchQuery] = useState("");
@@ -157,6 +195,8 @@ export function AdminTabs({
     { id: "pending", label: "Pending", count: pendingInterviews.length },
     { id: "flagged", label: "Flagged", count: flaggedInterviews.length },
     { id: "messages", label: "Messages", count: contactMessages.length },
+    { id: "reps", label: "Company Reps", count: companyReps.length },
+    { id: "responses", label: "Responses", count: pendingResponses.length },
   ];
 
   return (
@@ -351,6 +391,37 @@ export function AdminTabs({
                   </p>
                 </div>
               </Card>
+            ))
+          )}
+        </div>
+      )}
+
+      {activeTab === "reps" && (
+        <div className="space-y-4">
+          <AddRepForm companies={allCompanies} />
+          {companyReps.length === 0 ? (
+            <EmptyState
+              title="No company representatives"
+              description="When a company gets in touch, verify their email domain and add them here."
+            />
+          ) : (
+            companyReps.map((rep) => (
+              <AdminRepRow key={rep.id} rep={rep} />
+            ))
+          )}
+        </div>
+      )}
+
+      {activeTab === "responses" && (
+        <div className="space-y-4">
+          {pendingResponses.length === 0 ? (
+            <EmptyState
+              title="No pending responses"
+              description="Company responses will appear here for review before publishing."
+            />
+          ) : (
+            pendingResponses.map((response) => (
+              <AdminResponseRow key={response.id} response={response} />
             ))
           )}
         </div>

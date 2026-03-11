@@ -12,12 +12,13 @@ import {
 import { ExperienceCard } from "./experience-card";
 import { fetchFilteredInterviews } from "@/lib/actions/recent";
 import { SENIORITY_LABELS, INTERVIEW_TYPE_LABELS } from "@/lib/constants";
-import type { Interview } from "@/types";
+import type { Interview, CompanyResponse } from "@/types";
 
 interface ExperienceListProps {
   companyId: string;
   initialInterviews: Interview[];
   totalCount: number;
+  companyResponses?: Record<string, CompanyResponse>;
 }
 
 type SortOption = "newest" | "oldest" | "highest" | "lowest";
@@ -43,6 +44,7 @@ export function ExperienceList({
   companyId,
   initialInterviews,
   totalCount: initialTotal,
+  companyResponses = {},
 }: ExperienceListProps) {
   const [interviews, setInterviews] = useState<Interview[]>(initialInterviews);
   const [totalCount, setTotalCount] = useState(initialTotal);
@@ -256,7 +258,7 @@ export function ExperienceList({
           ))
         ) : interviews.length > 0 ? (
           interviews.map((interview) => (
-            <ExperienceCard key={interview.id} interview={interview} />
+            <ExperienceCard key={interview.id} interview={interview} companyResponse={companyResponses[interview.id] ?? null} />
           ))
         ) : (
           <div className="col-span-2 py-6 text-center text-sm text-muted-foreground">

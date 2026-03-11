@@ -27,13 +27,14 @@ import {
 } from "@/lib/constants";
 import { useVotes } from "@/hooks/use-votes";
 import { CompanyLogo } from "@/components/shared/company-logo";
-import type { Interview } from "@/types";
+import type { Interview, CompanyResponse } from "@/types";
 
 interface ExperienceCardProps {
   interview: Interview;
   companyName?: string;
   companySlug?: string;
   companyLogoUrl?: string | null;
+  companyResponse?: CompanyResponse | null;
 }
 
 /** Strip the ---FOLLOW_UP_DATA--- JSON block from comments */
@@ -121,6 +122,7 @@ function ExperienceModal({
   interview,
   companyName,
   companySlug,
+  companyResponse,
 }: ExperienceCardProps) {
   const avgRating =
     (interview.professionalism_rating +
@@ -348,6 +350,26 @@ function ExperienceModal({
           </div>
         </>
       )}
+      {/* Company Response */}
+      {companyResponse && (
+        <>
+          <Separator />
+          <div className="rounded-md border border-blue-200 bg-blue-50/50 px-4 py-3">
+            <div className="mb-2 flex items-center gap-2">
+              <Badge className="bg-blue-100 text-blue-700 text-xs">
+                Company Response
+              </Badge>
+              <svg className="h-3.5 w-3.5 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              <span className="text-xs text-blue-600/70">Verified Representative</span>
+            </div>
+            <p className="whitespace-pre-wrap text-sm text-blue-900/80">
+              {companyResponse.body}
+            </p>
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -358,6 +380,7 @@ export function ExperienceCard({
   companyName,
   companySlug,
   companyLogoUrl,
+  companyResponse,
 }: ExperienceCardProps) {
   const {
     userVote: vote,
@@ -549,6 +572,23 @@ export function ExperienceCard({
             </div>
           )}
 
+          {/* Company response */}
+          {companyResponse && (
+            <div className="mt-3 rounded-md border border-blue-200 bg-blue-50/50 px-3 py-2.5">
+              <div className="mb-1 flex items-center gap-1.5">
+                <Badge className="bg-blue-100 text-blue-700 text-[10px] px-1.5 py-0">
+                  Company Response
+                </Badge>
+                <svg className="h-3 w-3 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <p className="line-clamp-2 text-xs text-blue-900/80">
+                {companyResponse.body}
+              </p>
+            </div>
+          )}
+
           {/* Actions — voting + report */}
           {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
           <div className="mt-3 flex items-center justify-between border-t pt-3" onClick={(e) => e.stopPropagation()}>
@@ -688,6 +728,7 @@ export function ExperienceCard({
             interview={interview}
             companyName={companyName}
             companySlug={companySlug}
+            companyResponse={companyResponse}
           />
         </DialogContent>
       </Dialog>

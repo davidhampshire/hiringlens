@@ -13,6 +13,7 @@ import { RedFlagIndicators } from "@/components/company/red-flag-indicators";
 import { CandidateTips } from "@/components/company/candidate-tips";
 import { ExperienceList } from "@/components/company/experience-list";
 import { ExperienceListSkeleton } from "@/components/company/company-page-skeleton";
+import type { CompanyResponse } from "@/types";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { ShareButton } from "@/components/shared/share-button";
 import { CompanyLogo } from "@/components/shared/company-logo";
@@ -88,6 +89,21 @@ async function CompanyExperiences({ companyId }: { companyId: string }) {
 
   const interviews = (interviewData ?? []) as Interview[];
 
+  // Fetch published company responses for these interviews
+  const interviewIds = interviews.map((i) => i.id);
+  const { data: responseData } = interviewIds.length > 0
+    ? await supabase
+        .from("company_responses")
+        .select("*")
+        .eq("status", "published")
+        .in("interview_id", interviewIds)
+    : { data: [] };
+
+  const companyResponses: Record<string, CompanyResponse> = {};
+  for (const r of (responseData ?? []) as CompanyResponse[]) {
+    companyResponses[r.interview_id] = r;
+  }
+
   const tips = interviews
     .map((i) => i.candidate_tip)
     .filter((t): t is string => !!t)
@@ -101,6 +117,7 @@ async function CompanyExperiences({ companyId }: { companyId: string }) {
         companyId={companyId}
         initialInterviews={interviews}
         totalCount={count ?? 0}
+        companyResponses={companyResponses}
       />
     </>
   );
