@@ -59,7 +59,7 @@ export function CompanyEngageSection() {
 
         <div className="animate-in-view-d2 text-center">
           <Button asChild size="lg">
-            <Link href="/contact">Represent Your Company</Link>
+            <Link href="/represent">Represent Your Company</Link>
           </Button>
           <p className="mt-2 text-xs text-muted-foreground">
             Get in touch and we&apos;ll verify your company affiliation

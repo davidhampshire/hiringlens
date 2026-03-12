@@ -23,13 +23,17 @@ const SUBJECT_OPTIONS = [
   { value: "other", label: "Other" },
 ];
 
-export function ContactForm() {
+interface ContactFormProps {
+  defaultSubject?: string;
+}
+
+export function ContactForm({ defaultSubject }: ContactFormProps = {}) {
   const [state, formAction, isPending] = useActionState(
     submitContactMessage,
     null
   );
   const toastShown = useRef(false);
-  const [subject, setSubject] = useState("");
+  const [subject, setSubject] = useState(defaultSubject ?? "");
 
   useEffect(() => {
     if (state?.success && !toastShown.current) {
