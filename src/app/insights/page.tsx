@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { AdPlaceholder } from "@/components/shared/ad-placeholder";
 import { PromoBanner } from "@/components/shared/promo-banner";
+import { InsightsGrid, type IndustryStats } from "@/components/insights/insights-grid";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hiringlens.com";
 
@@ -18,71 +17,6 @@ export const metadata: Metadata = {
 };
 
 export const revalidate = 3600; // 1 hour ISR
-
-interface IndustryStats {
-  industry: string;
-  companies: number;
-  totalReviews: number;
-  avgStages: number | null;
-  avgDuration: number | null;
-  avgScore: number | null;
-  ghostingRate: number | null;
-  feedbackRate: number | null;
-  unpaidTaskRate: number | null;
-}
-
-function ProgressBar({ value, max = 100, color }: { value: number; max?: number; color: string }) {
-  const pct = Math.min((value / max) * 100, 100);
-  return (
-    <div className="h-2 w-full rounded-full bg-muted">
-      <div
-        className={`h-2 rounded-full ${color}`}
-        style={{ width: `${pct}%` }}
-      />
-    </div>
-  );
-}
-
-function StatRow({
-  label,
-  value,
-  suffix = "",
-  barValue,
-  barMax = 100,
-  barColor = "bg-primary",
-}: {
-  label: string;
-  value: string;
-  suffix?: string;
-  barValue?: number;
-  barMax?: number;
-  barColor?: string;
-}) {
-  return (
-    <div className="space-y-1">
-      <div className="flex items-center justify-between text-sm">
-        <span className="text-muted-foreground">{label}</span>
-        <span className="font-medium">
-          {value}
-          {suffix}
-        </span>
-      </div>
-      {barValue !== undefined && (
-        <ProgressBar value={barValue} max={barMax} color={barColor} />
-      )}
-    </div>
-  );
-}
-
-/* Stagger delay index → class */
-const STAGGER = [
-  "animate-in-view",
-  "animate-in-view-d1",
-  "animate-in-view-d2",
-  "animate-in-view-d3",
-  "animate-in-view-d4",
-  "animate-in-view-d5",
-];
 
 export default async function InsightsPage() {
   const supabase = await createClient();
@@ -166,9 +100,6 @@ export default async function InsightsPage() {
   const bestIndustry = withScores.length > 0
     ? withScores.reduce((best, i) => (i.avgScore! > best.avgScore! ? i : best))
     : null;
-  const worstIndustry = withScores.length > 1
-    ? withScores.reduce((worst, i) => (i.avgScore! < worst.avgScore! ? i : worst))
-    : null;
   const totalReviews = industries.reduce((sum, i) => sum + i.totalReviews, 0);
   const totalCompanies = industries.reduce((sum, i) => sum + i.companies, 0);
 
@@ -237,86 +168,7 @@ export default async function InsightsPage() {
         </div>
       ) : (
         <>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {industries.map((ind, i) => (
-              <Card
-                key={ind.industry}
-                className={`gap-0 p-0 transition-shadow hover:shadow-md ${STAGGER[Math.min(i, STAGGER.length - 1)]}`}
-              >
-                <div className="p-5">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold">{ind.industry}</h3>
-                    {ind.avgScore != null && (
-                      <Badge
-                        className={
-                          ind.avgScore >= 75
-                            ? "bg-emerald-100 text-emerald-700"
-                            : ind.avgScore >= 50
-                              ? "bg-amber-100 text-amber-700"
-                              : "bg-rose-100 text-rose-700"
-                        }
-                      >
-                        {Math.round(ind.avgScore)}
-                      </Badge>
-                    )}
-                  </div>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    {ind.companies} {ind.companies === 1 ? "company" : "companies"} &middot;{" "}
-                    {ind.totalReviews} {ind.totalReviews === 1 ? "review" : "reviews"}
-                  </p>
-
-                  <div className="mt-4 space-y-3">
-                    {ind.avgStages != null && (
-                      <StatRow
-                        label="Avg stages"
-                        value={ind.avgStages.toFixed(1)}
-                        barValue={ind.avgStages}
-                        barMax={10}
-                        barColor="bg-blue-500"
-                      />
-                    )}
-                    {ind.avgDuration != null && (
-                      <StatRow
-                        label="Avg duration"
-                        value={`${Math.round(ind.avgDuration)}`}
-                        suffix=" days"
-                        barValue={ind.avgDuration}
-                        barMax={60}
-                        barColor="bg-violet-500"
-                      />
-                    )}
-                    {ind.ghostingRate != null && (
-                      <StatRow
-                        label="Ghosting rate"
-                        value={`${Math.round(ind.ghostingRate)}`}
-                        suffix="%"
-                        barValue={ind.ghostingRate}
-                        barColor="bg-rose-500"
-                      />
-                    )}
-                    {ind.feedbackRate != null && (
-                      <StatRow
-                        label="Feedback rate"
-                        value={`${Math.round(ind.feedbackRate)}`}
-                        suffix="%"
-                        barValue={ind.feedbackRate}
-                        barColor="bg-emerald-500"
-                      />
-                    )}
-                    {ind.unpaidTaskRate != null && (
-                      <StatRow
-                        label="Unpaid task rate"
-                        value={`${Math.round(ind.unpaidTaskRate)}`}
-                        suffix="%"
-                        barValue={ind.unpaidTaskRate}
-                        barColor="bg-amber-500"
-                      />
-                    )}
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
+          <InsightsGrid industries={industries} />
 
           {/* Cross-links */}
           <div className="animate-in-view mt-10 grid gap-3 sm:grid-cols-2">
