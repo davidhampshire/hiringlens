@@ -6,16 +6,29 @@ import { signUp } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { LinkedInButton } from "@/components/auth/linkedin-button";
 
 export function SignUpForm() {
   const [state, formAction, isPending] = useActionState(signUp, null);
 
   return (
+    <div className="space-y-4">
+      <LinkedInButton />
+
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-card px-2 text-muted-foreground">
+            or sign up with email
+          </span>
+        </div>
+      </div>
+
     <form
       action={(formData) => {
         formAction(formData);
-        // If after action state is success, flip local flag
-        // (useActionState will set state.success)
       }}
       className="space-y-4"
     >
@@ -77,5 +90,6 @@ export function SignUpForm() {
         </Link>
       </p>
     </form>
+    </div>
   );
 }

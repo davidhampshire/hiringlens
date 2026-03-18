@@ -7,6 +7,7 @@ import { signIn } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { LinkedInButton } from "@/components/auth/linkedin-button";
 
 export function SignInForm() {
   const [state, formAction, isPending] = useActionState(signIn, null);
@@ -15,6 +16,20 @@ export function SignInForm() {
   const errorParam = searchParams.get("error");
 
   return (
+    <div className="space-y-4">
+      <LinkedInButton redirectTo={redirectTo} />
+
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-card px-2 text-muted-foreground">
+            or continue with email
+          </span>
+        </div>
+      </div>
+
     <form action={formAction} className="space-y-4">
       {/* URL error param (e.g., from failed email verification) */}
       {errorParam && (
@@ -79,5 +94,6 @@ export function SignInForm() {
         </Link>
       </p>
     </form>
+    </div>
   );
 }
