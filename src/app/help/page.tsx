@@ -38,7 +38,7 @@ const FAQ_ITEMS = [
   {
     question: "Can I edit or delete my review after submitting?",
     answer:
-      "Currently, reviews cannot be edited after submission. If you need to make a correction or request removal, please contact us at support@hiringlens.com.",
+      "Currently, reviews cannot be edited after submission. If you need to make a correction or request removal, please contact us at hiringlensofficial@gmail.com.",
   },
   {
     question: "What are red flags?",
@@ -135,10 +135,10 @@ export default function HelpPage() {
         <p className="mt-1 text-sm text-muted-foreground">
           Contact us at{" "}
           <a
-            href="mailto:support@hiringlens.com"
+            href="mailto:hiringlensofficial@gmail.com"
             className="text-primary hover:underline"
           >
-            support@hiringlens.com
+            hiringlensofficial@gmail.com
           </a>
         </p>
       </div>

@@ -83,10 +83,10 @@ export default function AdvertisersPage() {
           </p>
           <p className="mt-3 text-sm">
             <a
-              href="mailto:ads@hiringlens.com"
+              href="mailto:hiringlensofficial@gmail.com"
               className="font-medium text-primary hover:underline"
             >
-              ads@hiringlens.com
+              hiringlensofficial@gmail.com
             </a>
           </p>
         </section>

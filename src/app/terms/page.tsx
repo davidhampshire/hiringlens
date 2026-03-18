@@ -143,10 +143,10 @@ export default function TermsPage() {
             fact about your organisation, you may submit a formal content review
             request to{" "}
             <a
-              href="mailto:legal@hiringlens.com"
+              href="mailto:hiringlensofficial@gmail.com"
               className="text-primary hover:underline"
             >
-              legal@hiringlens.com
+              hiringlensofficial@gmail.com
             </a>{" "}
             with the subject line &quot;Content Review Request&quot;.
           </p>
@@ -166,10 +166,10 @@ export default function TermsPage() {
             basis of being negative or critical. Verified company representatives
             may also apply for a right of response — contact us at{" "}
             <a
-              href="mailto:legal@hiringlens.com"
+              href="mailto:hiringlensofficial@gmail.com"
               className="text-primary hover:underline"
             >
-              legal@hiringlens.com
+              hiringlensofficial@gmail.com
             </a>{" "}
             for details.
           </p>
@@ -180,10 +180,10 @@ export default function TermsPage() {
           <p className="mt-2">
             For questions about these Terms, contact us at{" "}
             <a
-              href="mailto:legal@hiringlens.com"
+              href="mailto:hiringlensofficial@gmail.com"
               className="text-primary hover:underline"
             >
-              legal@hiringlens.com
+              hiringlensofficial@gmail.com
             </a>
             .
           </p>

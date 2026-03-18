@@ -4,8 +4,8 @@ const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
 
-const FROM_EMAIL = process.env.EMAIL_FROM ?? "HiringLens <noreply@hiringlens.com>";
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "davidcreativedesign@gmail.com";
+const FROM_EMAIL = process.env.EMAIL_FROM ?? "HiringLens <hiringlensofficial@gmail.com>";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "hiringlensofficial@gmail.com";
 
 interface SendEmailParams {
   to: string;

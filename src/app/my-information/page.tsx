@@ -150,10 +150,10 @@ export default async function MyInformationPage() {
           <p className="mt-2 text-sm text-muted-foreground">
             To exercise any of these rights, please contact us at{" "}
             <a
-              href="mailto:privacy@hiringlens.com"
+              href="mailto:hiringlensofficial@gmail.com"
               className="text-primary hover:underline"
             >
-              privacy@hiringlens.com
+              hiringlensofficial@gmail.com
             </a>{" "}
             with your request. We will respond within 30 days. If you are signed
             in, you can also use the &quot;Download My Data&quot; button above to

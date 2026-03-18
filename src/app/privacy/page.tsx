@@ -118,10 +118,10 @@ export default function PrivacyPage() {
             </a>{" "}
             page or contact us at{" "}
             <a
-              href="mailto:privacy@hiringlens.com"
+              href="mailto:hiringlensofficial@gmail.com"
               className="text-primary hover:underline"
             >
-              privacy@hiringlens.com
+              hiringlensofficial@gmail.com
             </a>
             .
           </p>
@@ -143,10 +143,10 @@ export default function PrivacyPage() {
           <p className="mt-2">
             For privacy-related enquiries, contact us at{" "}
             <a
-              href="mailto:privacy@hiringlens.com"
+              href="mailto:hiringlensofficial@gmail.com"
               className="text-primary hover:underline"
             >
-              privacy@hiringlens.com
+              hiringlensofficial@gmail.com
             </a>
             .
           </p>

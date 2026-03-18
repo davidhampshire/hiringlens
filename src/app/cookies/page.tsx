@@ -95,10 +95,10 @@ export default function CookiesPage() {
           <p className="mt-2">
             For questions about our use of cookies, contact us at{" "}
             <a
-              href="mailto:privacy@hiringlens.com"
+              href="mailto:hiringlensofficial@gmail.com"
               className="text-primary hover:underline"
             >
-              privacy@hiringlens.com
+              hiringlensofficial@gmail.com
             </a>
             .
           </p>

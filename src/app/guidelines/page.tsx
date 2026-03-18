@@ -157,10 +157,10 @@ export default function GuidelinesPage() {
             err on the side of being constructive and factual. If you have
             questions, contact us at{" "}
             <a
-              href="mailto:support@hiringlens.com"
+              href="mailto:hiringlensofficial@gmail.com"
               className="text-primary hover:underline"
             >
-              support@hiringlens.com
+              hiringlensofficial@gmail.com
             </a>
             .
           </p>

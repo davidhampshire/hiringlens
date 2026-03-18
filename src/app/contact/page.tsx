@@ -23,21 +23,21 @@ export default function ContactPage() {
           <section>
             <h3 className="font-medium">General Enquiries</h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              hello@hiringlens.com
+              hiringlensofficial@gmail.com
             </p>
           </section>
 
           <section>
             <h3 className="font-medium">Press & Media</h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              press@hiringlens.com
+              hiringlensofficial@gmail.com
             </p>
           </section>
 
           <section>
             <h3 className="font-medium">Report an Issue</h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              support@hiringlens.com
+              hiringlensofficial@gmail.com
             </p>
           </section>
         </div>
