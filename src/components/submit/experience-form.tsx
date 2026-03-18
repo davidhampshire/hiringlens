@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { interviewSchema, type InterviewFormData } from "@/lib/validators";
 import { createClient } from "@/lib/supabase/client";
+import { LinkedInButton } from "@/components/auth/linkedin-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -119,36 +120,46 @@ const FORM_STORAGE_KEY = "hiringlens_draft";
 function AuthBanner({ isSignedIn }: { isSignedIn: boolean }) {
   if (isSignedIn) return null;
   return (
-    <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50/60 px-4 py-3">
-      <svg
-        className="mt-0.5 h-5 w-5 shrink-0 text-amber-600"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-        />
-      </svg>
-      <div className="text-sm">
-        <p className="font-medium text-amber-900">
-          You&apos;ll need an account to post
-        </p>
-        <p className="mt-0.5 text-amber-800/80">
-          Start filling in your experience. When you&apos;re ready to submit, we&apos;ll
-          ask you to{" "}
-          <Link href="/sign-up" className="font-medium underline hover:text-amber-900">
-            create a free account
-          </Link>{" "}
-          or{" "}
-          <Link href="/sign-in" className="font-medium underline hover:text-amber-900">
-            sign in
+    <div className="rounded-lg border border-amber-200 bg-amber-50/60 px-4 py-4">
+      <div className="flex items-start gap-3">
+        <svg
+          className="mt-0.5 h-5 w-5 shrink-0 text-amber-600"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+        <div className="text-sm">
+          <p className="font-medium text-amber-900">
+            You&apos;ll need an account to post
+          </p>
+          <p className="mt-0.5 text-amber-800/80">
+            Fill in your experience, then sign in to submit. Your progress will be saved.
+          </p>
+        </div>
+      </div>
+      <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+        <LinkedInButton redirectTo="/submit" />
+        <div className="flex gap-2">
+          <Link
+            href="/sign-in?redirectTo=/submit"
+            className="flex-1 rounded-md border border-amber-300 bg-white px-4 py-2 text-center text-sm font-medium text-amber-900 hover:bg-amber-50"
+          >
+            Sign in
           </Link>
-          . Your progress will be saved.
-        </p>
+          <Link
+            href="/sign-up?redirectTo=/submit"
+            className="flex-1 rounded-md border border-amber-300 bg-white px-4 py-2 text-center text-sm font-medium text-amber-900 hover:bg-amber-50"
+          >
+            Create account
+          </Link>
+        </div>
       </div>
     </div>
   );
