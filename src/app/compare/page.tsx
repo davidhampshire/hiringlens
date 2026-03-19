@@ -28,7 +28,7 @@ export default function ComparePage() {
   );
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
       <div className="mb-8">
         <h1 className="text-5xl font-medium sm:text-6xl">Compare <span className="text-foreground/25">Companies</span></h1>
         <p className="mt-1 text-muted-foreground">
