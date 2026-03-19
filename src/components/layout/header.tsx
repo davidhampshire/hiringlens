@@ -57,7 +57,7 @@ export function Header() {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
             <span className="text-sm font-bold text-primary-foreground">HL</span>
           </div>
-          <span className="text-lg font-semibold tracking-tight">HiringLens</span>
+          <span className="text-lg font-semibold tracking-tight">Hiring<span className="text-foreground/25">Lens</span></span>
         </Link>
 
         {/* Desktop nav */}
