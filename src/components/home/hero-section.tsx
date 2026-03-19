@@ -34,7 +34,7 @@ export function HeroSection() {
 
       <div className="relative mx-auto max-w-4xl px-4 pb-16 pt-10 text-center sm:px-6 sm:pb-20 sm:pt-12 lg:pb-24 lg:pt-14">
         {/* Headline */}
-        <h1 className="animate-in-view text-5xl font-medium leading-[0.95] text-foreground sm:text-7xl lg:text-8xl">
+        <h1 className="animate-in-view text-5xl font-medium leading-[1.05] text-foreground sm:text-7xl lg:text-8xl">
           See how
           <br />
           companies
@@ -43,7 +43,7 @@ export function HeroSection() {
         </h1>
 
         {/* Subtext — constrained to ~two lines on desktop */}
-        <p className="animate-in-view-d2 mx-auto mt-8 max-w-sm text-base leading-relaxed text-muted-foreground sm:max-w-xl sm:text-lg">
+        <p className="animate-in-view-d2 mx-auto mt-8 max-w-sm text-base leading-relaxed text-muted-foreground sm:max-w-2xl sm:text-lg">
           Real interview experiences from real candidates. Holding companies
           accountable and helping you prepare for what&apos;s actually ahead.
         </p>
