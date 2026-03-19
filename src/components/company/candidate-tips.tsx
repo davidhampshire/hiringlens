@@ -7,7 +7,7 @@ export function CandidateTips({ tips }: CandidateTipsProps) {
 
   return (
     <div className="space-y-3">
-      <h3 className="text-sm font-semibold">Candidate Tips</h3>
+      <h3 className="text-base font-medium">Candidate Tips</h3>
       <ul className="space-y-2">
         {tips.map((tip, i) => (
           <li

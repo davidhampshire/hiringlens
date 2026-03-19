@@ -35,7 +35,7 @@ export function RedFlagIndicators({
 
   return (
     <div className="space-y-3">
-      <h3 className="text-sm font-semibold">Red Flags</h3>
+      <h3 className="text-base font-medium">Red Flags</h3>
       <div className="flex flex-wrap gap-2">
         {flags.map((flag) => (
           <Badge

@@ -142,7 +142,7 @@ export function ExperienceList({
       {/* Header with filters */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-semibold">
+          <h3 className="text-base font-medium">
             Interview Experiences ({totalCount})
           </h3>
           <div className="flex items-center gap-2">
@@ -188,7 +188,7 @@ export function ExperienceList({
               updateFilter(v as SortOption, filterBy, seniorityFilter, typeFilter)
             }
           >
-            <SelectTrigger className="h-9 w-[140px] bg-white text-xs">
+            <SelectTrigger className="h-9 w-[140px] bg-background text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -204,7 +204,7 @@ export function ExperienceList({
               updateFilter(sortBy, v, seniorityFilter, typeFilter)
             }
           >
-            <SelectTrigger className="h-9 w-[130px] bg-white text-xs">
+            <SelectTrigger className="h-9 w-[130px] bg-background text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -220,7 +220,7 @@ export function ExperienceList({
               updateFilter(sortBy, filterBy, v, typeFilter)
             }
           >
-            <SelectTrigger className="h-9 w-[130px] bg-white text-xs">
+            <SelectTrigger className="h-9 w-[130px] bg-background text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -237,7 +237,7 @@ export function ExperienceList({
               updateFilter(sortBy, filterBy, seniorityFilter, v)
             }
           >
-            <SelectTrigger className="h-9 w-[130px] bg-white text-xs">
+            <SelectTrigger className="h-9 w-[130px] bg-background text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

@@ -99,7 +99,7 @@ export function RatingsBreakdown({
 
   return (
     <div className={cn("space-y-2", compact ? "space-y-1.5" : "space-y-3")}>
-      {!compact && <h3 className="text-sm font-semibold">Ratings Breakdown</h3>}
+      {!compact && <h3 className="text-base font-medium">Ratings Breakdown</h3>}
       <div className={cn(compact ? "space-y-1.5" : "space-y-2.5")}>
         {ratings.map(({ key, value }, index) => (
           <RatingBar

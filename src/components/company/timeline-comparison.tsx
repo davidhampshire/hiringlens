@@ -22,7 +22,7 @@ export function TimelineComparison({
 
   return (
     <div>
-      <h3 className="mb-3 text-sm font-semibold">Timeline Comparison</h3>
+      <h3 className="mb-3 text-base font-medium">Timeline Comparison</h3>
       <div className="space-y-3">
         {/* Company bar */}
         <div>

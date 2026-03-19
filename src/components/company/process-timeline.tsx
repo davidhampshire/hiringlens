@@ -13,17 +13,17 @@ export function ProcessTimeline({
 
   return (
     <div className="space-y-3">
-      <h3 className="text-sm font-semibold">Typical Process</h3>
+      <h3 className="text-base font-medium">Typical Process</h3>
       <div className="flex gap-4">
         {avgStages && (
           <div className="flex-1 rounded-lg border bg-muted/30 p-4 text-center">
-            <p className="text-2xl font-bold">{Math.round(avgStages)}</p>
+            <p className="text-2xl font-medium">{Math.round(avgStages)}</p>
             <p className="text-xs text-muted-foreground">stages</p>
           </div>
         )}
         {avgDurationDays && (
           <div className="flex-1 rounded-lg border bg-muted/30 p-4 text-center">
-            <p className="text-2xl font-bold">{Math.round(avgDurationDays)}</p>
+            <p className="text-2xl font-medium">{Math.round(avgDurationDays)}</p>
             <p className="text-xs text-muted-foreground">days total</p>
           </div>
         )}

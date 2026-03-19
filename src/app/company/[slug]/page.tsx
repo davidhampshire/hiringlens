@@ -186,11 +186,11 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
           <CompanyLogo
             name={c.name}
             logoUrl={c.logo_url}
-            size="xl"
+            size="2xl"
           />
           <div className="min-w-0 flex-1">
             <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
-              <h1 className="text-2xl font-bold sm:text-3xl">{c.name}</h1>
+              <h1 className="text-3xl font-medium leading-tight sm:text-4xl">{c.name}</h1>
               {c.industry && (
                 <span className="text-sm text-muted-foreground">{c.industry}</span>
               )}
@@ -275,7 +275,7 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
 
           {/* Share CTA — drives virality */}
           <div className="rounded-lg border border-dashed border-primary/20 bg-primary/[0.03] p-4">
-            <p className="text-sm font-semibold">
+            <p className="text-sm font-medium">
               {c.total_reviews < 3
                 ? "Be one of the first to review"
                 : "Know someone who interviewed here?"}

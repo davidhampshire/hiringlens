@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 interface CompanyLogoProps {
   name: string;
   logoUrl?: string | null;
-  size?: "sm" | "md" | "lg" | "xl";
+  size?: "sm" | "md" | "lg" | "xl" | "2xl";
   className?: string;
 }
 
@@ -16,9 +16,9 @@ const SIZES = {
   md: { container: "h-10 w-10", text: "text-sm", px: 40 },
   lg: { container: "h-14 w-14", text: "text-lg", px: 56 },
   xl: { container: "h-[72px] w-[72px]", text: "text-xl", px: 72 },
+  "2xl": { container: "h-24 w-24", text: "text-2xl", px: 96 },
 };
 
-// Generate a consistent colour from a company name
 function getAvatarColour(name: string): string {
   const colours = [
     "bg-blue-100 text-blue-700",
@@ -49,42 +49,22 @@ function getInitials(name: string): string {
     .toUpperCase();
 }
 
-/**
- * Extract the domain from a logo_url stored in the DB.
- * Handles:
- *  - Direct domains: "deliveroo.co.uk"
- *  - Clearbit URLs: "https://logo.clearbit.com/deliveroo.co.uk"
- *  - Google URLs: "https://www.google.com/s2/favicons?domain=deliveroo.co.uk&sz=128"
- *  - Any URL with a path: return null (custom uploaded logo)
- */
 function extractDomain(logoUrl: string): string | null {
-  // If it looks like a bare domain (no protocol, no slashes)
   if (!logoUrl.includes("/")) return logoUrl;
-
   try {
     const url = new URL(logoUrl);
-
-    // Clearbit-style: https://logo.clearbit.com/{domain}
     if (url.hostname === "logo.clearbit.com") {
       return url.pathname.replace(/^\//, "");
     }
-
-    // Google favicon-style: already a working URL
     if (url.hostname === "www.google.com" && url.pathname.includes("favicons")) {
-      return null; // already a full working Google URL, don't re-derive
+      return null;
     }
-
     return null;
   } catch {
-    // Not a URL — treat as domain
     return logoUrl;
   }
 }
 
-/**
- * Build a Google Favicon URL from a domain.
- * Returns a 128px favicon which is good enough for card-sized logos.
- */
 function googleFaviconUrl(domain: string): string {
   return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=128`;
 }
@@ -93,16 +73,13 @@ export function CompanyLogo({ name, logoUrl, size = "md", className }: CompanyLo
   const [imgError, setImgError] = useState(false);
   const s = SIZES[size];
 
-  // Determine the actual image URL to use
   let resolvedUrl: string | null = null;
 
   if (logoUrl && !imgError) {
     const domain = extractDomain(logoUrl);
     if (domain) {
-      // Convert any stored domain/Clearbit URL to Google Favicon
       resolvedUrl = googleFaviconUrl(domain);
     } else {
-      // Already a full working URL (Google favicon or custom)
       resolvedUrl = logoUrl;
     }
   }
@@ -112,7 +89,7 @@ export function CompanyLogo({ name, logoUrl, size = "md", className }: CompanyLo
       <div
         className={cn(
           s.container,
-          "relative shrink-0 overflow-hidden rounded-lg border bg-white",
+          "relative shrink-0 overflow-hidden rounded-xl border bg-white",
           className
         )}
       >
@@ -122,20 +99,19 @@ export function CompanyLogo({ name, logoUrl, size = "md", className }: CompanyLo
           width={s.px}
           height={s.px}
           sizes={`${s.px}px`}
-          className="h-full w-full object-contain p-1"
+          className="h-full w-full object-contain p-1.5"
           onError={() => setImgError(true)}
         />
       </div>
     );
   }
 
-  // Fallback: letter avatar
   return (
     <div
       className={cn(
         s.container,
         s.text,
-        "flex shrink-0 items-center justify-center rounded-lg font-semibold",
+        "flex shrink-0 items-center justify-center rounded-xl font-semibold",
         getAvatarColour(name),
         className
       )}
