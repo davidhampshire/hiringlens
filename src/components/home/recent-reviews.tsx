@@ -31,7 +31,7 @@ export async function RecentReviews() {
     <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
       <div className="animate-in-view mb-6 flex items-end justify-between">
         <div>
-          <h2 className="text-xl font-bold tracking-tight sm:text-2xl">Recent Experiences</h2>
+          <h2 className="text-2xl font-medium sm:text-3xl">Recent Experiences</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             Latest interview insights from candidates
           </p>
@@ -68,7 +68,7 @@ export async function RecentReviews() {
                     size="xl"
                   />
                   <div className="min-w-0 flex-1">
-                    <p className="truncate font-semibold group-hover:text-primary">
+                    <p className="truncate text-base font-medium group-hover:text-primary">
                       {company?.name ?? "Unknown Company"}
                     </p>
                     <p className="truncate text-xs text-muted-foreground">
@@ -86,7 +86,7 @@ export async function RecentReviews() {
                 {/* Card body */}
                 <div className="flex flex-1 flex-col p-5">
                   <div className="flex items-center gap-2">
-                    <p className="font-medium">{review.role_title}</p>
+                    <p className="text-base font-medium">{review.role_title}</p>
                     {Date.now() - new Date(review.created_at).getTime() < 7 * 24 * 60 * 60 * 1000 && (
                       <Badge className="bg-blue-100 text-[10px] font-semibold text-blue-700 hover:bg-blue-100">
                         New

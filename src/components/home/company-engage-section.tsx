@@ -49,7 +49,7 @@ export function CompanyEngageSection() {
               <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/40">
                 <feature.icon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
-              <h3 className="text-sm font-semibold">{feature.title}</h3>
+              <h3 className="text-sm font-medium">{feature.title}</h3>
               <p className="mt-1 text-xs text-muted-foreground">
                 {feature.description}
               </p>

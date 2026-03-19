@@ -48,7 +48,7 @@ export async function PlatformStats() {
         <div className="grid grid-cols-2 divide-x divide-border p-5 sm:grid-cols-4 sm:p-7">
           {stats.map((stat) => (
             <div key={stat.label} className="px-3 text-center sm:px-4">
-              <p className="text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">
+              <p className="text-2xl font-medium sm:text-3xl lg:text-4xl">
                 <AnimatedCounter value={stat.value} />
               </p>
               <p className="mt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground sm:text-xs">

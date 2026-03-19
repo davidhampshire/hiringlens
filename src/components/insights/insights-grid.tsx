@@ -140,7 +140,7 @@ export function InsightsGrid({ industries }: { industries: IndustryStats[] }) {
             <Card className="gap-0 p-0 transition-all hover:shadow-md hover:border-primary/30 cursor-pointer h-full">
               <div className="p-5">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-semibold">{ind.industry}</h3>
+                  <h3 className="text-lg font-medium">{ind.industry}</h3>
                   {ind.avgScore != null && (
                     <Badge
                       className={

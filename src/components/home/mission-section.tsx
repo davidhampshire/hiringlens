@@ -48,7 +48,7 @@ export function MissionSection() {
   return (
     <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
       <div className="mb-12 text-center sm:mb-14">
-        <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+        <h2 className="text-2xl font-medium sm:text-3xl">
           Why HiringLens exists
         </h2>
         <p className="mx-auto mt-4 max-w-2xl text-muted-foreground sm:mt-5">
@@ -69,7 +69,7 @@ export function MissionSection() {
               {value.icon}
             </div>
             <div>
-              <h3 className="font-semibold">{value.title}</h3>
+              <h3 className="text-base font-medium">{value.title}</h3>
               <p className="mt-1 text-sm text-muted-foreground">
                 {value.description}
               </p>

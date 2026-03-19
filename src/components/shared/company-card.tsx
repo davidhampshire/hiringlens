@@ -32,7 +32,7 @@ export function CompanyCard({ company }: CompanyCardProps) {
                   size="xl"
                 />
                 <div className="min-w-0 flex-1">
-                  <h3 className="truncate text-base font-semibold group-hover:text-primary">
+                  <h3 className="truncate text-lg font-medium group-hover:text-primary">
                     {company.name}
                   </h3>
                   {company.industry && (

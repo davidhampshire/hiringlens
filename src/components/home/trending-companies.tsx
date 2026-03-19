@@ -20,7 +20,7 @@ export async function TrendingCompanies() {
     <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
       <div className="animate-in-view mb-6 flex items-end justify-between">
         <div>
-          <h2 className="text-xl font-bold tracking-tight sm:text-2xl">Trending Companies</h2>
+          <h2 className="text-2xl font-medium sm:text-3xl">Trending Companies</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             Most reviewed interview experiences
           </p>

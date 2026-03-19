@@ -73,7 +73,7 @@ export function CompanyPromo({ variant }: CompanyPromoProps) {
           For Companies
         </span>
 
-        <h3 className="mt-4 text-xl font-bold tracking-tight sm:text-2xl">
+        <h3 className="mt-4 text-xl font-medium sm:text-2xl">
           {heading}
         </h3>
         <p className="mx-auto mt-2 max-w-lg text-sm leading-relaxed text-muted-foreground">
