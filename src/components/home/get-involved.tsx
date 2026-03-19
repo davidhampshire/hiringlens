@@ -28,7 +28,7 @@ export function GetInvolved() {
     <section className="border-t bg-muted/30">
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
         <div className="animate-in-view mb-8 text-center">
-          <h2 className="text-3xl font-black uppercase tracking-tighter sm:text-4xl">
+          <h2 className="text-3xl font-black tracking-tight sm:text-4xl">
             Want to get <span className="text-foreground/25">involved?</span>
           </h2>
           <p className="mx-auto mt-2 max-w-md text-muted-foreground">

@@ -16,7 +16,7 @@ export function PromoBanner() {
       <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-primary/[0.06] blur-3xl" />
 
       <div className="relative px-6 py-8 text-center sm:py-10">
-        <h3 className="text-xl font-black uppercase tracking-tighter sm:text-2xl">
+        <h3 className="text-xl font-black tracking-tight sm:text-2xl">
           Hiring should be <span className="text-foreground/25">fair</span>
         </h3>
         <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">

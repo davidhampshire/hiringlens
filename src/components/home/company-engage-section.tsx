@@ -29,7 +29,7 @@ export function CompanyEngageSection() {
             <Building2 className="h-3 w-3" />
             For companies
           </span>
-          <h2 className="text-3xl font-black uppercase tracking-tighter sm:text-4xl">
+          <h2 className="text-3xl font-black tracking-tight sm:text-4xl">
             Your candidates are{" "}
             <span className="text-foreground/25">talking</span>
           </h2>
