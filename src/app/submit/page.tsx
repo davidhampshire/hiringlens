@@ -17,11 +17,10 @@ export default async function SubmitPage({ searchParams }: SubmitPageProps) {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <div className="animate-in-view mb-8 mt-10 lg:mt-0">
+      <div className="animate-in-view mb-5 mt-4 lg:mt-0">
         <h1 className="text-3xl font-black uppercase tracking-tighter sm:text-4xl">Share Your <span className="text-foreground/25">Experience</span></h1>
-        <p className="mt-2 text-muted-foreground">
-          Help other candidates prepare by sharing honest feedback about the
-          interview process. Your submission will be reviewed before publishing.
+        <p className="mt-1.5 text-sm text-muted-foreground">
+          Help other candidates prepare by sharing honest feedback about the interview process.
         </p>
       </div>
 

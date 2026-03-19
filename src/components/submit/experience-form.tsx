@@ -486,8 +486,8 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
   return (
     <div className="mx-auto max-w-2xl">
       {/* Progress */}
-      <div className="mb-10">
-        <div className="mb-2.5 flex items-center justify-between text-sm">
+      <div className="mb-6">
+        <div className="mb-2 flex items-center justify-between">
           <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
             {currentStep + 1} / {FORM_STEPS.length}
           </span>
@@ -502,15 +502,15 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)}>
-        {/* Step content — fixed min-height so footer doesn't jump */}
-        <div key={`${currentStep}-${direction}`} className={`min-h-[440px] sm:min-h-[480px] ${animClass}`}>
+        {/* Step content */}
+        <div key={`${currentStep}-${direction}`} className={animClass}>
 
           {/* ── Step 1: Company ── */}
           {step.id === "company" && (
-            <div className="space-y-8">
+            <div className="space-y-5">
               <div>
-                <h2 className="text-3xl font-bold leading-tight">Which company did you interview with?</h2>
-                <p className="mt-2 text-muted-foreground">Search by name or add a new one</p>
+                <h2 className="text-2xl font-bold leading-tight">Which company did you interview with?</h2>
+                <p className="mt-1 text-sm text-muted-foreground">Search by name or add a new one</p>
               </div>
 
               <CompanySearchInput
@@ -582,14 +582,14 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
 
           {/* ── Step 2: Outcome ── */}
           {step.id === "outcome" && (
-            <div className="space-y-10">
+            <div className="space-y-6">
               <div>
-                <h2 className="text-3xl font-bold leading-tight">How did the interview go?</h2>
-                <p className="mt-2 text-muted-foreground">This helps frame the rest of your feedback</p>
+                <h2 className="text-2xl font-bold leading-tight">How did the interview go?</h2>
+                <p className="mt-1 text-sm text-muted-foreground">This helps frame the rest of your feedback</p>
               </div>
 
               <div>
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+                <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-5">
                   {Object.entries(OUTCOME_LABELS).map(([value, label]) => {
                     const isSelected = currentOutcome === value;
                     return (
@@ -599,13 +599,13 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
                         onClick={() =>
                           setValue("outcome", isSelected ? undefined : (value as InterviewFormData["outcome"]))
                         }
-                        className={`flex flex-col items-center gap-2 rounded-xl border-2 p-4 text-center transition-all ${
+                        className={`flex flex-col items-center gap-1.5 rounded-xl border-2 p-3 text-center transition-all ${
                           isSelected
                             ? OUTCOME_COLORS[value] + " ring-1 ring-primary/20 shadow-sm"
                             : "border-muted bg-muted/20 hover:bg-muted/50 hover:border-muted-foreground/20"
                         }`}
                       >
-                        <span className="text-2xl" aria-hidden="true">{OUTCOME_ICONS[value]}</span>
+                        <span className="text-xl" aria-hidden="true">{OUTCOME_ICONS[value]}</span>
                         <span className={`text-xs font-semibold ${isSelected ? "text-foreground" : "text-muted-foreground"}`}>
                           {label}
                         </span>
@@ -614,7 +614,7 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
                   })}
                 </div>
                 {currentOutcome && (
-                  <div className={`mt-3 rounded-lg px-4 py-3 text-sm ${OUTCOME_COLORS[currentOutcome]}`}>
+                  <div className={`mt-2.5 rounded-lg px-3 py-2 text-sm ${OUTCOME_COLORS[currentOutcome]}`}>
                     {OUTCOME_CONTEXT_MESSAGES[currentOutcome]}
                   </div>
                 )}
@@ -622,8 +622,8 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
 
               <div className="space-y-1.5">
                 <p className="text-sm font-semibold text-foreground">Would you recommend applying here?</p>
-                <p className="text-xs text-muted-foreground mb-3">Based on the overall experience</p>
-                <div className="flex gap-3">
+                <p className="text-xs text-muted-foreground">Based on the overall experience</p>
+                <div className="flex gap-2 pt-1">
                   {Object.entries(RECOMMEND_APPLYING_LABELS).map(([value, label]) => {
                     const isSelected = watch("recommend_applying") === value;
                     const colorClass =
@@ -645,7 +645,7 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
                         onClick={() =>
                           setValue("recommend_applying", isSelected ? undefined : (value as InterviewFormData["recommend_applying"]))
                         }
-                        className={`flex-1 rounded-xl border-2 px-4 py-3 text-sm font-semibold transition-all ${colorClass}`}
+                        className={`flex-1 rounded-xl border-2 px-4 py-2.5 text-sm font-semibold transition-all ${colorClass}`}
                       >
                         {label}
                       </button>
@@ -656,8 +656,8 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
 
               <div className="space-y-1.5">
                 <p className="text-sm font-semibold text-foreground">Did the interview match the job description?</p>
-                <p className="text-xs text-muted-foreground mb-3">Was the role as advertised?</p>
-                <div className="flex gap-3">
+                <p className="text-xs text-muted-foreground">Was the role as advertised?</p>
+                <div className="flex gap-2 pt-1">
                   {Object.entries(JD_ACCURACY_LABELS).map(([value, label]) => {
                     const isSelected = watch("jd_accuracy") === value;
                     const colorClass =
@@ -679,7 +679,7 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
                         onClick={() =>
                           setValue("jd_accuracy", isSelected ? undefined : (value as InterviewFormData["jd_accuracy"]))
                         }
-                        className={`flex-1 rounded-xl border-2 px-4 py-3 text-sm font-semibold transition-all ${colorClass}`}
+                        className={`flex-1 rounded-xl border-2 px-4 py-2.5 text-sm font-semibold transition-all ${colorClass}`}
                       >
                         {label}
                       </button>
@@ -692,10 +692,10 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
 
           {/* ── Step 3: Role ── */}
           {step.id === "role" && (
-            <div className="space-y-8">
+            <div className="space-y-5">
               <div>
-                <h2 className="text-3xl font-bold leading-tight">Tell us about the role</h2>
-                <p className="mt-2 text-muted-foreground">Help others find relevant experiences</p>
+                <h2 className="text-2xl font-bold leading-tight">Tell us about the role</h2>
+                <p className="mt-1 text-sm text-muted-foreground">Help others find relevant experiences</p>
               </div>
 
               <div>
@@ -775,10 +775,10 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
 
           {/* ── Step 4: Process ── */}
           {step.id === "process" && (
-            <div className="space-y-8">
+            <div className="space-y-5">
               <div>
-                <h2 className="text-3xl font-bold leading-tight">About the interview process</h2>
-                <p className="mt-2 text-muted-foreground">These details help candidates know what to expect</p>
+                <h2 className="text-2xl font-bold leading-tight">About the interview process</h2>
+                <p className="mt-1 text-sm text-muted-foreground">These details help candidates know what to expect</p>
               </div>
 
               <div>
@@ -817,10 +817,10 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
 
           {/* ── Step 5: Ratings ── */}
           {step.id === "ratings" && (
-            <div className="space-y-8">
+            <div className="space-y-5">
               <div>
-                <h2 className="text-3xl font-bold leading-tight">Rate the experience</h2>
-                <p className="mt-2 text-muted-foreground">All ratings required — be honest!</p>
+                <h2 className="text-2xl font-bold leading-tight">Rate the experience</h2>
+                <p className="mt-1 text-sm text-muted-foreground">All ratings required — be honest!</p>
               </div>
 
               <div className="grid gap-6 sm:grid-cols-2">
@@ -841,10 +841,10 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
 
           {/* ── Step 6: Flags ── */}
           {step.id === "flags" && (
-            <div className="space-y-8">
+            <div className="space-y-5">
               <div>
-                <h2 className="text-3xl font-bold leading-tight">Any red flags or highlights?</h2>
-                <p className="mt-2 text-muted-foreground">
+                <h2 className="text-2xl font-bold leading-tight">Any red flags or highlights?</h2>
+                <p className="mt-1 text-sm text-muted-foreground">
                   Toggle any that apply — follow-up details are optional but helpful
                 </p>
               </div>
@@ -886,10 +886,10 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
 
           {/* ── Step 7: Advice + Submit ── */}
           {step.id === "advice" && (
-            <div className="space-y-8">
+            <div className="space-y-5">
               <div>
-                <h2 className="text-3xl font-bold leading-tight">Share your advice</h2>
-                <p className="mt-2 text-muted-foreground">Help future candidates prepare</p>
+                <h2 className="text-2xl font-bold leading-tight">Share your advice</h2>
+                <p className="mt-1 text-sm text-muted-foreground">Help future candidates prepare</p>
               </div>
 
               {/* Display name */}
@@ -1014,7 +1014,7 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
         </div>
 
         {/* Navigation */}
-        <div className="mt-12 flex items-center justify-between border-t pt-6">
+        <div className="mt-8 flex items-center justify-between border-t pt-5">
           <Button
             type="button"
             variant="ghost"
