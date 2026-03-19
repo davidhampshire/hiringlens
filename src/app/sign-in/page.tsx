@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 export default function SignInPage() {
   return (
-    <div className="mx-auto max-w-md px-4 py-16 sm:px-6">
+    <div className="mx-auto max-w-md px-4 py-24 sm:px-6 sm:py-32">
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-4xl font-medium leading-[1.1] sm:text-5xl">Welcome <span className="text-foreground/25">Back</span></CardTitle>

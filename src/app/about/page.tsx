@@ -64,24 +64,25 @@ export default function AboutPage() {
   ]);
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+    <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 sm:py-16">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold">About HiringLens</h1>
-        <p className="mt-2 text-lg text-muted-foreground">
-          Championing transparency in hiring, for candidates and
-          companies alike
+      <div className="mb-10">
+        <h1 className="text-4xl font-medium leading-tight sm:text-5xl">
+          About <span className="text-foreground/25">HiringLens</span>
+        </h1>
+        <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
+          Championing transparency in hiring, for candidates and companies alike
         </p>
       </div>
 
-      <div className="space-y-10">
+      <div className="space-y-12">
         {/* The Problem */}
         <section>
-          <h2 className="text-lg font-semibold">The Problem</h2>
-          <p className="mt-2 text-muted-foreground">
+          <h2 className="text-2xl font-medium">The Problem</h2>
+          <p className="mt-3 text-muted-foreground">
             Interviewing is stressful. Candidates invest real time and emotional
             energy into every application. Researching the company,
             preparing for interviews, completing take-home tasks, only to
@@ -94,8 +95,8 @@ export default function AboutPage() {
 
         {/* Our Mission */}
         <section>
-          <h2 className="text-lg font-semibold">Our Mission</h2>
-          <p className="mt-2 text-muted-foreground">
+          <h2 className="text-2xl font-medium">Our Mission</h2>
+          <p className="mt-3 text-muted-foreground">
             We believe candidates deserve to know what they&apos;re walking into,
             and companies that treat people well deserve recognition. HiringLens
             exists to spotlight the companies doing it right, flag the ones that
@@ -107,7 +108,7 @@ export default function AboutPage() {
             {VALUES.map((value) => (
               <div
                 key={value.title}
-                className="flex gap-3 rounded-lg border bg-card p-4"
+                className="flex gap-3 rounded-lg border bg-card p-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm hover:border-primary/20"
               >
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
                   {value.icon}
@@ -125,11 +126,11 @@ export default function AboutPage() {
 
         {/* How It Works */}
         <section>
-          <h2 className="text-lg font-semibold">How It Works</h2>
+          <h2 className="text-2xl font-medium">How It Works</h2>
           <div className="mt-4 grid gap-4 sm:grid-cols-3">
-            <div className="rounded-lg border p-5">
+            <div className="rounded-lg border p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <span className="text-lg font-bold">1</span>
+                <span className="text-lg font-medium">1</span>
               </div>
               <h3 className="mt-3 font-medium">Share</h3>
               <p className="mt-1 text-sm text-muted-foreground">
@@ -138,9 +139,9 @@ export default function AboutPage() {
                 you&apos;d had.
               </p>
             </div>
-            <div className="rounded-lg border p-5">
+            <div className="rounded-lg border p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <span className="text-lg font-bold">2</span>
+                <span className="text-lg font-medium">2</span>
               </div>
               <h3 className="mt-3 font-medium">Review</h3>
               <p className="mt-1 text-sm text-muted-foreground">
@@ -149,9 +150,9 @@ export default function AboutPage() {
                 not hit pieces.
               </p>
             </div>
-            <div className="rounded-lg border p-5">
+            <div className="rounded-lg border p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <span className="text-lg font-bold">3</span>
+                <span className="text-lg font-medium">3</span>
               </div>
               <h3 className="mt-3 font-medium">Discover</h3>
               <p className="mt-1 text-sm text-muted-foreground">
@@ -164,8 +165,8 @@ export default function AboutPage() {
 
         {/* The Reality Score */}
         <section>
-          <h2 className="text-lg font-semibold">The Reality Score</h2>
-          <p className="mt-2 text-muted-foreground">
+          <h2 className="text-2xl font-medium">The Reality Score</h2>
+          <p className="mt-3 text-muted-foreground">
             Every company receives a Reality Score from 0 to 100 based on four
             dimensions: professionalism, communication, clarity, and
             fairness. It applies penalties for red flags like ghosting, unpaid
@@ -189,11 +190,11 @@ export default function AboutPage() {
 
         {/* Explore */}
         <section>
-          <h2 className="text-lg font-semibold">Explore HiringLens</h2>
+          <h2 className="text-2xl font-medium">Explore HiringLens</h2>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <Link
               href="/companies"
-              className="group rounded-lg border p-4 transition-colors hover:border-primary/30 hover:bg-primary/5"
+              className="group rounded-lg border p-4 transition-all duration-150 hover:border-primary/30 hover:bg-primary/5"
             >
               <h3 className="font-medium group-hover:text-primary">Company Directory</h3>
               <p className="mt-1 text-sm text-muted-foreground">
@@ -202,7 +203,7 @@ export default function AboutPage() {
             </Link>
             <Link
               href="/recent"
-              className="group rounded-lg border p-4 transition-colors hover:border-primary/30 hover:bg-primary/5"
+              className="group rounded-lg border p-4 transition-all duration-150 hover:border-primary/30 hover:bg-primary/5"
             >
               <h3 className="font-medium group-hover:text-primary">Latest Reviews</h3>
               <p className="mt-1 text-sm text-muted-foreground">
@@ -211,7 +212,7 @@ export default function AboutPage() {
             </Link>
             <Link
               href="/insights"
-              className="group rounded-lg border p-4 transition-colors hover:border-primary/30 hover:bg-primary/5"
+              className="group rounded-lg border p-4 transition-all duration-150 hover:border-primary/30 hover:bg-primary/5"
             >
               <h3 className="font-medium group-hover:text-primary">Industry Insights</h3>
               <p className="mt-1 text-sm text-muted-foreground">
@@ -220,7 +221,7 @@ export default function AboutPage() {
             </Link>
             <Link
               href="/compare"
-              className="group rounded-lg border p-4 transition-colors hover:border-primary/30 hover:bg-primary/5"
+              className="group rounded-lg border p-4 transition-all duration-150 hover:border-primary/30 hover:bg-primary/5"
             >
               <h3 className="font-medium group-hover:text-primary">Compare Companies</h3>
               <p className="mt-1 text-sm text-muted-foreground">
@@ -231,16 +232,16 @@ export default function AboutPage() {
         </section>
 
         {/* CTA */}
-        <section className="rounded-lg bg-muted/30 p-6 text-center">
-          <h2 className="text-lg font-semibold">
+        <section className="rounded-xl bg-muted/30 p-8 text-center">
+          <h2 className="text-2xl font-medium">
             Had an interview recently?
           </h2>
-          <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">
+          <p className="mx-auto mt-2 max-w-md text-muted-foreground">
             Your experience matters. Whether it was brilliant or terrible, sharing
             it helps the next person walking into that room, and it pushes
             companies to do better.
           </p>
-          <Button asChild className="mt-4">
+          <Button asChild className="mt-5">
             <Link href="/submit">Share Your Experience</Link>
           </Button>
         </section>

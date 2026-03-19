@@ -75,7 +75,7 @@ export default function HelpPage() {
   ]);
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+    <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 sm:py-16">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
@@ -84,16 +84,18 @@ export default function HelpPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold">Help Centre</h1>
-        <p className="mt-2 text-muted-foreground">
+      <div className="mb-10">
+        <h1 className="text-4xl font-medium leading-tight sm:text-5xl">
+          Help <span className="text-foreground/25">Centre</span>
+        </h1>
+        <p className="mt-4 text-lg text-muted-foreground">
           Frequently asked questions about using HiringLens.
         </p>
       </div>
 
       <div className="space-y-3">
         {FAQ_ITEMS.map((item) => (
-          <Card key={item.question} className="gap-0 p-5">
+          <Card key={item.question} className="gap-0 p-5 transition-all duration-150 hover:border-primary/30 hover:shadow-sm">
             <h3 className="font-medium">{item.question}</h3>
             <p className="mt-2 text-sm text-muted-foreground">{item.answer}</p>
           </Card>
@@ -103,7 +105,7 @@ export default function HelpPage() {
       <div className="mt-8 grid gap-3 sm:grid-cols-3">
         <Link
           href="/guidelines"
-          className="group rounded-lg border p-4 transition-colors hover:border-primary/30 hover:bg-primary/5"
+          className="group rounded-lg border p-4 transition-all duration-150 hover:border-primary/30 hover:bg-primary/5"
         >
           <h3 className="text-sm font-medium group-hover:text-primary">Review Guidelines</h3>
           <p className="mt-1 text-xs text-muted-foreground">
@@ -112,7 +114,7 @@ export default function HelpPage() {
         </Link>
         <Link
           href="/about"
-          className="group rounded-lg border p-4 transition-colors hover:border-primary/30 hover:bg-primary/5"
+          className="group rounded-lg border p-4 transition-all duration-150 hover:border-primary/30 hover:bg-primary/5"
         >
           <h3 className="text-sm font-medium group-hover:text-primary">About HiringLens</h3>
           <p className="mt-1 text-xs text-muted-foreground">
@@ -121,7 +123,7 @@ export default function HelpPage() {
         </Link>
         <Link
           href="/contact"
-          className="group rounded-lg border p-4 transition-colors hover:border-primary/30 hover:bg-primary/5"
+          className="group rounded-lg border p-4 transition-all duration-150 hover:border-primary/30 hover:bg-primary/5"
         >
           <h3 className="text-sm font-medium group-hover:text-primary">Contact Us</h3>
           <p className="mt-1 text-xs text-muted-foreground">
@@ -130,9 +132,9 @@ export default function HelpPage() {
         </Link>
       </div>
 
-      <div className="mt-6 rounded-lg bg-muted/30 p-6 text-center">
-        <h2 className="font-semibold">Still have questions?</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
+      <div className="mt-6 rounded-xl bg-muted/30 p-8 text-center">
+        <h2 className="text-2xl font-medium">Still have questions?</h2>
+        <p className="mt-2 text-muted-foreground">
           Contact us at{" "}
           <a
             href="mailto:hiringlensofficial@gmail.com"
