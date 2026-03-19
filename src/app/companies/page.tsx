@@ -53,7 +53,7 @@ export default async function CompaniesPage() {
     return (
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
         <div className="mb-8">
-          <h1 className="text-4xl font-black tracking-tight sm:text-5xl">Company <span className="text-foreground/25">Directory</span></h1>
+          <h1 className="text-5xl font-medium sm:text-6xl">Company <span className="text-foreground/25">Directory</span></h1>
         </div>
         <EmptyState
           title="No companies yet"
@@ -71,7 +71,7 @@ export default async function CompaniesPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
       <div className="animate-in-view mb-6">
-        <h1 className="text-4xl font-black tracking-tight sm:text-5xl">Company <span className="text-foreground/25">Directory</span></h1>
+        <h1 className="text-5xl font-medium sm:text-6xl">Company <span className="text-foreground/25">Directory</span></h1>
         <p className="mt-2 text-muted-foreground">
           Browse all {companies.length} rated companies alphabetically. Click a
           letter to jump to that section.

@@ -20,7 +20,7 @@ export default function SignInPage() {
     <div className="mx-auto max-w-md px-4 py-16 sm:px-6">
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-3xl font-black tracking-tight sm:text-4xl">Welcome <span className="text-foreground/25">Back</span></CardTitle>
+          <CardTitle className="text-4xl font-medium leading-[1.1] sm:text-5xl">Welcome <span className="text-foreground/25">Back</span></CardTitle>
           <CardDescription>
             Sign in to your HiringLens account
           </CardDescription>

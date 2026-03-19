@@ -26,7 +26,7 @@ export function ClosingCTA() {
       {/* Content - left aligned */}
       <div className="relative mx-auto max-w-6xl px-4 pb-16 pt-32 sm:px-6 sm:pb-20 sm:pt-40">
         <div className="animate-in-view max-w-xl">
-          <h2 className="text-4xl font-black tracking-tight sm:text-6xl lg:text-7xl">
+          <h2 className="text-5xl font-medium leading-[1.1] sm:text-7xl lg:text-8xl">
             See how companies
             <br />
             <span className="text-foreground/25">really</span> hire

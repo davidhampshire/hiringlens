@@ -69,7 +69,7 @@ export default function RepresentPage() {
           <Building2 className="h-3 w-3" />
           For companies
         </span>
-        <h1 className="text-4xl font-black tracking-tight sm:text-5xl">
+        <h1 className="text-5xl font-medium sm:text-6xl">
           Your candidates are{" "}
           <span className="text-foreground/25">talking</span>
         </h1>
