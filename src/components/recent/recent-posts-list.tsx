@@ -181,7 +181,7 @@ export function RecentPostsList({
             updateFilter(v as SortOption, outcomeFilter, industryFilter, seniorityFilter, typeFilter)
           }
         >
-          <SelectTrigger className="h-9 w-[140px] bg-white text-xs">
+          <SelectTrigger className="h-9 w-[140px] bg-background text-xs">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -199,7 +199,7 @@ export function RecentPostsList({
             updateFilter(sortBy, v, industryFilter, seniorityFilter, typeFilter)
           }
         >
-          <SelectTrigger className="h-9 w-[130px] bg-white text-xs">
+          <SelectTrigger className="h-9 w-[130px] bg-background text-xs">
             <SelectValue placeholder="Outcome" />
           </SelectTrigger>
           <SelectContent>
@@ -216,7 +216,7 @@ export function RecentPostsList({
             updateFilter(sortBy, outcomeFilter, v, seniorityFilter, typeFilter)
           }
         >
-          <SelectTrigger className="h-9 w-[150px] bg-white text-xs">
+          <SelectTrigger className="h-9 w-[150px] bg-background text-xs">
             <SelectValue placeholder="Industry" />
           </SelectTrigger>
           <SelectContent>
@@ -233,7 +233,7 @@ export function RecentPostsList({
             updateFilter(sortBy, outcomeFilter, industryFilter, v, typeFilter)
           }
         >
-          <SelectTrigger className="h-9 w-[130px] bg-white text-xs">
+          <SelectTrigger className="h-9 w-[130px] bg-background text-xs">
             <SelectValue placeholder="Seniority" />
           </SelectTrigger>
           <SelectContent>
@@ -250,7 +250,7 @@ export function RecentPostsList({
             updateFilter(sortBy, outcomeFilter, industryFilter, seniorityFilter, v)
           }
         >
-          <SelectTrigger className="h-9 w-[130px] bg-white text-xs">
+          <SelectTrigger className="h-9 w-[130px] bg-background text-xs">
             <SelectValue placeholder="Type" />
           </SelectTrigger>
           <SelectContent>
