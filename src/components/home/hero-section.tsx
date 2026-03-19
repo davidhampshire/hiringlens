@@ -43,7 +43,7 @@ export function HeroSection() {
         </h1>
 
         {/* Subtext — constrained to ~two lines on desktop */}
-        <p className="animate-in-view-d2 mx-auto mt-8 max-w-sm text-base leading-relaxed text-muted-foreground sm:max-w-md sm:text-lg">
+        <p className="animate-in-view-d2 mx-auto mt-8 max-w-sm text-base leading-relaxed text-muted-foreground sm:max-w-xl sm:text-lg">
           Real interview experiences from real candidates. Holding companies
           accountable and helping you prepare for what&apos;s actually ahead.
         </p>
