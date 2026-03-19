@@ -18,7 +18,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CompanySearchInput } from "./company-search-input";
 import { RatingInput } from "./rating-input";
@@ -106,21 +105,21 @@ const OUTCOME_CONTEXT_MESSAGES: Record<string, string> = {
 };
 
 const FORM_STEPS = [
-  { id: "company", label: "Company", fields: ["company_name"] },
-  { id: "outcome", label: "Outcome", fields: ["outcome"] },
-  { id: "role", label: "Role Details", fields: ["role_title"] },
-  { id: "process", label: "Process", fields: ["stages_count", "total_duration_days"] },
-  { id: "ratings", label: "Ratings", fields: ["professionalism_rating", "communication_rating", "clarity_rating", "fairness_rating"] },
-  { id: "flags", label: "Experience Flags", fields: [] },
-  { id: "advice", label: "Your Advice", fields: ["candidate_tip", "overall_comments"] },
+  { id: "company", label: "Company", skippable: false },
+  { id: "outcome", label: "How did it go?", skippable: true },
+  { id: "role", label: "Role Details", skippable: false },
+  { id: "process", label: "Interview Process", skippable: true },
+  { id: "ratings", label: "Rate the Experience", skippable: false },
+  { id: "flags", label: "Red Flags", skippable: true },
+  { id: "advice", label: "Your Advice", skippable: false },
 ] as const;
 
 const FORM_STORAGE_KEY = "hiringlens_draft";
 
-function AuthBanner({ isSignedIn }: { isSignedIn: boolean }) {
+function AuthBanner({ isSignedIn, onSaveDraft }: { isSignedIn: boolean; onSaveDraft: () => void }) {
   if (isSignedIn) return null;
   return (
-    <div className="rounded-lg border border-amber-200 bg-amber-50/60 px-4 py-4">
+    <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50/60 px-4 py-4">
       <div className="flex items-start gap-3">
         <svg
           className="mt-0.5 h-5 w-5 shrink-0 text-amber-600"
@@ -144,18 +143,20 @@ function AuthBanner({ isSignedIn }: { isSignedIn: boolean }) {
           </p>
         </div>
       </div>
-      <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-        <LinkedInButton redirectTo="/submit" />
+      <div className="mt-3 space-y-2">
+        <LinkedInButton redirectTo="/submit" onBeforeRedirect={onSaveDraft} />
         <div className="flex gap-2">
           <Link
             href="/sign-in?redirectTo=/submit"
             className="flex-1 rounded-md border border-amber-300 bg-white px-4 py-2 text-center text-sm font-medium text-amber-900 hover:bg-amber-50"
+            onClick={onSaveDraft}
           >
             Sign in
           </Link>
           <Link
             href="/sign-up?redirectTo=/submit"
             className="flex-1 rounded-md border border-amber-300 bg-white px-4 py-2 text-center text-sm font-medium text-amber-900 hover:bg-amber-50"
+            onClick={onSaveDraft}
           >
             Create account
           </Link>
@@ -174,13 +175,13 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
   const [followUpAnswers, setFollowUpAnswers] = useState<
     Record<string, Record<string, string>>
   >({});
-  const [activeStep, setActiveStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [direction, setDirection] = useState<"forward" | "backward">("forward");
   const [truthfulnessConfirmed, setTruthfulnessConfirmed] = useState(false);
   const [isAnonymous, setIsAnonymous] = useState(
     editData ? !editData.display_name : true
   );
 
-  // Strip follow-up data from comments for editing
   function cleanCommentsForEdit(text: string | null): string {
     if (!text) return "";
     const idx = text.indexOf("---FOLLOW_UP_DATA---");
@@ -268,23 +269,19 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
   const currentOutcome = watch("outcome");
   const watchedValues = watch();
 
-  // Check auth state and restore saved draft
   useEffect(() => {
     const supabase = createClient();
 
-    // Check initial auth
     supabase.auth.getUser().then(({ data: { user } }) => {
       setIsSignedIn(!!user);
     });
 
-    // Listen for auth changes (e.g., user signs in in another tab)
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsSignedIn(!!session?.user);
     });
 
-    // Restore saved draft from localStorage (skip in edit mode)
     if (isEditMode) return () => subscription.unsubscribe();
     try {
       const saved = localStorage.getItem(FORM_STORAGE_KEY);
@@ -292,144 +289,83 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
         const draft = JSON.parse(saved) as {
           formData: Partial<InterviewFormData>;
           followUps?: Record<string, Record<string, string>>;
+          step?: number;
         };
-        // Restore form values
         for (const [key, value] of Object.entries(draft.formData)) {
           if (value !== undefined && value !== null && value !== "") {
             setValue(key as keyof InterviewFormData, value as never);
           }
         }
-        // Restore follow-up answers
         if (draft.followUps) {
           setFollowUpAnswers(draft.followUps);
         }
-        // Clear the draft after restoring
+        if (draft.step != null) {
+          setCurrentStep(draft.step);
+        }
         localStorage.removeItem(FORM_STORAGE_KEY);
         toast.success("Your draft has been restored.");
       }
     } catch {
-      // Ignore parse errors
+      // ignore
     }
 
     return () => subscription.unsubscribe();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Save current form to localStorage (called before redirect)
   const saveDraft = useCallback(() => {
     try {
       const currentData = form.getValues();
       localStorage.setItem(
         FORM_STORAGE_KEY,
-        JSON.stringify({ formData: currentData, followUps: followUpAnswers })
+        JSON.stringify({ formData: currentData, followUps: followUpAnswers, step: currentStep })
       );
     } catch {
-      // Ignore storage errors
+      // ignore
     }
-  }, [form, followUpAnswers]);
+  }, [form, followUpAnswers, currentStep]);
 
-  function isFlagsCompleted(): boolean {
-    return !!(
-      watchedValues.received_feedback ||
-      watchedValues.unpaid_task ||
-      watchedValues.ghosted ||
-      watchedValues.interviewer_late ||
-      watchedValues.exceeded_timeline
-    );
-  }
-
-  // Track which steps are completed
-  useEffect(() => {
-    function getCompletedSteps(): boolean[] {
-      return FORM_STEPS.map((step) => {
-        switch (step.id) {
-          case "company":
-            return !!watchedValues.company_name && watchedValues.company_name.length >= 2;
-          case "outcome":
-            return !!watchedValues.outcome;
-          case "role":
-            return !!watchedValues.role_title;
-          case "process":
-            return !!(watchedValues.stages_count || watchedValues.total_duration_days);
-          case "ratings":
-            return (
-              watchedValues.professionalism_rating > 0 &&
-              watchedValues.communication_rating > 0 &&
-              watchedValues.clarity_rating > 0 &&
-              watchedValues.fairness_rating > 0
-            );
-          case "flags":
-            return isFlagsCompleted();
-          case "advice":
-            return !!(watchedValues.candidate_tip || watchedValues.overall_comments);
-          default:
-            return false;
-        }
-      });
-    }
-
-    const completed = getCompletedSteps();
-    // Find the first incomplete step that isn't flags
-    const firstIncomplete = completed.findIndex(
-      (c, i) => !c && FORM_STEPS[i].id !== "flags"
-    );
-    if (firstIncomplete >= 0) {
-      setActiveStep(firstIncomplete);
-    } else {
-      setActiveStep(FORM_STEPS.length - 1);
-    }
-  }, [watchedValues]);
-
-  function handleFollowUpChange(
-    flagKey: string,
-    questionId: string,
-    value: string
-  ) {
+  function handleFollowUpChange(flagKey: string, questionId: string, value: string) {
     setFollowUpAnswers((prev) => ({
       ...prev,
-      [flagKey]: {
-        ...(prev[flagKey] ?? {}),
-        [questionId]: value,
-      },
+      [flagKey]: { ...(prev[flagKey] ?? {}), [questionId]: value },
     }));
   }
 
-  function scrollToStep(stepId: string) {
-    const el = document.getElementById(`step-${stepId}`);
-    if (el) {
-      // Offset for sticky header (desktop ~64px, mobile ~64px header + ~40px progress bar)
-      const headerOffset = window.innerWidth >= 1024 ? 80 : 120;
-      const top = el.getBoundingClientRect().top + window.scrollY - headerOffset;
-      window.scrollTo({ top, behavior: "smooth" });
+  async function handleNext() {
+    const stepId = FORM_STEPS[currentStep].id;
+    let valid = true;
+
+    if (stepId === "company") {
+      valid = await form.trigger("company_name");
+    } else if (stepId === "role") {
+      valid = await form.trigger("role_title");
+    } else if (stepId === "ratings") {
+      valid = await form.trigger([
+        "professionalism_rating",
+        "communication_rating",
+        "clarity_rating",
+        "fairness_rating",
+      ]);
     }
+
+    if (!valid) return;
+    setDirection("forward");
+    setCurrentStep((prev) => Math.min(prev + 1, FORM_STEPS.length - 1));
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  // Compute completed count for progress
-  const completedCount = FORM_STEPS.filter((step) => {
-    switch (step.id) {
-      case "company":
-        return !!watchedValues.company_name && watchedValues.company_name.length >= 2;
-      case "outcome":
-        return !!watchedValues.outcome;
-      case "role":
-        return !!watchedValues.role_title;
-      case "process":
-        return !!(watchedValues.stages_count || watchedValues.total_duration_days);
-      case "ratings":
-        return (
-          watchedValues.professionalism_rating > 0 &&
-          watchedValues.communication_rating > 0 &&
-          watchedValues.clarity_rating > 0 &&
-          watchedValues.fairness_rating > 0
-        );
-      case "flags":
-        return isFlagsCompleted();
-      case "advice":
-        return !!(watchedValues.candidate_tip || watchedValues.overall_comments);
-      default:
-        return false;
-    }
-  }).length;
+  function handleBack() {
+    setDirection("backward");
+    setCurrentStep((prev) => Math.max(prev - 1, 0));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function handleSkip() {
+    setDirection("forward");
+    setCurrentStep((prev) => Math.min(prev + 1, FORM_STEPS.length - 1));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
   async function onSubmit(data: InterviewFormData) {
     setIsSubmitting(true);
@@ -437,12 +373,10 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
     try {
       const supabase = createClient();
 
-      // Get authenticated user
       const {
         data: { user },
       } = await supabase.auth.getUser();
 
-      // If not signed in, save draft and redirect to sign-up
       if (!user) {
         saveDraft();
         setIsSubmitting(false);
@@ -451,7 +385,6 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
         return;
       }
 
-      // Collect follow-up data
       const activeFollowUps: Record<string, Record<string, string>> = {};
       for (const [flagKey, answers] of Object.entries(followUpAnswers)) {
         const flagValue = data[flagKey as keyof InterviewFormData];
@@ -465,7 +398,6 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
         }
       }
 
-      // Submit or update via server action
       if (isEditMode) {
         const { updateInterview } = await import("@/lib/actions/interview");
         const result = await updateInterview(editData!.id, {
@@ -478,14 +410,11 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
           return;
         }
 
-        toast.success(
-          "Your experience has been updated and will be re-reviewed."
-        );
+        toast.success("Your experience has been updated and will be re-reviewed.");
         router.push("/account");
         return;
       }
 
-      // New submission
       const { submitInterview } = await import("@/lib/actions/interview");
       const result = await submitInterview({
         formData: data as unknown as Record<string, unknown>,
@@ -499,9 +428,7 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
 
       localStorage.removeItem(FORM_STORAGE_KEY);
       setIsSuccess(true);
-      toast.success(
-        "Thanks for sharing! Your experience will be visible after review."
-      );
+      toast.success("Thanks for sharing! Your experience will be visible after review.");
     } catch {
       toast.error("Something went wrong. Please try again.");
     } finally {
@@ -538,6 +465,7 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
           onClick={() => {
             setIsSuccess(false);
             setFollowUpAnswers({});
+            setCurrentStep(0);
             form.reset();
           }}
         >
@@ -547,728 +475,604 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
     );
   }
 
+  const isLastStep = currentStep === FORM_STEPS.length - 1;
+  const step = FORM_STEPS[currentStep];
+  const progressPct = ((currentStep + 1) / FORM_STEPS.length) * 100;
+  const animClass =
+    direction === "forward"
+      ? "animate-in fade-in slide-in-from-right-8 duration-300"
+      : "animate-in fade-in slide-in-from-left-8 duration-300";
+
   return (
-    <div className="flex gap-8">
-      {/* Step Progress Sidebar — desktop only */}
-      <aside className="hidden lg:block w-48 shrink-0">
-        <div className="sticky top-24">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Progress ({completedCount}/{FORM_STEPS.length})
-          </p>
-          <nav className="space-y-1">
-            {FORM_STEPS.map((step, i) => {
-              const isCompleted = (() => {
-                switch (step.id) {
-                  case "company":
-                    return !!watchedValues.company_name && watchedValues.company_name.length >= 2;
-                  case "outcome":
-                    return !!watchedValues.outcome;
-                  case "role":
-                    return !!watchedValues.role_title;
-                  case "process":
-                    return !!(watchedValues.stages_count || watchedValues.total_duration_days);
-                  case "ratings":
-                    return (
-                      watchedValues.professionalism_rating > 0 &&
-                      watchedValues.communication_rating > 0 &&
-                      watchedValues.clarity_rating > 0 &&
-                      watchedValues.fairness_rating > 0
-                    );
-                  case "flags":
-                    return isFlagsCompleted();
-                  case "advice":
-                    return !!(watchedValues.candidate_tip || watchedValues.overall_comments);
-                  default:
-                    return false;
-                }
-              })();
-              const isActive = i === activeStep;
-
-              return (
-                <button
-                  key={step.id}
-                  type="button"
-                  onClick={() => scrollToStep(step.id)}
-                  className={`flex w-full items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left text-sm transition-colors ${
-                    isActive
-                      ? "bg-primary/5 font-medium text-foreground"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  <span
-                    className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${
-                      isCompleted
-                        ? "bg-emerald-100 text-emerald-700"
-                        : isActive
-                          ? "bg-primary/10 text-primary"
-                          : "bg-muted text-muted-foreground"
-                    }`}
-                  >
-                    {isCompleted ? (
-                      <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                      </svg>
-                    ) : (
-                      i + 1
-                    )}
-                  </span>
-                  {step.label}
-                </button>
-              );
-            })}
-          </nav>
-
-          {/* Progress bar */}
-          <div className="mt-4">
-            <div className="h-1.5 w-full rounded-full bg-muted">
-              <div
-                className="h-1.5 rounded-full bg-emerald-500 transition-all duration-500"
-                style={{
-                  width: `${(completedCount / FORM_STEPS.length) * 100}%`,
-                }}
-              />
-            </div>
-          </div>
+    <div className="mx-auto max-w-2xl">
+      {/* Progress */}
+      <div className="mb-8">
+        <div className="mb-2 flex items-center justify-between text-sm">
+          <span className="text-muted-foreground">
+            {currentStep + 1} of {FORM_STEPS.length}
+          </span>
+          <span className="font-medium">{step.label}</span>
         </div>
-      </aside>
-
-      {/* Mobile progress bar */}
-      <div className="fixed left-0 right-0 top-[65px] z-30 bg-background/95 backdrop-blur px-4 py-2 border-b shadow-sm lg:hidden">
-        <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
-          <span>Step {activeStep + 1} of {FORM_STEPS.length}: {FORM_STEPS[activeStep].label}</span>
-          <span>{completedCount}/{FORM_STEPS.length} complete</span>
-        </div>
-        <div className="h-1 w-full rounded-full bg-muted">
+        <div className="h-1.5 w-full rounded-full bg-muted">
           <div
-            className="h-1 rounded-full bg-emerald-500 transition-all duration-500"
-            style={{
-              width: `${(completedCount / FORM_STEPS.length) * 100}%`,
-            }}
+            className="h-1.5 rounded-full bg-primary transition-all duration-500"
+            style={{ width: `${progressPct}%` }}
           />
         </div>
       </div>
 
-      {/* Form */}
-      <form onSubmit={handleSubmit(onSubmit)} className="flex-1 min-w-0 space-y-8 pt-14 lg:pt-0">
-        {/* Auth banner — top */}
-        {isSignedIn === false && <AuthBanner isSignedIn={false} />}
+      <form onSubmit={handleSubmit(onSubmit)}>
+        {/* Step content */}
+        <div key={`${currentStep}-${direction}`} className={animClass}>
 
-        {/* Company Section */}
-        <section id="step-company" className="scroll-mt-28 lg:scroll-mt-20">
-          <h2 className="mb-4 text-lg font-semibold">Company</h2>
-          <div className="space-y-4">
-            <CompanySearchInput
-              value={watch("company_name")}
-              selectedId={watch("company_id")}
-              onChange={(name, id) => {
-                setValue("company_name", name);
-                setValue("company_id", id as string | undefined);
-              }}
-              error={errors.company_name?.message}
-            />
-
-            {!watch("company_id") && watch("company_name").length >= 2 && (
+          {/* ── Step 1: Company ── */}
+          {step.id === "company" && (
+            <div className="space-y-6">
               <div>
-                <label className="mb-1.5 block text-sm font-medium">
-                  Industry
-                </label>
+                <h2 className="text-2xl font-bold">Which company did you interview with?</h2>
+                <p className="mt-1 text-muted-foreground text-sm">Search by name or add a new one</p>
+              </div>
+
+              <CompanySearchInput
+                value={watch("company_name")}
+                selectedId={watch("company_id")}
+                onChange={(name, id) => {
+                  setValue("company_name", name);
+                  setValue("company_id", id as string | undefined);
+                }}
+                error={errors.company_name?.message}
+              />
+
+              {!watch("company_id") && watch("company_name").length >= 2 && (
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium">Industry</label>
+                  <Select
+                    value={watch("industry") ?? ""}
+                    onValueChange={(v) => setValue("industry", v)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select industry (optional)" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {INDUSTRIES.map((industry) => (
+                        <SelectItem key={industry} value={industry}>
+                          {industry}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              <div>
+                <label className="mb-1.5 block text-sm font-medium">Company Website</label>
+                <Input
+                  type="url"
+                  placeholder="https://example.com (optional)"
+                  {...register("company_website")}
+                />
+                {errors.company_website && (
+                  <p className="mt-1 text-xs text-destructive">{errors.company_website.message}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-sm font-medium">How did you find this role?</label>
                 <Select
-                  value={watch("industry") ?? ""}
-                  onValueChange={(v) => setValue("industry", v)}
+                  value={watch("application_source") ?? ""}
+                  onValueChange={(v) =>
+                    setValue("application_source", v as InterviewFormData["application_source"])
+                  }
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select industry (optional)" />
+                    <SelectValue placeholder="Select source (optional)" />
                   </SelectTrigger>
                   <SelectContent>
-                    {INDUSTRIES.map((industry) => (
-                      <SelectItem key={industry} value={industry}>
-                        {industry}
+                    {Object.entries(APPLICATION_SOURCE_LABELS).map(([value, label]) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
-            )}
+            </div>
+          )}
 
-            <div>
-              <label className="mb-1.5 block text-sm font-medium">
-                Company Website
-              </label>
-              <Input
-                type="url"
-                placeholder="https://example.com"
-                {...register("company_website")}
-              />
-              {errors.company_website && (
-                <p className="mt-1 text-xs text-destructive">{errors.company_website.message}</p>
+          {/* ── Step 2: Outcome ── */}
+          {step.id === "outcome" && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-bold">How did the interview go?</h2>
+                <p className="mt-1 text-muted-foreground text-sm">This helps frame the rest of your feedback</p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+                {Object.entries(OUTCOME_LABELS).map(([value, label]) => {
+                  const isSelected = currentOutcome === value;
+                  return (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() =>
+                        setValue("outcome", isSelected ? undefined : (value as InterviewFormData["outcome"]))
+                      }
+                      className={`flex flex-col items-center gap-1.5 rounded-lg border-2 p-3 text-center transition-all ${
+                        isSelected
+                          ? OUTCOME_COLORS[value] + " ring-1 ring-primary/20"
+                          : "border-transparent bg-muted/30 hover:bg-muted/60"
+                      }`}
+                    >
+                      <span className="text-xl" aria-hidden="true">{OUTCOME_ICONS[value]}</span>
+                      <span className={`text-xs font-medium ${isSelected ? "text-foreground" : "text-muted-foreground"}`}>
+                        {label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {currentOutcome && (
+                <div className={`rounded-md px-3 py-2 text-sm ${OUTCOME_COLORS[currentOutcome]}`}>
+                  {OUTCOME_CONTEXT_MESSAGES[currentOutcome]}
+                </div>
               )}
-            </div>
 
-            <div>
-              <label className="mb-1.5 block text-sm font-medium">
-                How did you find this role?
-              </label>
-              <Select
-                value={watch("application_source") ?? ""}
-                onValueChange={(v) =>
-                  setValue("application_source", v as InterviewFormData["application_source"])
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select source (optional)" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.entries(APPLICATION_SOURCE_LABELS).map(([value, label]) => (
-                    <SelectItem key={value} value={value}>
-                      {label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </section>
+              <div>
+                <label className="mb-2 block text-sm font-medium">Would you recommend applying here?</label>
+                <div className="flex gap-2">
+                  {Object.entries(RECOMMEND_APPLYING_LABELS).map(([value, label]) => {
+                    const isSelected = watch("recommend_applying") === value;
+                    const colorClass =
+                      value === "yes"
+                        ? isSelected
+                          ? "border-emerald-300 bg-emerald-50 text-emerald-800"
+                          : "border-transparent bg-muted/30 hover:bg-emerald-50/50"
+                        : value === "maybe"
+                          ? isSelected
+                            ? "border-amber-300 bg-amber-50 text-amber-800"
+                            : "border-transparent bg-muted/30 hover:bg-amber-50/50"
+                          : isSelected
+                            ? "border-red-300 bg-red-50 text-red-800"
+                            : "border-transparent bg-muted/30 hover:bg-red-50/50";
+                    return (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() =>
+                          setValue("recommend_applying", isSelected ? undefined : (value as InterviewFormData["recommend_applying"]))
+                        }
+                        className={`flex-1 rounded-lg border-2 px-4 py-2 text-sm font-medium transition-all ${colorClass}`}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
 
-        {/* Display name + anonymous toggle — right after company */}
-        <div className="rounded-lg border bg-muted/20 p-4">
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <p className="text-sm font-medium">How should we display your name?</p>
-              <p className="mt-0.5 text-xs text-muted-foreground">
-                {isAnonymous
-                  ? "Your review will be shown as \"Anonymous\""
-                  : "Your name will be shown on your review"}
-              </p>
+              <div>
+                <label className="mb-2 block text-sm font-medium">Did the interview match the job description?</label>
+                <div className="flex gap-2">
+                  {Object.entries(JD_ACCURACY_LABELS).map(([value, label]) => {
+                    const isSelected = watch("jd_accuracy") === value;
+                    const colorClass =
+                      value === "yes"
+                        ? isSelected
+                          ? "border-emerald-300 bg-emerald-50 text-emerald-800"
+                          : "border-transparent bg-muted/30 hover:bg-emerald-50/50"
+                        : value === "somewhat"
+                          ? isSelected
+                            ? "border-amber-300 bg-amber-50 text-amber-800"
+                            : "border-transparent bg-muted/30 hover:bg-amber-50/50"
+                          : isSelected
+                            ? "border-red-300 bg-red-50 text-red-800"
+                            : "border-transparent bg-muted/30 hover:bg-red-50/50";
+                    return (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() =>
+                          setValue("jd_accuracy", isSelected ? undefined : (value as InterviewFormData["jd_accuracy"]))
+                        }
+                        className={`flex-1 rounded-lg border-2 px-4 py-2 text-sm font-medium transition-all ${colorClass}`}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={!isAnonymous}
-              onClick={() => {
-                const newAnon = !isAnonymous;
-                setIsAnonymous(newAnon);
-                if (newAnon) {
-                  setValue("display_name", "");
-                }
-              }}
-              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ${
-                !isAnonymous ? "bg-primary" : "bg-muted-foreground/25"
-              }`}
-            >
-              <span
-                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition-transform ${
-                  !isAnonymous ? "translate-x-5" : "translate-x-0"
-                }`}
-              />
-            </button>
-          </div>
-          {!isAnonymous && (
-            <div className="mt-3">
-              <Input
-                placeholder="Your first name or nickname"
-                {...register("display_name")}
-              />
-              {errors.display_name && (
-                <p className="mt-1 text-xs text-destructive">
-                  {errors.display_name.message}
+          )}
+
+          {/* ── Step 3: Role ── */}
+          {step.id === "role" && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-bold">Tell us about the role</h2>
+                <p className="mt-1 text-muted-foreground text-sm">Help others find relevant experiences</p>
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-sm font-medium">
+                  Role Title <span className="text-destructive">*</span>
+                </label>
+                <Input placeholder="e.g. Frontend Developer" {...register("role_title")} />
+                {errors.role_title && (
+                  <p className="mt-1 text-xs text-destructive">{errors.role_title.message}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-sm font-medium">Location</label>
+                <Input placeholder="e.g. London, Remote" {...register("location")} />
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-sm font-medium">Department / Team</label>
+                <Input placeholder="e.g. Engineering, Marketing" {...register("department")} />
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium">Seniority</label>
+                  <Select
+                    value={watch("seniority") ?? ""}
+                    onValueChange={(v) => setValue("seniority", v as InterviewFormData["seniority"])}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select level" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(SENIORITY_LABELS).map(([value, label]) => (
+                        <SelectItem key={value} value={value}>{label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium">Interview Type</label>
+                  <Select
+                    value={watch("interview_type") ?? ""}
+                    onValueChange={(v) => setValue("interview_type", v as InterviewFormData["interview_type"])}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(INTERVIEW_TYPE_LABELS).map(([value, label]) => (
+                        <SelectItem key={value} value={value}>{label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-sm font-medium">Salary Range</label>
+                <Select
+                  value={watch("salary_range") ?? ""}
+                  onValueChange={(v) => setValue("salary_range", v)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select range (optional)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {SALARY_RANGES.map((range) => (
+                      <SelectItem key={range} value={range}>{range}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          )}
+
+          {/* ── Step 4: Process ── */}
+          {step.id === "process" && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-bold">About the interview process</h2>
+                <p className="mt-1 text-muted-foreground text-sm">These details help candidates know what to expect</p>
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-sm font-medium">Interview Date</label>
+                <Input
+                  type="date"
+                  max={new Date().toISOString().split("T")[0]}
+                  {...register("interview_date")}
+                />
+                <p className="mt-1 text-xs text-muted-foreground">When did the interview take place?</p>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium">Number of Stages</label>
+                  <Input
+                    type="number"
+                    min={1}
+                    max={20}
+                    placeholder="e.g. 4"
+                    {...register("stages_count", { valueAsNumber: true })}
+                  />
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium">Total Duration (days)</label>
+                  <Input
+                    type="number"
+                    min={1}
+                    placeholder="e.g. 21"
+                    {...register("total_duration_days", { valueAsNumber: true })}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── Step 5: Ratings ── */}
+          {step.id === "ratings" && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-bold">Rate the experience</h2>
+                <p className="mt-1 text-muted-foreground text-sm">All ratings required — be honest!</p>
+              </div>
+
+              <div className="grid gap-6 sm:grid-cols-2">
+                {(Object.entries(RATING_LABELS) as [keyof typeof RATING_LABELS, string][]).map(
+                  ([key, label]) => (
+                    <RatingInput
+                      key={key}
+                      label={label}
+                      value={watch(key)}
+                      onChange={(v) => setValue(key, v)}
+                      error={errors[key]?.message}
+                    />
+                  )
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* ── Step 6: Flags ── */}
+          {step.id === "flags" && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-bold">Any red flags or highlights?</h2>
+                <p className="mt-1 text-muted-foreground text-sm">
+                  Toggle any that apply — follow-up details are optional but helpful
                 </p>
+              </div>
+
+              <div className="space-y-3">
+                {(
+                  Object.entries(FLAG_LABELS) as [
+                    keyof typeof FLAG_LABELS,
+                    (typeof FLAG_LABELS)[keyof typeof FLAG_LABELS],
+                  ][]
+                ).map(([key, { label, description, positive, followUps }]) => (
+                  <FlagToggle
+                    key={key}
+                    id={key}
+                    label={label}
+                    description={description}
+                    positive={positive}
+                    checked={watch(key) as boolean}
+                    onCheckedChange={(checked) => {
+                      setValue(key, checked);
+                      if (!checked) {
+                        setFollowUpAnswers((prev) => {
+                          const next = { ...prev };
+                          delete next[key];
+                          return next;
+                        });
+                      }
+                    }}
+                    followUps={followUps}
+                    followUpValues={followUpAnswers[key] ?? {}}
+                    onFollowUpChange={(questionId, value) =>
+                      handleFollowUpChange(key, questionId, value)
+                    }
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ── Step 7: Advice + Submit ── */}
+          {step.id === "advice" && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-bold">Share your advice</h2>
+                <p className="mt-1 text-muted-foreground text-sm">Help future candidates prepare</p>
+              </div>
+
+              {/* Display name */}
+              <div className="rounded-lg border bg-muted/20 p-4">
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <p className="text-sm font-medium">How should we display your name?</p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      {isAnonymous
+                        ? "Your review will be shown as \"Anonymous\""
+                        : "Your name will be shown on your review"}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={!isAnonymous}
+                    onClick={() => {
+                      const newAnon = !isAnonymous;
+                      setIsAnonymous(newAnon);
+                      if (newAnon) setValue("display_name", "");
+                    }}
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ${
+                      !isAnonymous ? "bg-primary" : "bg-muted-foreground/25"
+                    }`}
+                  >
+                    <span
+                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition-transform ${
+                        !isAnonymous ? "translate-x-5" : "translate-x-0"
+                      }`}
+                    />
+                  </button>
+                </div>
+                {!isAnonymous && (
+                  <div className="mt-3">
+                    <Input placeholder="Your first name or nickname" {...register("display_name")} />
+                    {errors.display_name && (
+                      <p className="mt-1 text-xs text-destructive">{errors.display_name.message}</p>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-sm font-medium">
+                  Questions asked during the interview
+                </label>
+                <Textarea
+                  placeholder={`e.g. "Tell me about a time you disagreed with a team decision...", system design questions, take-home brief details`}
+                  rows={4}
+                  className="min-h-[100px]"
+                  {...register("interview_questions")}
+                />
+                {errors.interview_questions && (
+                  <p className="mt-1 text-xs text-destructive">{errors.interview_questions.message}</p>
+                )}
+                <p className="mt-1 text-xs text-muted-foreground">Sharing questions helps future candidates prepare</p>
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-sm font-medium">Tip for future candidates</label>
+                <Textarea
+                  placeholder={
+                    currentOutcome === "offer"
+                      ? "What helped you succeed in this interview?"
+                      : currentOutcome === "rejected"
+                        ? "What would you do differently next time?"
+                        : "What advice would you give someone interviewing here?"
+                  }
+                  rows={5}
+                  className="min-h-[120px]"
+                  {...register("candidate_tip")}
+                />
+                {errors.candidate_tip && (
+                  <p className="mt-1 text-xs text-destructive">{errors.candidate_tip.message}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-sm font-medium">Additional comments</label>
+                <Textarea
+                  placeholder="Anything else you'd like to share about the experience?"
+                  rows={5}
+                  className="min-h-[120px]"
+                  {...register("overall_comments")}
+                />
+                {errors.overall_comments && (
+                  <p className="mt-1 text-xs text-destructive">{errors.overall_comments.message}</p>
+                )}
+              </div>
+
+              {/* Auth banner on last step */}
+              {!isEditMode && isSignedIn === false && (
+                <AuthBanner isSignedIn={false} onSaveDraft={saveDraft} />
+              )}
+
+              {/* Truthfulness */}
+              {!isEditMode && (
+                <div className="flex min-h-[44px] items-start gap-3">
+                  <Checkbox
+                    id="truthfulness"
+                    checked={truthfulnessConfirmed}
+                    onCheckedChange={(checked) => setTruthfulnessConfirmed(checked === true)}
+                    className="mt-0.5"
+                  />
+                  <label
+                    htmlFor="truthfulness"
+                    className="cursor-pointer text-sm leading-relaxed text-muted-foreground"
+                  >
+                    This review is based on my genuine, first-hand experience and is truthful to the best of my knowledge. Read our{" "}
+                    <Link
+                      href="/guidelines"
+                      className="text-primary underline underline-offset-2 hover:text-primary/80"
+                    >
+                      Community Guidelines
+                    </Link>
+                  </label>
+                </div>
               )}
             </div>
           )}
         </div>
 
-        <Separator />
-
-        {/* Outcome */}
-        <section id="step-outcome" className="scroll-mt-28 lg:scroll-mt-20">
-          <h2 className="mb-1 text-lg font-semibold">How did it go?</h2>
-          <p className="mb-4 text-sm text-muted-foreground">
-            This helps frame the rest of your feedback
-          </p>
-
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
-            {Object.entries(OUTCOME_LABELS).map(([value, label]) => {
-              const isSelected = currentOutcome === value;
-              return (
-                <button
-                  key={value}
-                  type="button"
-                  onClick={() =>
-                    setValue(
-                      "outcome",
-                      isSelected
-                        ? undefined
-                        : (value as InterviewFormData["outcome"])
-                    )
-                  }
-                  className={`flex flex-col items-center gap-1.5 rounded-lg border-2 p-3 text-center transition-all ${
-                    isSelected
-                      ? OUTCOME_COLORS[value] + " border-2 ring-1 ring-primary/20"
-                      : "border-transparent bg-muted/30 hover:bg-muted/60"
-                  }`}
-                >
-                  <span className="text-lg" aria-hidden="true">
-                    {OUTCOME_ICONS[value]}
-                  </span>
-                  <span
-                    className={`text-xs font-medium ${
-                      isSelected ? "text-foreground" : "text-muted-foreground"
-                    }`}
-                  >
-                    {label}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-
-          {currentOutcome && (
-            <div
-              className={`mt-3 rounded-md px-3 py-2 text-sm ${OUTCOME_COLORS[currentOutcome]}`}
-            >
-              {OUTCOME_CONTEXT_MESSAGES[currentOutcome]}
-            </div>
-          )}
-
-          {/* Recommend Applying */}
-          <div className="mt-6">
-            <label className="mb-2 block text-sm font-medium">
-              Would you recommend applying here?
-            </label>
-            <div className="flex gap-2">
-              {Object.entries(RECOMMEND_APPLYING_LABELS).map(([value, label]) => {
-                const isSelected = watch("recommend_applying") === value;
-                const colorClass =
-                  value === "yes"
-                    ? isSelected
-                      ? "border-emerald-300 bg-emerald-50 text-emerald-800"
-                      : "border-transparent bg-muted/30 hover:bg-emerald-50/50"
-                    : value === "maybe"
-                      ? isSelected
-                        ? "border-amber-300 bg-amber-50 text-amber-800"
-                        : "border-transparent bg-muted/30 hover:bg-amber-50/50"
-                      : isSelected
-                        ? "border-red-300 bg-red-50 text-red-800"
-                        : "border-transparent bg-muted/30 hover:bg-red-50/50";
-                return (
-                  <button
-                    key={value}
-                    type="button"
-                    onClick={() =>
-                      setValue(
-                        "recommend_applying",
-                        isSelected
-                          ? undefined
-                          : (value as InterviewFormData["recommend_applying"])
-                      )
-                    }
-                    className={`flex-1 rounded-lg border-2 px-4 py-2 text-sm font-medium transition-all ${colorClass}`}
-                  >
-                    {label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* JD Accuracy */}
-          <div className="mt-4">
-            <label className="mb-2 block text-sm font-medium">
-              Did the interview match the job description?
-            </label>
-            <div className="flex gap-2">
-              {Object.entries(JD_ACCURACY_LABELS).map(([value, label]) => {
-                const isSelected = watch("jd_accuracy") === value;
-                const colorClass =
-                  value === "yes"
-                    ? isSelected
-                      ? "border-emerald-300 bg-emerald-50 text-emerald-800"
-                      : "border-transparent bg-muted/30 hover:bg-emerald-50/50"
-                    : value === "somewhat"
-                      ? isSelected
-                        ? "border-amber-300 bg-amber-50 text-amber-800"
-                        : "border-transparent bg-muted/30 hover:bg-amber-50/50"
-                      : isSelected
-                        ? "border-red-300 bg-red-50 text-red-800"
-                        : "border-transparent bg-muted/30 hover:bg-red-50/50";
-                return (
-                  <button
-                    key={value}
-                    type="button"
-                    onClick={() =>
-                      setValue(
-                        "jd_accuracy",
-                        isSelected
-                          ? undefined
-                          : (value as InterviewFormData["jd_accuracy"])
-                      )
-                    }
-                    className={`flex-1 rounded-lg border-2 px-4 py-2 text-sm font-medium transition-all ${colorClass}`}
-                  >
-                    {label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
-        <Separator />
-
-        {/* Role Details — full-width fields */}
-        <section id="step-role" className="scroll-mt-28 lg:scroll-mt-20">
-          <h2 className="mb-4 text-lg font-semibold">Role Details</h2>
-          <div className="space-y-4">
-            <div>
-              <label className="mb-1.5 block text-sm font-medium">
-                Role Title <span className="text-destructive">*</span>
-              </label>
-              <Input
-                placeholder="e.g. Frontend Developer"
-                {...register("role_title")}
-              />
-              {errors.role_title && (
-                <p className="mt-1 text-xs text-destructive">
-                  {errors.role_title.message}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label className="mb-1.5 block text-sm font-medium">
-                Location
-              </label>
-              <Input placeholder="e.g. London, Remote" {...register("location")} />
-            </div>
-
-            <div>
-              <label className="mb-1.5 block text-sm font-medium">
-                Department / Team
-              </label>
-              <Input
-                placeholder="e.g. Engineering, Product, Marketing"
-                {...register("department")}
-              />
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label className="mb-1.5 block text-sm font-medium">
-                  Seniority
-                </label>
-                <Select
-                  value={watch("seniority") ?? ""}
-                  onValueChange={(v) =>
-                    setValue("seniority", v as InterviewFormData["seniority"])
-                  }
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select level" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.entries(SENIORITY_LABELS).map(([value, label]) => (
-                      <SelectItem key={value} value={value}>
-                        {label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <label className="mb-1.5 block text-sm font-medium">
-                  Interview Type
-                </label>
-                <Select
-                  value={watch("interview_type") ?? ""}
-                  onValueChange={(v) =>
-                    setValue(
-                      "interview_type",
-                      v as InterviewFormData["interview_type"]
-                    )
-                  }
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.entries(INTERVIEW_TYPE_LABELS).map(([value, label]) => (
-                      <SelectItem key={value} value={value}>
-                        {label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div>
-              <label className="mb-1.5 block text-sm font-medium">
-                Salary Range
-              </label>
-              <Select
-                value={watch("salary_range") ?? ""}
-                onValueChange={(v) => setValue("salary_range", v)}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select range (optional)" />
-                </SelectTrigger>
-                <SelectContent>
-                  {SALARY_RANGES.map((range) => (
-                    <SelectItem key={range} value={range}>
-                      {range}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </section>
-
-        <Separator />
-
-        {/* Process Metrics */}
-        <section id="step-process" className="scroll-mt-28 lg:scroll-mt-20">
-          <h2 className="mb-4 text-lg font-semibold">Process</h2>
-          <div className="space-y-4">
-            <div>
-              <label className="mb-1.5 block text-sm font-medium">
-                Interview Date
-              </label>
-              <Input
-                type="date"
-                max={new Date().toISOString().split("T")[0]}
-                {...register("interview_date")}
-              />
-              <p className="mt-1 text-xs text-muted-foreground">
-                When did the interview take place?
-              </p>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className="mb-1.5 block text-sm font-medium">
-                Number of Stages
-              </label>
-              <Input
-                type="number"
-                min={1}
-                max={20}
-                placeholder="e.g. 4"
-                {...register("stages_count", { valueAsNumber: true })}
-              />
-            </div>
-
-            <div>
-              <label className="mb-1.5 block text-sm font-medium">
-                Total Duration (days)
-              </label>
-              <Input
-                type="number"
-                min={1}
-                placeholder="e.g. 21"
-                {...register("total_duration_days", { valueAsNumber: true })}
-              />
-            </div>
-            </div>
-          </div>
-        </section>
-
-        <Separator />
-
-        {/* Ratings */}
-        <section id="step-ratings" className="scroll-mt-28 lg:scroll-mt-20">
-          <h2 className="mb-4 text-lg font-semibold">
-            Ratings <span className="text-destructive">*</span>
-          </h2>
-          <div className="grid gap-6 sm:grid-cols-2">
-            {(
-              Object.entries(RATING_LABELS) as [
-                keyof typeof RATING_LABELS,
-                string,
-              ][]
-            ).map(([key, label]) => (
-              <RatingInput
-                key={key}
-                label={label}
-                value={watch(key)}
-                onChange={(v) => setValue(key, v)}
-                error={errors[key]?.message}
-              />
-            ))}
-          </div>
-        </section>
-
-        <Separator />
-
-        {/* Experience Flags — stacked vertically */}
-        <section id="step-flags" className="scroll-mt-28 lg:scroll-mt-20">
-          <h2 className="mb-1 text-lg font-semibold">Experience Flags</h2>
-          <p className="mb-4 text-sm text-muted-foreground">
-            Toggle any that apply. Follow-up details are optional but help paint
-            a fuller picture
-          </p>
-          <div className="space-y-3">
-            {(
-              Object.entries(FLAG_LABELS) as [
-                keyof typeof FLAG_LABELS,
-                (typeof FLAG_LABELS)[keyof typeof FLAG_LABELS],
-              ][]
-            ).map(([key, { label, description, positive, followUps }]) => (
-              <FlagToggle
-                key={key}
-                id={key}
-                label={label}
-                description={description}
-                positive={positive}
-                checked={watch(key) as boolean}
-                onCheckedChange={(checked) => {
-                  setValue(key, checked);
-                  if (!checked) {
-                    setFollowUpAnswers((prev) => {
-                      const next = { ...prev };
-                      delete next[key];
-                      return next;
-                    });
-                  }
-                }}
-                followUps={followUps}
-                followUpValues={followUpAnswers[key] ?? {}}
-                onFollowUpChange={(questionId, value) =>
-                  handleFollowUpChange(key, questionId, value)
-                }
-              />
-            ))}
-          </div>
-        </section>
-
-        <Separator />
-
-        {/* Tips & Comments — deeper textareas */}
-        <section id="step-advice" className="scroll-mt-28 lg:scroll-mt-20">
-          <h2 className="mb-4 text-lg font-semibold">Your Advice</h2>
-          <div className="space-y-4">
-            <div>
-              <label className="mb-1.5 block text-sm font-medium">
-                Questions asked during the interview
-              </label>
-              <Textarea
-                placeholder="e.g. &quot;Tell me about a time you disagreed with a team decision...&quot;, system design questions, take-home brief details"
-                rows={4}
-                className="min-h-[100px]"
-                {...register("interview_questions")}
-              />
-              {errors.interview_questions && (
-                <p className="mt-1 text-xs text-destructive">
-                  {errors.interview_questions.message}
-                </p>
-              )}
-              <p className="mt-1 text-xs text-muted-foreground">
-                Sharing questions helps future candidates prepare
-              </p>
-            </div>
-
-            <div>
-              <label className="mb-1.5 block text-sm font-medium">
-                Tip for future candidates
-              </label>
-              <Textarea
-                placeholder={
-                  currentOutcome === "offer"
-                    ? "What helped you succeed in this interview?"
-                    : currentOutcome === "rejected"
-                      ? "What would you do differently next time?"
-                      : "What advice would you give someone interviewing here?"
-                }
-                rows={5}
-                className="min-h-[120px]"
-                {...register("candidate_tip")}
-              />
-              {errors.candidate_tip && (
-                <p className="mt-1 text-xs text-destructive">
-                  {errors.candidate_tip.message}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label className="mb-1.5 block text-sm font-medium">
-                Additional comments
-              </label>
-              <Textarea
-                placeholder="Anything else you'd like to share about the experience?"
-                rows={6}
-                className="min-h-[150px]"
-                {...register("overall_comments")}
-              />
-              {errors.overall_comments && (
-                <p className="mt-1 text-xs text-destructive">
-                  {errors.overall_comments.message}
-                </p>
-              )}
-            </div>
-          </div>
-        </section>
-
-        {/* Auth banner — bottom */}
-        {!isEditMode && isSignedIn === false && <AuthBanner isSignedIn={false} />}
-
-        {/* Truthfulness confirmation */}
-        {!isEditMode && (
-          <div className="flex min-h-[44px] items-start gap-3">
-            <Checkbox
-              id="truthfulness"
-              checked={truthfulnessConfirmed}
-              onCheckedChange={(checked) =>
-                setTruthfulnessConfirmed(checked === true)
-              }
-              className="mt-0.5"
-            />
-            <label
-              htmlFor="truthfulness"
-              className="cursor-pointer text-sm leading-relaxed text-muted-foreground"
-            >
-              This review is based on my genuine, first-hand experience and is
-              truthful to the best of my knowledge. Read our{" "}
-              <Link
-                href="/guidelines"
-                className="text-primary underline underline-offset-2 hover:text-primary/80"
-              >
-                Community Guidelines
-              </Link>
-            </label>
-          </div>
-        )}
-
-        {/* Submit */}
-        <div className="sticky bottom-0 border-t bg-background py-4 sm:static sm:border-0 sm:py-0">
+        {/* Navigation */}
+        <div className="mt-10 flex items-center justify-between border-t pt-6">
           <Button
-            type="submit"
-            size="lg"
-            className="w-full sm:w-auto"
-            disabled={isSubmitting || (!isEditMode && !truthfulnessConfirmed)}
-            title={
-              !isEditMode && !truthfulnessConfirmed
-                ? "Please confirm your review is truthful to continue"
-                : undefined
-            }
+            type="button"
+            variant="ghost"
+            onClick={handleBack}
+            disabled={currentStep === 0}
+            className="gap-1"
           >
-            {isSubmitting
-              ? isEditMode
-                ? "Saving..."
-                : "Submitting..."
-              : isEditMode
-                ? "Save Changes"
-                : isSignedIn === false
-                  ? "Create Account & Submit"
-                  : "Submit Experience"}
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Back
           </Button>
-          <p className="mt-2 text-xs text-muted-foreground">
+
+          <div className="flex items-center gap-3">
+            {step.skippable && !isLastStep && (
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={handleSkip}
+                className="text-muted-foreground"
+              >
+                Skip
+              </Button>
+            )}
+
+            {isLastStep ? (
+              <Button
+                type="submit"
+                size="lg"
+                disabled={isSubmitting || (!isEditMode && !truthfulnessConfirmed)}
+                title={
+                  !isEditMode && !truthfulnessConfirmed
+                    ? "Please confirm your review is truthful to continue"
+                    : undefined
+                }
+              >
+                {isSubmitting
+                  ? isEditMode ? "Saving..." : "Submitting..."
+                  : isEditMode
+                    ? "Save Changes"
+                    : isSignedIn === false
+                      ? "Create Account & Submit"
+                      : "Submit Experience"}
+              </Button>
+            ) : (
+              <Button type="button" onClick={handleNext} size="lg" className="gap-1">
+                Next
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </Button>
+            )}
+          </div>
+        </div>
+
+        {isLastStep && (
+          <p className="mt-2 text-xs text-muted-foreground text-right">
             {isEditMode
               ? "Your edited submission will be re-reviewed before being published."
               : "Your submission will be reviewed before being published."}
           </p>
-        </div>
+        )}
       </form>
     </div>
   );

@@ -6,12 +6,14 @@ import { Button } from "@/components/ui/button";
 
 interface LinkedInButtonProps {
   redirectTo?: string;
+  onBeforeRedirect?: () => void;
 }
 
-export function LinkedInButton({ redirectTo = "/" }: LinkedInButtonProps) {
+export function LinkedInButton({ redirectTo = "/", onBeforeRedirect }: LinkedInButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLinkedIn = async () => {
+    onBeforeRedirect?.();
     setIsLoading(true);
     const supabase = createClient();
 

@@ -4,6 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { SubmissionCard } from "@/components/account/submission-card";
+import { ConnectedAccounts } from "@/components/account/connected-accounts";
+import type { UserIdentity } from "@supabase/supabase-js";
 
 export const metadata: Metadata = {
   title: "My Account | HiringLens",
@@ -16,6 +18,10 @@ export default async function AccountPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  // Check linked identities for connected accounts section
+  const linkedInIdentity =
+    (user?.identities?.find((id: UserIdentity) => id.provider === "linkedin_oidc") as UserIdentity) ?? null;
 
   // Check if user is a verified company representative
   const { data: repRecord } = await supabase
@@ -110,6 +116,11 @@ export default async function AccountPage() {
           ))}
         </div>
       )}
+
+      {/* Connected Accounts */}
+      <div className="animate-in-view-d2 mb-6">
+        <ConnectedAccounts linkedInIdentity={linkedInIdentity} />
+      </div>
 
       {/* Submissions Section */}
       <div className="animate-in-view-d2 mb-4 flex items-center justify-between">
