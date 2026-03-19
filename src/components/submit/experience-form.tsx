@@ -119,7 +119,7 @@ const FORM_STORAGE_KEY = "hiringlens_draft";
 function AuthBanner({ isSignedIn, onSaveDraft }: { isSignedIn: boolean; onSaveDraft: () => void }) {
   if (isSignedIn) return null;
   return (
-    <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50/60 px-4 py-4">
+    <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50/60 p-4">
       <div className="flex items-start gap-3">
         <svg
           className="mt-0.5 h-5 w-5 shrink-0 text-amber-600"
@@ -134,28 +134,32 @@ function AuthBanner({ isSignedIn, onSaveDraft }: { isSignedIn: boolean; onSaveDr
             d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
           />
         </svg>
-        <div className="text-sm">
-          <p className="font-medium text-amber-900">
-            You&apos;ll need an account to post
-          </p>
-          <p className="mt-0.5 text-amber-800/80">
-            Fill in your experience, then sign in to submit. Your progress will be saved.
+        <div>
+          <p className="text-sm font-semibold text-amber-900">A free account is required to submit</p>
+          <p className="mt-1 text-xs leading-relaxed text-amber-800/80">
+            We link every review to a verified account to keep things fair, spam-free, and trustworthy for everyone. Your details stay private — only your first name is shown publicly.
           </p>
         </div>
       </div>
-      <div className="mt-3 space-y-2">
+      <div className="mt-4 flex flex-col gap-2">
         <LinkedInButton redirectTo="/submit" onBeforeRedirect={onSaveDraft} />
+        <p className="text-center text-xs text-amber-700/60">Fastest option — auto-fills your profile details</p>
+        <div className="flex items-center gap-2 py-1">
+          <div className="h-px flex-1 bg-amber-200" />
+          <span className="text-xs text-amber-600">or continue with email</span>
+          <div className="h-px flex-1 bg-amber-200" />
+        </div>
         <div className="flex gap-2">
           <Link
             href="/sign-in?redirectTo=/submit"
-            className="flex-1 rounded-md border border-amber-300 bg-white px-4 py-2 text-center text-sm font-medium text-amber-900 hover:bg-amber-50"
+            className="flex-1 rounded-lg border border-amber-300 bg-white px-4 py-2 text-center text-sm font-medium text-amber-900 transition-colors hover:bg-amber-50"
             onClick={onSaveDraft}
           >
             Sign in
           </Link>
           <Link
             href="/sign-up?redirectTo=/submit"
-            className="flex-1 rounded-md border border-amber-300 bg-white px-4 py-2 text-center text-sm font-medium text-amber-900 hover:bg-amber-50"
+            className="flex-1 rounded-lg border border-amber-300 bg-white px-4 py-2 text-center text-sm font-medium text-amber-900 transition-colors hover:bg-amber-50"
             onClick={onSaveDraft}
           >
             Create account
@@ -1013,8 +1017,8 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
           )}
         </div>
 
-        {/* Navigation */}
-        <div className="mt-8 flex items-center justify-between border-t pt-5">
+        {/* Navigation — sticky so Back/Next stay anchored as step height changes */}
+        <div className="sticky bottom-0 mt-8 flex items-center justify-between border-t bg-background/95 pt-5 pb-4 backdrop-blur-sm">
           <Button
             type="button"
             variant="ghost"
