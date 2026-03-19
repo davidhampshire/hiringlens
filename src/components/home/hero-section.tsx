@@ -32,9 +32,9 @@ export function HeroSection() {
       {/* Soft radial glow */}
       <div className="absolute -right-1/4 -top-1/4 h-[600px] w-[600px] rounded-full bg-foreground/[0.03] blur-3xl" />
 
-      <div className="relative mx-auto max-w-4xl px-4 pb-20 pt-16 text-center sm:px-6 sm:pb-24 sm:pt-20 lg:pb-28 lg:pt-24">
+      <div className="relative mx-auto max-w-4xl px-4 pb-16 pt-10 text-center sm:px-6 sm:pb-20 sm:pt-12 lg:pb-24 lg:pt-14">
         {/* Headline */}
-        <h1 className="animate-in-view text-5xl font-medium leading-[1.1] text-foreground sm:text-7xl lg:text-8xl">
+        <h1 className="animate-in-view text-5xl font-medium leading-[0.95] text-foreground sm:text-7xl lg:text-8xl">
           See how
           <br />
           companies
@@ -42,8 +42,8 @@ export function HeroSection() {
           <span className="text-foreground/25">really</span> hire
         </h1>
 
-        {/* Subtext */}
-        <p className="animate-in-view-d2 mx-auto mt-8 max-w-lg text-base leading-relaxed text-muted-foreground sm:text-lg">
+        {/* Subtext — constrained to ~two lines on desktop */}
+        <p className="animate-in-view-d2 mx-auto mt-8 max-w-sm text-base leading-relaxed text-muted-foreground sm:max-w-md sm:text-lg">
           Real interview experiences from real candidates. Holding companies
           accountable and helping you prepare for what&apos;s actually ahead.
         </p>
