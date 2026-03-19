@@ -23,7 +23,7 @@ export function CompanyCard({ company }: CompanyCardProps) {
     <HoverCard openDelay={300} closeDelay={100}>
       <HoverCardTrigger asChild>
         <Link href={`/company/${company.slug}`}>
-          <Card className="group gap-0 p-0 transition-all hover:shadow-md">
+          <Card className="group gap-0 p-0 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
             <div className="p-5">
               <div className="flex items-start justify-between gap-3">
                 <CompanyLogo

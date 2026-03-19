@@ -63,7 +63,7 @@ export function MissionSection() {
         {VALUES.map((value) => (
           <div
             key={value.title}
-            className="flex gap-4 rounded-lg border bg-card p-6"
+            className="flex gap-4 rounded-lg border bg-card p-6 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm hover:border-primary/20"
           >
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
               {value.icon}

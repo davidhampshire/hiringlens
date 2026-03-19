@@ -137,7 +137,7 @@ export function InsightsGrid({ industries }: { industries: IndustryStats[] }) {
             key={ind.industry}
             href={`/search?industry=${encodeURIComponent(ind.industry)}`}
           >
-            <Card className="gap-0 p-0 transition-all hover:shadow-md hover:border-primary/30 cursor-pointer h-full">
+            <Card className="gap-0 p-0 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-primary/30 cursor-pointer h-full">
               <div className="p-5">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-medium">{ind.industry}</h3>

@@ -59,7 +59,7 @@ export async function RecentReviews() {
 
           return (
             <Link key={review.id} href={`/company/${company?.slug ?? ""}`}>
-              <Card className="group flex h-full flex-col gap-0 p-0 transition-all hover:shadow-md">
+              <Card className="group flex h-full flex-col gap-0 p-0 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
                 {/* Company header with prominent logo */}
                 <div className="flex items-center gap-3 border-b px-5 py-3">
                   <CompanyLogo
