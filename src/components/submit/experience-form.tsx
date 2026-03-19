@@ -480,37 +480,37 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
   const progressPct = ((currentStep + 1) / FORM_STEPS.length) * 100;
   const animClass =
     direction === "forward"
-      ? "animate-in fade-in slide-in-from-right-8 duration-300"
-      : "animate-in fade-in slide-in-from-left-8 duration-300";
+      ? "animate-in fade-in slide-in-from-bottom-6 duration-500 ease-out"
+      : "animate-in fade-in slide-in-from-top-6 duration-500 ease-out";
 
   return (
     <div className="mx-auto max-w-2xl">
       {/* Progress */}
-      <div className="mb-8">
-        <div className="mb-2 flex items-center justify-between text-sm">
-          <span className="text-muted-foreground">
-            {currentStep + 1} of {FORM_STEPS.length}
+      <div className="mb-10">
+        <div className="mb-2.5 flex items-center justify-between text-sm">
+          <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+            {currentStep + 1} / {FORM_STEPS.length}
           </span>
-          <span className="font-medium">{step.label}</span>
+          <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">{step.label}</span>
         </div>
-        <div className="h-1.5 w-full rounded-full bg-muted">
+        <div className="h-1 w-full rounded-full bg-muted">
           <div
-            className="h-1.5 rounded-full bg-primary transition-all duration-500"
+            className="h-1 rounded-full bg-foreground transition-all duration-700 ease-out"
             style={{ width: `${progressPct}%` }}
           />
         </div>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)}>
-        {/* Step content */}
-        <div key={`${currentStep}-${direction}`} className={animClass}>
+        {/* Step content — fixed min-height so footer doesn't jump */}
+        <div key={`${currentStep}-${direction}`} className={`min-h-[440px] sm:min-h-[480px] ${animClass}`}>
 
           {/* ── Step 1: Company ── */}
           {step.id === "company" && (
-            <div className="space-y-6">
+            <div className="space-y-8">
               <div>
-                <h2 className="text-2xl font-bold">Which company did you interview with?</h2>
-                <p className="mt-1 text-muted-foreground text-sm">Search by name or add a new one</p>
+                <h2 className="text-3xl font-bold leading-tight">Which company did you interview with?</h2>
+                <p className="mt-2 text-muted-foreground">Search by name or add a new one</p>
               </div>
 
               <CompanySearchInput
@@ -544,97 +544,100 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
                 </div>
               )}
 
-              <div>
-                <label className="mb-1.5 block text-sm font-medium">Company Website</label>
-                <Input
-                  type="url"
-                  placeholder="https://example.com (optional)"
-                  {...register("company_website")}
-                />
-                {errors.company_website && (
-                  <p className="mt-1 text-xs text-destructive">{errors.company_website.message}</p>
-                )}
-              </div>
-
-              <div>
-                <label className="mb-1.5 block text-sm font-medium">How did you find this role?</label>
-                <Select
-                  value={watch("application_source") ?? ""}
-                  onValueChange={(v) =>
-                    setValue("application_source", v as InterviewFormData["application_source"])
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select source (optional)" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.entries(APPLICATION_SOURCE_LABELS).map(([value, label]) => (
-                      <SelectItem key={value} value={value}>
-                        {label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium">Company Website</label>
+                  <Input
+                    type="url"
+                    placeholder="https://example.com"
+                    {...register("company_website")}
+                  />
+                  {errors.company_website && (
+                    <p className="mt-1 text-xs text-destructive">{errors.company_website.message}</p>
+                  )}
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium">How did you find this role?</label>
+                  <Select
+                    value={watch("application_source") ?? ""}
+                    onValueChange={(v) =>
+                      setValue("application_source", v as InterviewFormData["application_source"])
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select source" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(APPLICATION_SOURCE_LABELS).map(([value, label]) => (
+                        <SelectItem key={value} value={value}>
+                          {label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </div>
           )}
 
           {/* ── Step 2: Outcome ── */}
           {step.id === "outcome" && (
-            <div className="space-y-6">
+            <div className="space-y-10">
               <div>
-                <h2 className="text-2xl font-bold">How did the interview go?</h2>
-                <p className="mt-1 text-muted-foreground text-sm">This helps frame the rest of your feedback</p>
+                <h2 className="text-3xl font-bold leading-tight">How did the interview go?</h2>
+                <p className="mt-2 text-muted-foreground">This helps frame the rest of your feedback</p>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
-                {Object.entries(OUTCOME_LABELS).map(([value, label]) => {
-                  const isSelected = currentOutcome === value;
-                  return (
-                    <button
-                      key={value}
-                      type="button"
-                      onClick={() =>
-                        setValue("outcome", isSelected ? undefined : (value as InterviewFormData["outcome"]))
-                      }
-                      className={`flex flex-col items-center gap-1.5 rounded-lg border-2 p-3 text-center transition-all ${
-                        isSelected
-                          ? OUTCOME_COLORS[value] + " ring-1 ring-primary/20"
-                          : "border-transparent bg-muted/30 hover:bg-muted/60"
-                      }`}
-                    >
-                      <span className="text-xl" aria-hidden="true">{OUTCOME_ICONS[value]}</span>
-                      <span className={`text-xs font-medium ${isSelected ? "text-foreground" : "text-muted-foreground"}`}>
-                        {label}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {currentOutcome && (
-                <div className={`rounded-md px-3 py-2 text-sm ${OUTCOME_COLORS[currentOutcome]}`}>
-                  {OUTCOME_CONTEXT_MESSAGES[currentOutcome]}
+              <div>
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+                  {Object.entries(OUTCOME_LABELS).map(([value, label]) => {
+                    const isSelected = currentOutcome === value;
+                    return (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() =>
+                          setValue("outcome", isSelected ? undefined : (value as InterviewFormData["outcome"]))
+                        }
+                        className={`flex flex-col items-center gap-2 rounded-xl border-2 p-4 text-center transition-all ${
+                          isSelected
+                            ? OUTCOME_COLORS[value] + " ring-1 ring-primary/20 shadow-sm"
+                            : "border-muted bg-muted/20 hover:bg-muted/50 hover:border-muted-foreground/20"
+                        }`}
+                      >
+                        <span className="text-2xl" aria-hidden="true">{OUTCOME_ICONS[value]}</span>
+                        <span className={`text-xs font-semibold ${isSelected ? "text-foreground" : "text-muted-foreground"}`}>
+                          {label}
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
-              )}
+                {currentOutcome && (
+                  <div className={`mt-3 rounded-lg px-4 py-3 text-sm ${OUTCOME_COLORS[currentOutcome]}`}>
+                    {OUTCOME_CONTEXT_MESSAGES[currentOutcome]}
+                  </div>
+                )}
+              </div>
 
-              <div>
-                <label className="mb-2 block text-sm font-medium">Would you recommend applying here?</label>
-                <div className="flex gap-2">
+              <div className="space-y-1.5">
+                <p className="text-sm font-semibold text-foreground">Would you recommend applying here?</p>
+                <p className="text-xs text-muted-foreground mb-3">Based on the overall experience</p>
+                <div className="flex gap-3">
                   {Object.entries(RECOMMEND_APPLYING_LABELS).map(([value, label]) => {
                     const isSelected = watch("recommend_applying") === value;
                     const colorClass =
                       value === "yes"
                         ? isSelected
-                          ? "border-emerald-300 bg-emerald-50 text-emerald-800"
-                          : "border-transparent bg-muted/30 hover:bg-emerald-50/50"
+                          ? "border-emerald-300 bg-emerald-50 text-emerald-800 shadow-sm"
+                          : "border-muted bg-muted/20 hover:bg-emerald-50/50 hover:border-emerald-200"
                         : value === "maybe"
                           ? isSelected
-                            ? "border-amber-300 bg-amber-50 text-amber-800"
-                            : "border-transparent bg-muted/30 hover:bg-amber-50/50"
+                            ? "border-amber-300 bg-amber-50 text-amber-800 shadow-sm"
+                            : "border-muted bg-muted/20 hover:bg-amber-50/50 hover:border-amber-200"
                           : isSelected
-                            ? "border-red-300 bg-red-50 text-red-800"
-                            : "border-transparent bg-muted/30 hover:bg-red-50/50";
+                            ? "border-red-300 bg-red-50 text-red-800 shadow-sm"
+                            : "border-muted bg-muted/20 hover:bg-red-50/50 hover:border-red-200";
                     return (
                       <button
                         key={value}
@@ -642,7 +645,7 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
                         onClick={() =>
                           setValue("recommend_applying", isSelected ? undefined : (value as InterviewFormData["recommend_applying"]))
                         }
-                        className={`flex-1 rounded-lg border-2 px-4 py-2 text-sm font-medium transition-all ${colorClass}`}
+                        className={`flex-1 rounded-xl border-2 px-4 py-3 text-sm font-semibold transition-all ${colorClass}`}
                       >
                         {label}
                       </button>
@@ -651,23 +654,24 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
                 </div>
               </div>
 
-              <div>
-                <label className="mb-2 block text-sm font-medium">Did the interview match the job description?</label>
-                <div className="flex gap-2">
+              <div className="space-y-1.5">
+                <p className="text-sm font-semibold text-foreground">Did the interview match the job description?</p>
+                <p className="text-xs text-muted-foreground mb-3">Was the role as advertised?</p>
+                <div className="flex gap-3">
                   {Object.entries(JD_ACCURACY_LABELS).map(([value, label]) => {
                     const isSelected = watch("jd_accuracy") === value;
                     const colorClass =
                       value === "yes"
                         ? isSelected
-                          ? "border-emerald-300 bg-emerald-50 text-emerald-800"
-                          : "border-transparent bg-muted/30 hover:bg-emerald-50/50"
+                          ? "border-emerald-300 bg-emerald-50 text-emerald-800 shadow-sm"
+                          : "border-muted bg-muted/20 hover:bg-emerald-50/50 hover:border-emerald-200"
                         : value === "somewhat"
                           ? isSelected
-                            ? "border-amber-300 bg-amber-50 text-amber-800"
-                            : "border-transparent bg-muted/30 hover:bg-amber-50/50"
+                            ? "border-amber-300 bg-amber-50 text-amber-800 shadow-sm"
+                            : "border-muted bg-muted/20 hover:bg-amber-50/50 hover:border-amber-200"
                           : isSelected
-                            ? "border-red-300 bg-red-50 text-red-800"
-                            : "border-transparent bg-muted/30 hover:bg-red-50/50";
+                            ? "border-red-300 bg-red-50 text-red-800 shadow-sm"
+                            : "border-muted bg-muted/20 hover:bg-red-50/50 hover:border-red-200";
                     return (
                       <button
                         key={value}
@@ -675,7 +679,7 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
                         onClick={() =>
                           setValue("jd_accuracy", isSelected ? undefined : (value as InterviewFormData["jd_accuracy"]))
                         }
-                        className={`flex-1 rounded-lg border-2 px-4 py-2 text-sm font-medium transition-all ${colorClass}`}
+                        className={`flex-1 rounded-xl border-2 px-4 py-3 text-sm font-semibold transition-all ${colorClass}`}
                       >
                         {label}
                       </button>
@@ -688,10 +692,10 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
 
           {/* ── Step 3: Role ── */}
           {step.id === "role" && (
-            <div className="space-y-6">
+            <div className="space-y-8">
               <div>
-                <h2 className="text-2xl font-bold">Tell us about the role</h2>
-                <p className="mt-1 text-muted-foreground text-sm">Help others find relevant experiences</p>
+                <h2 className="text-3xl font-bold leading-tight">Tell us about the role</h2>
+                <p className="mt-2 text-muted-foreground">Help others find relevant experiences</p>
               </div>
 
               <div>
@@ -771,10 +775,10 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
 
           {/* ── Step 4: Process ── */}
           {step.id === "process" && (
-            <div className="space-y-6">
+            <div className="space-y-8">
               <div>
-                <h2 className="text-2xl font-bold">About the interview process</h2>
-                <p className="mt-1 text-muted-foreground text-sm">These details help candidates know what to expect</p>
+                <h2 className="text-3xl font-bold leading-tight">About the interview process</h2>
+                <p className="mt-2 text-muted-foreground">These details help candidates know what to expect</p>
               </div>
 
               <div>
@@ -813,10 +817,10 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
 
           {/* ── Step 5: Ratings ── */}
           {step.id === "ratings" && (
-            <div className="space-y-6">
+            <div className="space-y-8">
               <div>
-                <h2 className="text-2xl font-bold">Rate the experience</h2>
-                <p className="mt-1 text-muted-foreground text-sm">All ratings required — be honest!</p>
+                <h2 className="text-3xl font-bold leading-tight">Rate the experience</h2>
+                <p className="mt-2 text-muted-foreground">All ratings required — be honest!</p>
               </div>
 
               <div className="grid gap-6 sm:grid-cols-2">
@@ -837,10 +841,10 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
 
           {/* ── Step 6: Flags ── */}
           {step.id === "flags" && (
-            <div className="space-y-6">
+            <div className="space-y-8">
               <div>
-                <h2 className="text-2xl font-bold">Any red flags or highlights?</h2>
-                <p className="mt-1 text-muted-foreground text-sm">
+                <h2 className="text-3xl font-bold leading-tight">Any red flags or highlights?</h2>
+                <p className="mt-2 text-muted-foreground">
                   Toggle any that apply — follow-up details are optional but helpful
                 </p>
               </div>
@@ -882,10 +886,10 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
 
           {/* ── Step 7: Advice + Submit ── */}
           {step.id === "advice" && (
-            <div className="space-y-6">
+            <div className="space-y-8">
               <div>
-                <h2 className="text-2xl font-bold">Share your advice</h2>
-                <p className="mt-1 text-muted-foreground text-sm">Help future candidates prepare</p>
+                <h2 className="text-3xl font-bold leading-tight">Share your advice</h2>
+                <p className="mt-2 text-muted-foreground">Help future candidates prepare</p>
               </div>
 
               {/* Display name */}
@@ -1010,13 +1014,13 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
         </div>
 
         {/* Navigation */}
-        <div className="mt-10 flex items-center justify-between border-t pt-6">
+        <div className="mt-12 flex items-center justify-between border-t pt-6">
           <Button
             type="button"
             variant="ghost"
             onClick={handleBack}
             disabled={currentStep === 0}
-            className="gap-1"
+            className="gap-1.5 text-muted-foreground hover:text-foreground"
           >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -1024,22 +1028,22 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
             Back
           </Button>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             {step.skippable && !isLastStep && (
-              <Button
+              <button
                 type="button"
-                variant="ghost"
                 onClick={handleSkip}
-                className="text-muted-foreground"
+                className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline transition-colors"
               >
                 Skip
-              </Button>
+              </button>
             )}
 
             {isLastStep ? (
               <Button
                 type="submit"
                 size="lg"
+                className="px-8"
                 disabled={isSubmitting || (!isEditMode && !truthfulnessConfirmed)}
                 title={
                   !isEditMode && !truthfulnessConfirmed
@@ -1056,7 +1060,7 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
                       : "Submit Experience"}
               </Button>
             ) : (
-              <Button type="button" onClick={handleNext} size="lg" className="gap-1">
+              <Button type="button" onClick={handleNext} size="lg" className="gap-1.5 px-8">
                 Next
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -1067,7 +1071,7 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
         </div>
 
         {isLastStep && (
-          <p className="mt-2 text-xs text-muted-foreground text-right">
+          <p className="mt-3 text-xs text-muted-foreground text-right">
             {isEditMode
               ? "Your edited submission will be re-reviewed before being published."
               : "Your submission will be reviewed before being published."}
