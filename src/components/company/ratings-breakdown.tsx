@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils";
 import { RATING_LABELS } from "@/lib/constants";
 import { useEffect, useState } from "react";
+import { InfoTooltip } from "@/components/ui/tooltip";
 
 interface RatingsBreakdownProps {
   avgProfessionalism: number | null;
@@ -99,7 +100,12 @@ export function RatingsBreakdown({
 
   return (
     <div className={cn("space-y-2", compact ? "space-y-1.5" : "space-y-3")}>
-      {!compact && <h3 className="text-base font-medium">Ratings Breakdown</h3>}
+      {!compact && (
+        <div className="flex items-center gap-1.5">
+          <h3 className="text-base font-medium">Ratings Breakdown</h3>
+          <InfoTooltip content="Average scores across four dimensions rated 1–5 by candidates: how professional the process felt, how clearly the company communicated, how well the role and expectations were explained, and how fairly candidates were treated." />
+        </div>
+      )}
       <div className={cn(compact ? "space-y-1.5" : "space-y-2.5")}>
         {ratings.map(({ key, value }, index) => (
           <RatingBar

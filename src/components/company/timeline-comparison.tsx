@@ -1,3 +1,5 @@
+import { InfoTooltip } from "@/components/ui/tooltip";
+
 interface TimelineComparisonProps {
   companyAvgDays: number | null;
   industryAvgDays: number | null;
@@ -22,7 +24,10 @@ export function TimelineComparison({
 
   return (
     <div>
-      <h3 className="mb-3 text-base font-medium">Timeline Comparison</h3>
+      <div className="mb-3 flex items-center gap-1.5">
+        <h3 className="text-base font-medium">Timeline Comparison</h3>
+        <InfoTooltip content="How this company's average interview duration compares to others in the same industry. Green means faster than the industry average; amber means slower." />
+      </div>
       <div className="space-y-3">
         {/* Company bar */}
         <div>

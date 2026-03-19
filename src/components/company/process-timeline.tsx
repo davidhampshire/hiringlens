@@ -1,3 +1,5 @@
+import { InfoTooltip } from "@/components/ui/tooltip";
+
 interface ProcessTimelineProps {
   avgStages: number | null;
   avgDurationDays: number | null;
@@ -13,7 +15,10 @@ export function ProcessTimeline({
 
   return (
     <div className="space-y-3">
-      <h3 className="text-base font-medium">Typical Process</h3>
+      <div className="flex items-center gap-1.5">
+        <h3 className="text-base font-medium">Typical Process</h3>
+        <InfoTooltip content="Average number of interview stages and total calendar days from first contact to final decision, based on candidate reports." />
+      </div>
       <div className="flex gap-4">
         {avgStages && (
           <div className="flex-1 rounded-lg border bg-muted/30 p-4 text-center">

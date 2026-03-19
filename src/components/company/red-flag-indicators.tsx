@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { InfoTooltip } from "@/components/ui/tooltip";
 
 interface RedFlagIndicatorsProps {
   pctGhosted: number | null;
@@ -35,7 +36,10 @@ export function RedFlagIndicators({
 
   return (
     <div className="space-y-3">
-      <h3 className="text-base font-medium">Red Flags</h3>
+      <div className="flex items-center gap-1.5">
+        <h3 className="text-base font-medium">Red Flags</h3>
+        <InfoTooltip content="Negative patterns reported by more than 10% of candidates: being ghosted with no response, unpaid take-home work, the process taking longer than stated, or receiving no feedback after rejection." />
+      </div>
       <div className="flex flex-wrap gap-2">
         {flags.map((flag) => (
           <Badge

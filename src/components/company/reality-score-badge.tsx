@@ -2,6 +2,7 @@
 
 import { cn, formatScore, getScoreColor } from "@/lib/utils";
 import { useEffect, useState } from "react";
+import { InfoTooltip } from "@/components/ui/tooltip";
 
 interface RealityScoreBadgeProps {
   score: number | null;
@@ -87,9 +88,14 @@ export function RealityScoreBadge({
         </div>
       </div>
       <div className="text-center">
-        <p className={cn("font-medium", isSmall ? "text-xs" : "text-sm")}>
-          Reality Score
-        </p>
+        <div className="flex items-center justify-center gap-1">
+          <p className={cn("font-medium", isSmall ? "text-xs" : "text-sm")}>
+            Reality Score
+          </p>
+          {!isSmall && (
+            <InfoTooltip content="A score from 0–100 based on four rating dimensions (professionalism, communication, clarity, fairness), with automatic penalties for red flags like ghosting (−15%), unpaid tasks (−10%), exceeded timelines (−10%), and no feedback (−5%)." />
+          )}
+        </div>
         {!isSmall && (
           <p className="text-xs text-muted-foreground">
             Based on {totalReviews} {totalReviews === 1 ? "review" : "reviews"}
