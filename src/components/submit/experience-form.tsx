@@ -455,7 +455,8 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
 
   if (isSuccess) {
     return (
-      <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white px-6 text-center">
+      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm sm:p-6">
+      <div className="flex w-full max-w-md flex-col items-center overflow-hidden rounded-2xl bg-white px-10 py-14 text-center shadow-2xl ring-1 ring-black/8">
         <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-50">
           <svg className="h-10 w-10 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -480,7 +481,8 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
             Submit another
           </Button>
         </div>
-      </div>
+      </div>{/* end modal card */}
+      </div>/* end backdrop */
     );
   }
 
@@ -493,38 +495,42 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
       : "animate-in fade-in slide-in-from-top-6 duration-500 ease-out";
 
   return (
-    <div className="fixed inset-0 z-[100] flex flex-col bg-white">
+    /* ── Backdrop: dims + blurs the page behind the modal ── */
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm sm:p-6">
 
-      {/* ── Top bar: exit + progress bar + step counter ── */}
-      <div className="flex shrink-0 items-center gap-4 border-b border-muted/60 px-5 py-3">
-        <Link
-          href="/"
-          className="flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
-        >
-          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-          <span className="hidden sm:inline text-xs">Exit</span>
-        </Link>
-        <div className="flex-1">
-          <div className="h-0.5 w-full rounded-full bg-muted">
-            <div
-              className="h-0.5 rounded-full bg-foreground transition-all duration-700 ease-out"
-              style={{ width: `${progressPct}%` }}
-            />
+      {/* ── Modal card ── */}
+      <div className="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/8">
+
+        {/* ── Top bar: exit + progress bar + step counter ── */}
+        <div className="flex shrink-0 items-center gap-4 border-b border-muted/40 px-6 py-4">
+          <button
+            type="button"
+            onClick={() => { saveDraft(); router.push("/"); }}
+            className="flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          <div className="flex-1">
+            <div className="h-1 w-full rounded-full bg-muted">
+              <div
+                className="h-1 rounded-full bg-foreground transition-all duration-700 ease-out"
+                style={{ width: `${progressPct}%` }}
+              />
+            </div>
           </div>
+          <span className="shrink-0 text-xs font-medium tabular-nums text-muted-foreground">
+            {currentStep + 1}<span className="mx-1 opacity-30">/</span>{FORM_STEPS.length}
+          </span>
         </div>
-        <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
-          {currentStep + 1}<span className="mx-0.5 opacity-30">/</span>{FORM_STEPS.length}
-        </span>
-      </div>
 
-      {/* ── Form fills remaining height, content scrollable inside ── */}
-      <form onSubmit={handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
+        {/* ── Form fills remaining height, content scrollable inside ── */}
+        <form onSubmit={handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
 
-        {/* Scrollable content */}
-        <div className="flex-1 overflow-y-auto">
-          <div className="mx-auto max-w-xl px-6 py-10 sm:px-10 sm:py-14">
+          {/* Scrollable content */}
+          <div className="flex-1 overflow-y-auto">
+            <div className="px-8 py-8 sm:px-10 sm:py-10">
             <div key={`${currentStep}-${direction}`} className={animClass}>
 
           {/* ── Step 1: Company ── */}
@@ -1034,12 +1040,12 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
               )}
             </div>
           )}
-            </div>{/* end step content scroll wrapper */}
-          </div>{/* end max-w-xl centering */}
-        </div>{/* end overflow-y-auto */}
+            </div>{/* end step content animation wrapper */}
+            </div>{/* end px/py content padding */}
+          </div>{/* end overflow-y-auto */}
 
-        {/* ── Bottom navigation bar — always anchored to viewport bottom ── */}
-        <div className="flex shrink-0 items-center justify-between border-t border-muted/60 bg-white px-6 py-4">
+          {/* ── Bottom navigation — anchored to modal bottom ── */}
+          <div className="flex shrink-0 items-center justify-between border-t border-muted/40 bg-white px-8 py-5">
           <Button
             type="button"
             variant="ghost"
@@ -1095,7 +1101,8 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
           </div>
         </div>
 
-      </form>
-    </div>
+        </form>
+      </div>{/* end modal card */}
+    </div>/* end backdrop */
   );
 }
