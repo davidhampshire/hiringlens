@@ -116,6 +116,13 @@ const FORM_STEPS = [
 
 const FORM_STORAGE_KEY = "hiringlens_draft";
 
+const RATING_DESCRIPTIONS: Record<string, string> = {
+  professionalism_rating: "Were interviewers respectful, prepared, and on time?",
+  communication_rating: "How clearly were timelines and next steps communicated?",
+  clarity_rating: "Was the role and what was expected well-defined?",
+  fairness_rating: "Were the questions relevant and appropriate for the role?",
+};
+
 function AuthBanner({ isSignedIn, onSaveDraft }: { isSignedIn: boolean; onSaveDraft: () => void }) {
   if (isSignedIn) return null;
   return (
@@ -317,6 +324,12 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Lock body scroll while form is open
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, []);
+
   const saveDraft = useCallback(() => {
     try {
       const currentData = form.getValues();
@@ -442,39 +455,31 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
 
   if (isSuccess) {
     return (
-      <div className="mx-auto max-w-lg py-16 text-center">
-        <div className="mb-4 flex h-16 w-16 mx-auto items-center justify-center rounded-full bg-emerald-50">
-          <svg
-            className="h-8 w-8 text-emerald-600"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M5 13l4 4L19 7"
-            />
+      <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white px-6 text-center">
+        <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-50">
+          <svg className="h-10 w-10 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h2 className="text-xl font-semibold">Experience Submitted</h2>
-        <p className="mt-2 text-muted-foreground">
-          Your interview experience has been submitted for review. It will be
-          visible to other candidates once approved. Thank you for helping the
-          community!
+        <h2 className="text-3xl font-bold">You&apos;re a legend.</h2>
+        <p className="mt-3 max-w-sm text-muted-foreground">
+          Your experience has been submitted for review and will be visible to other candidates once approved. Thank you for helping the community.
         </p>
-        <Button
-          className="mt-6"
-          onClick={() => {
-            setIsSuccess(false);
-            setFollowUpAnswers({});
-            setCurrentStep(0);
-            form.reset();
-          }}
-        >
-          Submit Another
-        </Button>
+        <div className="mt-8 flex gap-3">
+          <Button variant="outline" asChild>
+            <Link href="/">Back to home</Link>
+          </Button>
+          <Button
+            onClick={() => {
+              setIsSuccess(false);
+              setFollowUpAnswers({});
+              setCurrentStep(0);
+              form.reset();
+            }}
+          >
+            Submit another
+          </Button>
+        </div>
       </div>
     );
   }
@@ -488,26 +493,39 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
       : "animate-in fade-in slide-in-from-top-6 duration-500 ease-out";
 
   return (
-    <div className="mx-auto max-w-2xl">
-      {/* Progress */}
-      <div className="mb-6">
-        <div className="mb-2 flex items-center justify-between">
-          <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-            {currentStep + 1} / {FORM_STEPS.length}
-          </span>
-          <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">{step.label}</span>
+    <div className="fixed inset-0 z-[100] flex flex-col bg-white">
+
+      {/* ── Top bar: exit + progress bar + step counter ── */}
+      <div className="flex shrink-0 items-center gap-4 border-b border-muted/60 px-5 py-3">
+        <Link
+          href="/"
+          className="flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+          <span className="hidden sm:inline text-xs">Exit</span>
+        </Link>
+        <div className="flex-1">
+          <div className="h-0.5 w-full rounded-full bg-muted">
+            <div
+              className="h-0.5 rounded-full bg-foreground transition-all duration-700 ease-out"
+              style={{ width: `${progressPct}%` }}
+            />
+          </div>
         </div>
-        <div className="h-1 w-full rounded-full bg-muted">
-          <div
-            className="h-1 rounded-full bg-foreground transition-all duration-700 ease-out"
-            style={{ width: `${progressPct}%` }}
-          />
-        </div>
+        <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
+          {currentStep + 1}<span className="mx-0.5 opacity-30">/</span>{FORM_STEPS.length}
+        </span>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        {/* Step content */}
-        <div key={`${currentStep}-${direction}`} className={animClass}>
+      {/* ── Form fills remaining height, content scrollable inside ── */}
+      <form onSubmit={handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
+
+        {/* Scrollable content */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="mx-auto max-w-xl px-6 py-10 sm:px-10 sm:py-14">
+            <div key={`${currentStep}-${direction}`} className={animClass}>
 
           {/* ── Step 1: Company ── */}
           {step.id === "company" && (
@@ -833,8 +851,9 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
                     <RatingInput
                       key={key}
                       label={label}
+                      description={RATING_DESCRIPTIONS[key]}
                       value={watch(key)}
-                      onChange={(v) => setValue(key, v)}
+                      onChange={(v) => setValue(key, v, { shouldValidate: true, shouldDirty: true })}
                       error={errors[key]?.message}
                     />
                   )
@@ -1015,10 +1034,12 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
               )}
             </div>
           )}
-        </div>
+            </div>{/* end step content scroll wrapper */}
+          </div>{/* end max-w-xl centering */}
+        </div>{/* end overflow-y-auto */}
 
-        {/* Navigation — sticky so Back/Next stay anchored as step height changes */}
-        <div className="sticky bottom-0 mt-8 flex items-center justify-between border-t bg-background/95 pt-5 pb-4 backdrop-blur-sm">
+        {/* ── Bottom navigation bar — always anchored to viewport bottom ── */}
+        <div className="flex shrink-0 items-center justify-between border-t border-muted/60 bg-white px-6 py-4">
           <Button
             type="button"
             variant="ghost"
@@ -1032,7 +1053,7 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
             Back
           </Button>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-5">
             {step.skippable && !isLastStep && (
               <button
                 type="button"
@@ -1074,13 +1095,6 @@ export function ExperienceForm({ prefilledCompany, editData }: ExperienceFormPro
           </div>
         </div>
 
-        {isLastStep && (
-          <p className="mt-3 text-xs text-muted-foreground text-right">
-            {isEditMode
-              ? "Your edited submission will be re-reviewed before being published."
-              : "Your submission will be reviewed before being published."}
-          </p>
-        )}
       </form>
     </div>
   );

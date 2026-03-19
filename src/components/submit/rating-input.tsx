@@ -13,12 +13,13 @@ const STAR_LABELS: Record<number, string> = {
 
 interface RatingInputProps {
   label: string;
+  description?: string;
   value: number;
   onChange: (value: number) => void;
   error?: string;
 }
 
-export function RatingInput({ label, value, onChange, error }: RatingInputProps) {
+export function RatingInput({ label, description, value, onChange, error }: RatingInputProps) {
   const [hoverValue, setHoverValue] = useState(0);
 
   const activeValue = hoverValue || value;
@@ -26,14 +27,17 @@ export function RatingInput({ label, value, onChange, error }: RatingInputProps)
 
   return (
     <div>
-      <div className="mb-1.5 flex items-baseline gap-2">
-        <label className="text-sm font-medium">{label}</label>
+      <div className="mb-1 flex items-baseline gap-2">
+        <label className="text-sm font-semibold">{label}</label>
         {activeLabel && (
           <span className="text-xs text-muted-foreground transition-all duration-150">
             ({activeLabel})
           </span>
         )}
       </div>
+      {description && (
+        <p className="mb-2 text-xs text-muted-foreground">{description}</p>
+      )}
       <div className="flex gap-1" onMouseLeave={() => setHoverValue(0)}>
         {[1, 2, 3, 4, 5].map((star) => {
           const filled = star <= activeValue;

@@ -15,19 +15,6 @@ interface SubmitPageProps {
 export default async function SubmitPage({ searchParams }: SubmitPageProps) {
   const { company } = await searchParams;
 
-  return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <div className="animate-in-view mb-5 mt-4 lg:mt-0">
-        <h1 className="text-3xl font-black uppercase tracking-tighter sm:text-4xl">Share Your <span className="text-foreground/25">Experience</span></h1>
-        <p className="mt-1.5 text-sm text-muted-foreground">
-          Help other candidates prepare by sharing honest feedback about the interview process.
-        </p>
-      </div>
-
-      <div>
-        <ExperienceForm prefilledCompany={company} />
-      </div>
-
-    </div>
-  );
+  // ExperienceForm renders as a full-screen fixed overlay — no page chrome needed
+  return <ExperienceForm prefilledCompany={company} />;
 }
