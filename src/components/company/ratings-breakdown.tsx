@@ -57,7 +57,7 @@ function RatingBar({
       <div
         className={cn(
           "flex-1 overflow-hidden rounded-full bg-muted",
-          compact ? "h-1.5" : "h-2.5"
+          compact ? "h-1.5" : "h-3.5"
         )}
       >
         <div

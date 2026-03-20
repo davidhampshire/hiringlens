@@ -37,9 +37,9 @@ export function TimelineComparison({
               {companyAvgDays} days
             </span>
           </div>
-          <div className="h-2.5 w-full rounded-full bg-muted">
+          <div className="h-4 w-full rounded-full bg-muted">
             <div
-              className={`h-2.5 rounded-full transition-all duration-700 ${
+              className={`h-4 rounded-full transition-all duration-700 ${
                 isFaster
                   ? "bg-emerald-500"
                   : isSame
@@ -61,9 +61,9 @@ export function TimelineComparison({
               {industryAvgDays} days
             </span>
           </div>
-          <div className="h-2.5 w-full rounded-full bg-muted">
+          <div className="h-4 w-full rounded-full bg-muted">
             <div
-              className="h-2.5 rounded-full bg-muted-foreground/30 transition-all duration-700"
+              className="h-4 rounded-full bg-muted-foreground/30 transition-all duration-700"
               style={{ width: `${industryPct}%` }}
             />
           </div>

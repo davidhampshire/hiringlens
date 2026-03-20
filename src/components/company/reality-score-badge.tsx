@@ -50,8 +50,8 @@ export function RealityScoreBadge({
   const isSmall = size === "sm";
 
   return (
-    <div className="flex flex-col items-center gap-1.5">
-      <div className={cn("relative", isSmall ? "h-20 w-20" : "h-32 w-32")}>
+    <div className="flex flex-col items-center gap-2">
+      <div className={cn("relative", isSmall ? "h-20 w-20" : "h-44 w-44")}>
         <svg className="h-full w-full -rotate-90" viewBox="0 0 120 120">
           <circle
             cx="60"
@@ -59,7 +59,7 @@ export function RealityScoreBadge({
             r="54"
             fill="none"
             stroke="currentColor"
-            strokeWidth={isSmall ? 10 : 8}
+            strokeWidth={isSmall ? 10 : 7}
             className="text-muted/30"
           />
           <circle
@@ -68,7 +68,7 @@ export function RealityScoreBadge({
             r="54"
             fill="none"
             stroke={getStrokeColor(score)}
-            strokeWidth={isSmall ? 10 : 8}
+            strokeWidth={isSmall ? 10 : 7}
             strokeLinecap="round"
             strokeDasharray={circumference}
             strokeDashoffset={strokeDashoffset}
@@ -79,17 +79,20 @@ export function RealityScoreBadge({
           <span
             className={cn(
               "font-bold leading-none",
-              isSmall ? "text-xl" : "text-3xl",
+              isSmall ? "text-xl" : "text-5xl",
               getScoreColor(score)
             )}
           >
             {score !== null ? formatScore(score) : "N/A"}
           </span>
+          {!isSmall && (
+            <span className="mt-1 text-xs text-muted-foreground">/100</span>
+          )}
         </div>
       </div>
       <div className="text-center">
         <div className="flex items-center justify-center gap-1">
-          <p className={cn("font-medium", isSmall ? "text-xs" : "text-sm")}>
+          <p className={cn("font-medium", isSmall ? "text-xs" : "text-base")}>
             Reality Score
           </p>
           {!isSmall && (
