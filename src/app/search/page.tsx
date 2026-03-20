@@ -68,7 +68,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         <Link href="/search">
           <Badge
             variant={!industry ? "default" : "outline"}
-            className="cursor-pointer text-xs"
+            className="cursor-pointer px-3.5 py-1.5 text-sm font-normal transition-colors hover:bg-accent hover:text-foreground"
           >
             All
           </Badge>
@@ -77,7 +77,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           <Link key={ind} href={`/search?industry=${encodeURIComponent(ind)}`}>
             <Badge
               variant={industry === ind ? "default" : "outline"}
-              className="cursor-pointer text-xs"
+              className="cursor-pointer px-3.5 py-1.5 text-sm font-normal transition-colors hover:bg-accent hover:text-foreground"
             >
               {ind}
             </Badge>
