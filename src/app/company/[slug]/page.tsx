@@ -19,6 +19,7 @@ import { ShareButton } from "@/components/shared/share-button";
 import { CompanyLogo } from "@/components/shared/company-logo";
 import { AdPlaceholder } from "@/components/shared/ad-placeholder";
 import { TimelineComparison } from "@/components/company/timeline-comparison";
+import { JumpToExperiences } from "@/components/company/jump-to-experiences";
 import { buildCompanyJsonLd, buildBreadcrumbJsonLd } from "@/lib/json-ld";
 import { getIndustryAverageDuration } from "@/lib/actions/interview";
 import type { CompanyScore, Interview } from "@/types";
@@ -269,21 +270,34 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
             totalReviews={c.total_reviews}
           />
 
-          <div className="space-y-2 pt-2">
-            <Button asChild className="w-full">
+          <AdPlaceholder variant="sidebar" />
+        </aside>
+
+        {/* Main content — streams in */}
+        <div id="experiences" className="animate-in-view-d3 space-y-6">
+          <Suspense fallback={<ExperienceListSkeleton />}>
+            <CompanyExperiences companyId={c.company_id} />
+          </Suspense>
+        </div>
+      </div>
+
+      {/* Bottom CTAs — visible on all screens, after experiences */}
+      <div className="mt-12 border-t pt-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
+          <div className="flex flex-1 flex-col gap-2 sm:flex-row">
+            <Button asChild className="w-full sm:w-auto">
               <Link href={`/submit?company=${encodeURIComponent(c.name)}`}>
                 Share Your Experience
               </Link>
             </Button>
-            <Button variant="outline" asChild className="w-full">
+            <Button variant="outline" asChild className="w-full sm:w-auto">
               <Link href={`/company/${slug}/widget`}>
                 Embed Widget
               </Link>
             </Button>
           </div>
-
           {/* Share CTA — drives virality */}
-          <div className="rounded-lg border border-dashed border-primary/20 bg-primary/[0.03] p-4">
+          <div className="rounded-lg border border-dashed border-primary/20 bg-primary/[0.03] p-4 sm:max-w-sm">
             <p className="text-sm font-medium">
               {c.total_reviews < 3
                 ? "Be one of the first to review"
@@ -300,17 +314,11 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
               text={`Have you interviewed at ${c.name}? Share your experience on HiringLens to help other candidates know what to expect.`}
             />
           </div>
-
-          <AdPlaceholder variant="sidebar" />
-        </aside>
-
-        {/* Main content — streams in */}
-        <div className="animate-in-view-d3 space-y-6">
-          <Suspense fallback={<ExperienceListSkeleton />}>
-            <CompanyExperiences companyId={c.company_id} />
-          </Suspense>
         </div>
       </div>
+
+      {/* Floating mobile jump button */}
+      <JumpToExperiences totalReviews={c.total_reviews} />
     </div>
   );
 }
