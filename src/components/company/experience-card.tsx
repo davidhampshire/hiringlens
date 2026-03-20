@@ -35,6 +35,14 @@ interface ExperienceCardProps {
   companySlug?: string;
   companyLogoUrl?: string | null;
   companyResponse?: CompanyResponse | null;
+  // Controlled modal + navigation (supplied by parent list for prev/next)
+  isOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  hasPrev?: boolean;
+  hasNext?: boolean;
+  onPrev?: () => void;
+  onNext?: () => void;
+  positionLabel?: string; // e.g. "3 of 12"
 }
 
 /** Strip the ---FOLLOW_UP_DATA--- JSON block from comments */
@@ -472,6 +480,13 @@ export function ExperienceCard({
   companySlug,
   companyLogoUrl,
   companyResponse,
+  isOpen,
+  onOpenChange,
+  hasPrev,
+  hasNext,
+  onPrev,
+  onNext,
+  positionLabel,
 }: ExperienceCardProps) {
   const {
     userVote: vote,
@@ -481,6 +496,14 @@ export function ExperienceCard({
     handleVote,
   } = useVotes(interview.id);
   const [modalOpen, setModalOpen] = useState(false);
+
+  // Support both controlled (from parent list) and uncontrolled modes
+  const controlled = isOpen !== undefined;
+  const isDialogOpen = controlled ? isOpen! : modalOpen;
+  const handleDialogOpenChange = (open: boolean) =>
+    controlled ? onOpenChange?.(open) : setModalOpen(open);
+  const handleCardClick = () =>
+    controlled ? onOpenChange?.(true) : setModalOpen(true);
 
   const avgRating =
     (interview.professionalism_rating +
@@ -501,7 +524,7 @@ export function ExperienceCard({
     <>
       <Card
         className="cursor-pointer gap-0 p-0 transition-all hover:shadow-md hover:ring-1 hover:ring-border"
-        onClick={() => setModalOpen(true)}
+        onClick={handleCardClick}
       >
         <div className="p-4">
           {/* Header — score aligns with company name */}
@@ -798,7 +821,7 @@ export function ExperienceCard({
       </Card>
 
       {/* Full Experience Modal */}
-      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+      <Dialog open={isDialogOpen} onOpenChange={handleDialogOpenChange}>
         <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
             <DialogTitle>Interview Experience</DialogTitle>
@@ -807,6 +830,38 @@ export function ExperienceCard({
               {companyName ? ` at ${companyName}` : ""}
             </DialogDescription>
           </DialogHeader>
+
+          {/* Prev / Next navigation */}
+          {(hasPrev || hasNext) && (
+            <div className="flex items-center justify-between border-b pb-3 -mt-1">
+              <button
+                type="button"
+                onClick={onPrev}
+                disabled={!hasPrev}
+                className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground disabled:pointer-events-none disabled:opacity-30"
+              >
+                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Previous
+              </button>
+              {positionLabel && (
+                <span className="text-xs text-muted-foreground">{positionLabel}</span>
+              )}
+              <button
+                type="button"
+                onClick={onNext}
+                disabled={!hasNext}
+                className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground disabled:pointer-events-none disabled:opacity-30"
+              >
+                Next
+                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          )}
+
           <ExperienceModal
             interview={interview}
             companyName={companyName}

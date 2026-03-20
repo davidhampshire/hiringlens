@@ -55,6 +55,7 @@ export function ExperienceList({
   const [filterBy, setFilterBy] = useState<FilterOption>("all");
   const [seniorityFilter, setSeniorityFilter] = useState<string>("all");
   const [typeFilter, setTypeFilter] = useState<string>("all");
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">(() => {
     if (typeof window !== "undefined") {
       return (localStorage.getItem("hl-view-mode") as "grid" | "list") || "grid";
@@ -257,8 +258,19 @@ export function ExperienceList({
             <div key={i} className="h-48 animate-pulse rounded-lg border bg-muted/30" />
           ))
         ) : interviews.length > 0 ? (
-          interviews.map((interview) => (
-            <ExperienceCard key={interview.id} interview={interview} companyResponse={companyResponses[interview.id] ?? null} />
+          interviews.map((interview, i) => (
+            <ExperienceCard
+              key={interview.id}
+              interview={interview}
+              companyResponse={companyResponses[interview.id] ?? null}
+              isOpen={openIndex === i}
+              onOpenChange={(open) => setOpenIndex(open ? i : null)}
+              hasPrev={openIndex !== null && openIndex > 0}
+              hasNext={openIndex !== null && openIndex < interviews.length - 1}
+              onPrev={() => setOpenIndex((openIndex ?? 0) - 1)}
+              onNext={() => setOpenIndex((openIndex ?? 0) + 1)}
+              positionLabel={openIndex !== null ? `${openIndex + 1} of ${interviews.length}` : undefined}
+            />
           ))
         ) : (
           <div className="col-span-2 py-6 text-center text-sm text-muted-foreground">

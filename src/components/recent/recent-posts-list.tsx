@@ -66,6 +66,7 @@ export function RecentPostsList({
     }
     return "grid";
   });
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   useEffect(() => {
     localStorage.setItem("hl-view-mode", viewMode);
@@ -139,6 +140,7 @@ export function RecentPostsList({
     setIndustryFilter(newIndustry);
     setSeniorityFilter(newSeniority);
     setTypeFilter(newType);
+    setOpenIndex(null);
     refetch(newSort, newOutcome, newIndustry, newSeniority, newType);
     syncUrlParams(newSort, newOutcome, newIndustry, newSeniority, newType);
   }
@@ -320,13 +322,20 @@ export function RecentPostsList({
             <div key={i} className="h-48 animate-pulse rounded-lg border bg-muted/30" />
           ))
         ) : posts.length > 0 ? (
-          posts.map((post) => (
+          posts.map((post, i) => (
             <ExperienceCard
               key={post.id}
               interview={post}
               companyName={post.companies?.name}
               companySlug={post.companies?.slug}
               companyLogoUrl={post.companies?.logo_url}
+              isOpen={openIndex === i}
+              onOpenChange={(open) => setOpenIndex(open ? i : null)}
+              hasPrev={openIndex !== null && openIndex > 0}
+              hasNext={openIndex !== null && openIndex < posts.length - 1}
+              onPrev={() => setOpenIndex((openIndex ?? 0) - 1)}
+              onNext={() => setOpenIndex((openIndex ?? 0) + 1)}
+              positionLabel={openIndex !== null ? `${openIndex + 1} of ${posts.length}` : undefined}
             />
           ))
         ) : (
