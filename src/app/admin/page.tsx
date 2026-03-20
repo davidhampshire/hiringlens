@@ -179,6 +179,10 @@ export default async function AdminPage() {
     .select("*", { count: "exact", head: true })
     .eq("status", "approved");
 
+  const { count: totalUsers } = await supabase
+    .from("profiles")
+    .select("*", { count: "exact", head: true });
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
       <div className="animate-in-view mb-8">
@@ -210,6 +214,10 @@ export default async function AdminPage() {
           <div className="rounded-lg border bg-card px-4 py-3">
             <p className="text-2xl font-bold text-indigo-600">{pendingResponses.length}</p>
             <p className="text-xs text-muted-foreground">Pending Responses</p>
+          </div>
+          <div className="rounded-lg border bg-card px-4 py-3">
+            <p className="text-2xl font-bold text-teal-600">{totalUsers ?? 0}</p>
+            <p className="text-xs text-muted-foreground">Registered Users</p>
           </div>
         </div>
       </div>

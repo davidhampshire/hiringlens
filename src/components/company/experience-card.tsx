@@ -34,6 +34,7 @@ interface ExperienceCardProps {
   companyName?: string;
   companySlug?: string;
   companyLogoUrl?: string | null;
+  companyWebsiteUrl?: string | null;
   companyResponse?: CompanyResponse | null;
   // Controlled modal + navigation (supplied by parent list for prev/next)
   isOpen?: boolean;
@@ -126,6 +127,7 @@ function RatingBreakdown({ interview }: { interview: Interview }) {
 }
 
 interface ExperienceModalProps extends ExperienceCardProps {
+  // inherits companyWebsiteUrl from ExperienceCardProps
   vote: "helpful" | "unhelpful" | null;
   helpfulCount: number;
   unhelpfulCount: number;
@@ -139,6 +141,7 @@ function ExperienceModal({
   companyName,
   companySlug,
   companyLogoUrl,
+  companyWebsiteUrl,
   companyResponse,
   vote,
   helpfulCount,
@@ -166,9 +169,7 @@ function ExperienceModal({
       <div>
         {companyName && companySlug && (
           <div className="mb-3 flex items-center gap-2.5">
-            {companyLogoUrl !== undefined && (
-              <CompanyLogo name={companyName} logoUrl={companyLogoUrl} size="md" />
-            )}
+            <CompanyLogo name={companyName} logoUrl={companyLogoUrl} websiteUrl={companyWebsiteUrl} size="md" />
             <Link
               href={`/company/${companySlug}`}
               className="text-base font-semibold text-primary hover:underline"
@@ -479,6 +480,7 @@ export function ExperienceCard({
   companyName,
   companySlug,
   companyLogoUrl,
+  companyWebsiteUrl,
   companyResponse,
   isOpen,
   onOpenChange,
@@ -536,6 +538,7 @@ export function ExperienceCard({
                   <CompanyLogo
                     name={companyName}
                     logoUrl={companyLogoUrl}
+                    websiteUrl={companyWebsiteUrl}
                     size="md"
                   />
                   <Link
@@ -867,6 +870,7 @@ export function ExperienceCard({
             companyName={companyName}
             companySlug={companySlug}
             companyLogoUrl={companyLogoUrl}
+            companyWebsiteUrl={companyWebsiteUrl}
             companyResponse={companyResponse}
             vote={vote}
             helpfulCount={helpfulCount}

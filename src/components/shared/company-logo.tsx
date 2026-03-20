@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 interface CompanyLogoProps {
   name: string;
   logoUrl?: string | null;
+  /** Fallback: derive logo domain from website URL when logoUrl is absent */
+  websiteUrl?: string | null;
   size?: "sm" | "md" | "lg" | "xl" | "2xl";
   className?: string;
 }
@@ -69,18 +71,24 @@ function googleFaviconUrl(domain: string): string {
   return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=128`;
 }
 
-export function CompanyLogo({ name, logoUrl, size = "md", className }: CompanyLogoProps) {
+export function CompanyLogo({ name, logoUrl, websiteUrl, size = "md", className }: CompanyLogoProps) {
   const [imgError, setImgError] = useState(false);
   const s = SIZES[size];
 
   let resolvedUrl: string | null = null;
 
-  if (logoUrl && !imgError) {
-    const domain = extractDomain(logoUrl);
-    if (domain) {
-      resolvedUrl = googleFaviconUrl(domain);
-    } else {
-      resolvedUrl = logoUrl;
+  if (!imgError) {
+    if (logoUrl) {
+      const domain = extractDomain(logoUrl);
+      resolvedUrl = domain ? googleFaviconUrl(domain) : logoUrl;
+    } else if (websiteUrl) {
+      // Derive logo from website URL when no explicit logoUrl is stored
+      try {
+        const domain = new URL(websiteUrl).hostname.replace(/^www\./, "");
+        resolvedUrl = googleFaviconUrl(domain);
+      } catch {
+        // Invalid URL — fall through to initials
+      }
     }
   }
 

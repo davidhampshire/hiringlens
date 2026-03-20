@@ -21,6 +21,7 @@ import { AdPlaceholder } from "@/components/shared/ad-placeholder";
 import { TimelineComparison } from "@/components/company/timeline-comparison";
 import { JumpToExperiences } from "@/components/company/jump-to-experiences";
 import { WatchCompanyForm } from "@/components/company/watch-company-form";
+import { CompanyRepCta } from "@/components/company/company-rep-cta";
 import { buildCompanyJsonLd, buildBreadcrumbJsonLd } from "@/lib/json-ld";
 import { getIndustryAverageDuration } from "@/lib/actions/interview";
 import { formatRelativeDate } from "@/lib/utils";
@@ -296,6 +297,8 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
           )}
 
           <WatchCompanyForm companyId={c.company_id} companyName={c.name} />
+
+          <CompanyRepCta companyName={c.name} />
 
           <AdPlaceholder variant="sidebar" />
         </aside>

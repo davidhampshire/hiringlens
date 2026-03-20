@@ -4,23 +4,31 @@ import { NextResponse, type NextRequest } from "next/server";
 const PROTECTED_ROUTES = ["/account", "/admin", "/company-dashboard"];
 const AUTH_ROUTES = ["/sign-in", "/sign-up"];
 
-/* ── Security Headers ── */
-const securityHeaders = {
-  // Prevent clickjacking — only allow our own site to frame pages
+/* ── Static security headers (non-CSP) ── */
+const STATIC_HEADERS: Record<string, string> = {
+  // Prevent clickjacking
   "X-Frame-Options": "DENY",
   // Stop browsers from MIME-sniffing the content-type
   "X-Content-Type-Options": "nosniff",
   // Control referrer info sent with requests
   "Referrer-Policy": "strict-origin-when-cross-origin",
-  // Enforce HTTPS for 1 year (includeSubDomains once you're confident)
+  // Enforce HTTPS for 1 year
   "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
   // Restrict browser features the site doesn't need
-  "Permissions-Policy":
-    "camera=(), microphone=(), geolocation=(), payment=()",
-  // Content Security Policy — allow our own origin + required third-party assets
-  "Content-Security-Policy": [
+  "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=()",
+  "X-DNS-Prefetch-Control": "on",
+};
+
+/**
+ * Build a per-request CSP header that embeds a nonce.
+ * The nonce eliminates the need for 'unsafe-inline' on script-src.
+ * 'strict-dynamic' allows scripts loaded by trusted (nonced) scripts.
+ * 'unsafe-inline' is kept on style-src — required by Tailwind.
+ */
+function buildCsp(nonce: string): string {
+  return [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com",
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://va.vercel-scripts.com`,
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob: https://logo.clearbit.com https://www.google.com https://*.gstatic.com https://*.supabase.co",
     "font-src 'self'",
@@ -28,23 +36,31 @@ const securityHeaders = {
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'",
-  ].join("; "),
-  // Prevent cross-origin attacks
-  "X-DNS-Prefetch-Control": "on",
-};
+  ].join("; ");
+}
 
-function applySecurityHeaders(response: NextResponse) {
-  for (const [key, value] of Object.entries(securityHeaders)) {
+function applySecurityHeaders(response: NextResponse, nonce: string) {
+  for (const [key, value] of Object.entries(STATIC_HEADERS)) {
     response.headers.set(key, value);
   }
+  response.headers.set("Content-Security-Policy", buildCsp(nonce));
   return response;
 }
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Generate a fresh cryptographic nonce for this request.
+  // Next.js App Router reads x-nonce from the request and automatically
+  // attaches it to its own generated inline scripts.
+  const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
+
+  // Build patched request headers that include the nonce
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-nonce", nonce);
+
   let supabaseResponse = NextResponse.next({
-    request,
+    request: { headers: requestHeaders },
   });
 
   const supabase = createServerClient(
@@ -59,8 +75,9 @@ export async function middleware(request: NextRequest) {
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value)
           );
+          // Pass the nonce-patched headers through when Supabase replaces the response
           supabaseResponse = NextResponse.next({
-            request,
+            request: { headers: requestHeaders },
           });
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options)
@@ -73,7 +90,6 @@ export async function middleware(request: NextRequest) {
   /* ── Password Gate ── */
   const sitePassword = process.env.SITE_PASSWORD;
   if (sitePassword) {
-    // Check if the gate is enabled in the database
     const { data: setting } = await supabase
       .from("site_settings")
       .select("value")
@@ -85,18 +101,16 @@ export async function middleware(request: NextRequest) {
     if (gateEnabled) {
       const hasAccess = request.cookies.get("site_access")?.value === "granted";
 
-      // Allow the password page itself (and its server action) through
       if (!hasAccess && !pathname.startsWith("/password")) {
         const url = request.nextUrl.clone();
         url.pathname = "/password";
-        return applySecurityHeaders(NextResponse.redirect(url));
+        return applySecurityHeaders(NextResponse.redirect(url), nonce);
       }
 
-      // If already authenticated, redirect away from password page
       if (hasAccess && pathname.startsWith("/password")) {
         const url = request.nextUrl.clone();
         url.pathname = "/";
-        return applySecurityHeaders(NextResponse.redirect(url));
+        return applySecurityHeaders(NextResponse.redirect(url), nonce);
       }
     }
   }
@@ -112,17 +126,17 @@ export async function middleware(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = "/sign-in";
     url.searchParams.set("redirectTo", pathname);
-    return applySecurityHeaders(NextResponse.redirect(url));
+    return applySecurityHeaders(NextResponse.redirect(url), nonce);
   }
 
-  // Redirect authenticated users away from auth routes (no need to sign in again)
+  // Redirect authenticated users away from auth routes
   if (user && AUTH_ROUTES.some((route) => pathname.startsWith(route))) {
     const url = request.nextUrl.clone();
     url.pathname = "/";
-    return applySecurityHeaders(NextResponse.redirect(url));
+    return applySecurityHeaders(NextResponse.redirect(url), nonce);
   }
 
-  return applySecurityHeaders(supabaseResponse);
+  return applySecurityHeaders(supabaseResponse, nonce);
 }
 
 export const config = {

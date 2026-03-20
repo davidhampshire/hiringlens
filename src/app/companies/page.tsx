@@ -9,11 +9,18 @@ import type { CompanyScore } from "@/types";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hiringlens.com";
 
 export const metadata: Metadata = {
-  title: "Company Directory",
+  title: "Company Interview Directory — Reality Scores & Candidate Reviews",
   description:
-    "Browse all rated companies alphabetically. Find interview experiences, Reality Scores, and candidate tips for companies across every industry.",
+    "Browse all rated companies A–Z. See interview Reality Scores, red flag rates, process timelines, and honest candidate experiences for hundreds of companies across every industry.",
   alternates: {
     canonical: `${siteUrl}/companies`,
+  },
+  openGraph: {
+    title: "Company Interview Directory | HiringLens",
+    description:
+      "Find interview Reality Scores and honest candidate reviews for hundreds of companies. Know what to expect before you apply.",
+    url: `${siteUrl}/companies`,
+    type: "website",
   },
 };
 
@@ -37,6 +44,24 @@ function groupByLetter(companies: CompanyScore[]) {
       return a[0].localeCompare(b[0]);
     })
   );
+}
+
+function buildDirectoryJsonLd(companies: CompanyScore[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Company Interview Directory",
+    description:
+      "A directory of companies rated by candidates based on their interview experiences.",
+    url: `${siteUrl}/companies`,
+    numberOfItems: companies.length,
+    itemListElement: companies.slice(0, 100).map((company, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      url: `${siteUrl}/company/${company.slug}`,
+      name: company.name,
+    })),
+  };
 }
 
 export default async function CompaniesPage() {
@@ -67,9 +92,15 @@ export default async function CompaniesPage() {
 
   const grouped = groupByLetter(companies);
   const availableLetters = new Set(grouped.keys());
+  const jsonLd = buildDirectoryJsonLd(companies);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       <div className="animate-in-view mb-6">
         <h1 className="text-5xl font-medium sm:text-6xl">Company <span className="text-foreground/25">Directory</span></h1>
         <p className="mt-2 text-muted-foreground">

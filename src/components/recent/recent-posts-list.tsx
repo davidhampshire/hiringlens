@@ -22,7 +22,7 @@ import {
 import type { Interview } from "@/types";
 
 type InterviewWithCompany = Interview & {
-  companies: { name: string; slug: string; industry: string | null; logo_url: string | null } | null;
+  companies: { name: string; slug: string; industry: string | null; logo_url: string | null; website_url: string | null } | null;
 };
 
 interface RecentPostsListProps {
@@ -329,6 +329,7 @@ export function RecentPostsList({
               companyName={post.companies?.name}
               companySlug={post.companies?.slug}
               companyLogoUrl={post.companies?.logo_url}
+              companyWebsiteUrl={post.companies?.website_url}
               isOpen={openIndex === i}
               onOpenChange={(open) => setOpenIndex(open ? i : null)}
               hasPrev={openIndex !== null && openIndex > 0}

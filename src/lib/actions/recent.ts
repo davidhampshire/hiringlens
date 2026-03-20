@@ -41,7 +41,7 @@ export async function fetchFilteredInterviews(params: FetchParams) {
         .eq("status", "approved")
     : supabase
         .from("interviews")
-        .select("*, companies(name, slug, industry, logo_url)", { count: "exact" })
+        .select("*, companies(name, slug, industry, logo_url, website_url)", { count: "exact" })
         .eq("status", "approved");
 
   // Apply filters
@@ -55,8 +55,16 @@ export async function fetchFilteredInterviews(params: FetchParams) {
     query = query.eq("interview_type", interviewType);
   }
   if (industry && industry !== "all" && !companyId) {
-    // Join filter on companies.industry
-    query = query.eq("companies.industry", industry);
+    // Resolve industry → company IDs first.
+    // .eq("companies.industry", …) only filters the embedded relation object —
+    // it does NOT exclude parent interview rows, so all interviews were returned.
+    const { data: industryCompanies } = await supabase
+      .from("companies")
+      .select("id")
+      .eq("industry", industry);
+    const ids = (industryCompanies ?? []).map((c: { id: string }) => c.id);
+    if (ids.length === 0) return { data: [], count: 0 };
+    query = query.in("company_id", ids);
   }
 
   // For rating sorts, fetch all and sort client-side
