@@ -5,7 +5,7 @@ import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import type { CompanyScore } from "@/types";
 
 export const metadata: Metadata = {
-  title: "Hiring Accountability Index | HiringLens",
+  title: "Accountability Index | HiringLens",
   description:
     "Ranking companies by how they treat candidates — ghosting rates, reality scores, unpaid tasks, and more. Based entirely on real interview experiences.",
 };
@@ -93,16 +93,17 @@ export default async function LeaderboardPage() {
       <Breadcrumbs
         items={[
           { label: "Home", href: "/" },
-          { label: "Leaderboard" },
+          { label: "Accountability Index" },
         ]}
       />
 
       {/* Page header */}
       <div className="mb-10 mt-2">
-        <h1 className="text-3xl font-bold sm:text-4xl">Hiring Accountability Index</h1>
-        <p className="mt-3 max-w-2xl text-muted-foreground">
-          Ranking companies by how they treat candidates — transparently, and based entirely on real
-          experiences shared by job seekers. No PR spin, no self-reporting.
+        <h1 className="text-5xl font-medium sm:text-6xl">
+          Accountability <span className="text-foreground/25">Index</span>
+        </h1>
+        <p className="mt-2 text-muted-foreground">
+          Ranking companies by how they treat candidates. Real experiences, no PR spin.
         </p>
       </div>
 
