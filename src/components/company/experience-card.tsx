@@ -523,10 +523,10 @@ export function ExperienceCard({
   return (
     <>
       <Card
-        className="cursor-pointer gap-0 p-0 transition-all hover:shadow-md hover:ring-1 hover:ring-border"
+        className="flex h-full cursor-pointer flex-col gap-0 p-0 transition-all hover:shadow-md hover:ring-1 hover:ring-border"
         onClick={handleCardClick}
       >
-        <div className="p-4">
+        <div className="flex flex-1 flex-col p-4">
           {/* Header — score aligns with company name */}
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0 flex-1">
@@ -705,7 +705,7 @@ export function ExperienceCard({
 
           {/* Actions — voting + report */}
           {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
-          <div className="mt-3 flex items-center justify-between border-t pt-3" onClick={(e) => e.stopPropagation()}>
+          <div className="mt-auto flex items-center justify-between border-t pt-3" onClick={(e) => e.stopPropagation()}>
             {/* Helpfulness voting */}
             <div className="flex items-center gap-1">
               <span className="mr-1 text-xs text-muted-foreground">

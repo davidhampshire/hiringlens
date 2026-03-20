@@ -87,12 +87,22 @@ export function MobileSearchButton({ onTap }: { onTap?: () => void }) {
   );
 }
 
+interface PopularCompany {
+  company_id: string;
+  name: string;
+  slug: string;
+  industry: string | null;
+  logo_url: string | null;
+  total_reviews: number;
+}
+
 function SearchOverlay({ onClose }: { onClose: () => void }) {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
+  const [popular, setPopular] = useState<PopularCompany[]>([]);
   const debouncedQuery = useDebounce(query, 300);
   const inputRef = useRef<HTMLInputElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -108,6 +118,25 @@ function SearchOverlay({ onClose }: { onClose: () => void }) {
     return () => {
       document.body.style.overflow = "";
     };
+  }, []);
+
+  // Fetch popular companies on mount
+  useEffect(() => {
+    async function fetchPopular() {
+      try {
+        const supabase = createClient();
+        const { data } = await supabase
+          .from("company_scores")
+          .select("company_id, name, slug, industry, logo_url, total_reviews")
+          .gt("total_reviews", 0)
+          .order("total_reviews", { ascending: false })
+          .limit(6);
+        setPopular((data ?? []) as PopularCompany[]);
+      } catch {
+        // silently skip
+      }
+    }
+    fetchPopular();
   }, []);
 
   // Escape to close
@@ -174,10 +203,12 @@ function SearchOverlay({ onClose }: { onClose: () => void }) {
     }
   }
 
+  const showingSearch = query.length >= 2;
+
   return createPortal(
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-[100] flex items-start justify-center bg-black/60 pt-[15vh] backdrop-blur-md sm:pt-[20vh]"
+      className="fixed inset-0 z-[100] flex items-start justify-center bg-black/60 px-4 pt-[12vh] backdrop-blur-md sm:pt-[16vh]"
       onClick={(e) => {
         if (e.target === overlayRef.current) onClose();
       }}
@@ -185,11 +216,11 @@ function SearchOverlay({ onClose }: { onClose: () => void }) {
       aria-label="Search companies"
       aria-modal="true"
     >
-      <div className="w-full max-w-2xl mx-4 overflow-hidden rounded-2xl border bg-background shadow-2xl">
+      <div className="w-full max-w-2xl overflow-hidden rounded-2xl border bg-background shadow-2xl">
         {/* Search input */}
-        <div className="flex items-center gap-4 border-b px-5">
+        <div className="flex items-center gap-3 border-b px-5">
           <svg
-            className="h-6 w-6 shrink-0 text-muted-foreground"
+            className="h-5 w-5 shrink-0 text-muted-foreground"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -209,7 +240,7 @@ function SearchOverlay({ onClose }: { onClose: () => void }) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="h-16 border-0 bg-transparent px-0 text-xl shadow-none focus-visible:ring-0"
+            className="h-14 border-0 bg-transparent px-0 text-lg shadow-none focus-visible:ring-0"
             aria-autocomplete="list"
             aria-controls="search-dialog-results"
             aria-activedescendant={
@@ -218,85 +249,125 @@ function SearchOverlay({ onClose }: { onClose: () => void }) {
           />
           <button
             onClick={onClose}
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border bg-muted text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+            className="flex h-7 shrink-0 items-center justify-center rounded-md border bg-muted px-2 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
             aria-label="Close search"
           >
-            <svg
-              className="h-4 w-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            esc
           </button>
         </div>
 
-        {/* Results */}
-        <div className="max-h-[60vh] overflow-y-auto">
-          {isLoading ? (
-            <div className="px-4 py-6 text-center text-sm text-muted-foreground" role="status">
-              Searching...
-            </div>
-          ) : results.length > 0 ? (
-            <ul
-              id="search-dialog-results"
-              role="listbox"
-              aria-label="Search results"
-              className="py-2"
-            >
-              {results.map((result, index) => (
-                <li
-                  key={result.id}
-                  id={`search-dialog-result-${index}`}
-                  role="option"
-                  aria-selected={index === activeIndex}
-                >
-                  <Link
-                    href={`/company/${result.slug}`}
-                    className={`flex items-center gap-3 px-4 py-3 text-sm transition-colors hover:bg-accent ${
-                      index === activeIndex ? "bg-accent" : ""
-                    }`}
-                    onClick={onClose}
-                    tabIndex={-1}
+        {/* Body */}
+        <div className="max-h-[65vh] overflow-y-auto">
+          {showingSearch ? (
+            /* Search results */
+            isLoading ? (
+              <div className="px-5 py-8 text-center text-sm text-muted-foreground" role="status">
+                Searching…
+              </div>
+            ) : results.length > 0 ? (
+              <ul
+                id="search-dialog-results"
+                role="listbox"
+                aria-label="Search results"
+                className="py-2"
+              >
+                {results.map((result, index) => (
+                  <li
+                    key={result.id}
+                    id={`search-dialog-result-${index}`}
+                    role="option"
+                    aria-selected={index === activeIndex}
                   >
-                    <CompanyLogo
-                      name={result.name}
-                      logoUrl={result.logo_url}
-                      size="sm"
-                    />
-                    <div className="min-w-0 flex-1">
-                      <div className="font-medium">{result.name}</div>
-                      {result.industry && (
-                        <div className="text-xs text-muted-foreground">
-                          {result.industry}
-                        </div>
+                    <Link
+                      href={`/company/${result.slug}`}
+                      className={`flex items-center gap-3 px-5 py-3 text-sm transition-colors hover:bg-accent ${
+                        index === activeIndex ? "bg-accent" : ""
+                      }`}
+                      onClick={onClose}
+                      tabIndex={-1}
+                    >
+                      <CompanyLogo name={result.name} logoUrl={result.logo_url} size="sm" />
+                      <div className="min-w-0 flex-1">
+                        <div className="font-medium">{result.name}</div>
+                        {result.industry && (
+                          <div className="text-xs text-muted-foreground">{result.industry}</div>
+                        )}
+                      </div>
+                      {result.total_reviews > 0 && (
+                        <span className="shrink-0 text-xs text-muted-foreground">
+                          {result.total_reviews} review{result.total_reviews !== 1 ? "s" : ""}
+                        </span>
                       )}
-                    </div>
-                    {result.total_reviews > 0 && (
-                      <span className="shrink-0 text-xs text-muted-foreground">
-                        {result.total_reviews} reviews
-                      </span>
-                    )}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : query.length >= 2 && !isLoading ? (
-            <div className="px-4 py-6 text-center text-sm text-muted-foreground">
-              No companies found for &ldquo;{query}&rdquo;
-            </div>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="px-5 py-8 text-center text-sm text-muted-foreground">
+                No companies found for &ldquo;{query}&rdquo;
+              </div>
+            )
           ) : (
-            <div className="px-4 py-6 text-center text-sm text-muted-foreground">
-              Type to search companies...
+            /* Default state — popular companies */
+            <div className="py-3">
+              {popular.length > 0 && (
+                <>
+                  <p className="px-5 pb-1 pt-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/60">
+                    Most reviewed
+                  </p>
+                  <ul role="list">
+                    {popular.map((company) => (
+                      <li key={company.company_id}>
+                        <Link
+                          href={`/company/${company.slug}`}
+                          className="flex items-center gap-3 px-5 py-3 text-sm transition-colors hover:bg-accent"
+                          onClick={onClose}
+                        >
+                          <CompanyLogo
+                            name={company.name}
+                            logoUrl={company.logo_url}
+                            size="sm"
+                          />
+                          <div className="min-w-0 flex-1">
+                            <div className="font-medium">{company.name}</div>
+                            {company.industry && (
+                              <div className="text-xs text-muted-foreground">
+                                {company.industry}
+                              </div>
+                            )}
+                          </div>
+                          <span className="shrink-0 text-xs text-muted-foreground">
+                            {company.total_reviews} review{company.total_reviews !== 1 ? "s" : ""}
+                          </span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
             </div>
           )}
+        </div>
+
+        {/* Footer links */}
+        <div className="flex items-center justify-between border-t px-5 py-3">
+          <div className="flex items-center gap-4">
+            <Link
+              href="/companies"
+              onClick={onClose}
+              className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Browse all companies →
+            </Link>
+            <Link
+              href="/search"
+              onClick={onClose}
+              className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Advanced search →
+            </Link>
+          </div>
+          <span className="text-xs text-muted-foreground/50">⌘K</span>
         </div>
       </div>
     </div>,
