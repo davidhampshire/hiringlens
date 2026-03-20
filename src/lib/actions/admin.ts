@@ -6,6 +6,7 @@ import {
   sendEmail,
   submissionApprovedEmail,
   submissionRejectedEmail,
+  newReviewWatcherEmail,
 } from "@/lib/email";
 
 async function requireAdmin() {
@@ -57,6 +58,11 @@ export async function approveInterview(interviewId: string) {
   // Send approval email to submitter (non-blocking, requires service role key)
   if (interview?.submitted_by && company) {
     notifySubmitter(interview.submitted_by, submissionApprovedEmail(company.name, company.slug));
+  }
+
+  // Notify anyone watching this company
+  if (interview?.company_id && company) {
+    notifyWatchers(interview.company_id, company.name, company.slug);
   }
 
   return { success: true };
@@ -120,6 +126,41 @@ export async function bulkRejectInterviews(ids: string[]) {
   revalidatePath("/admin");
 
   return { success: true, count: ids.length };
+}
+
+/**
+ * Send new-review notification emails to all watchers of a company.
+ * Fails silently — watcher emails are best-effort.
+ */
+async function notifyWatchers(companyId: string, companyName: string, companySlug: string) {
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!serviceRoleKey) return;
+
+  try {
+    const { createClient: createServiceClient } = await import("@supabase/supabase-js");
+    const admin = createServiceClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      serviceRoleKey
+    );
+
+    const { data: watchers } = await admin
+      .from("company_watchers")
+      .select("email, unsubscribe_token")
+      .eq("company_id", companyId);
+
+    if (!watchers || watchers.length === 0) return;
+
+    await Promise.all(
+      watchers.map((w: { email: string; unsubscribe_token: string }) =>
+        sendEmail({
+          to: w.email,
+          ...newReviewWatcherEmail(companyName, companySlug, w.unsubscribe_token),
+        }).catch(() => {})
+      )
+    );
+  } catch {
+    // silently skip
+  }
 }
 
 /**

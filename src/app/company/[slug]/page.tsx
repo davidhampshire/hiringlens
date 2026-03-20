@@ -20,8 +20,10 @@ import { CompanyLogo } from "@/components/shared/company-logo";
 import { AdPlaceholder } from "@/components/shared/ad-placeholder";
 import { TimelineComparison } from "@/components/company/timeline-comparison";
 import { JumpToExperiences } from "@/components/company/jump-to-experiences";
+import { WatchCompanyForm } from "@/components/company/watch-company-form";
 import { buildCompanyJsonLd, buildBreadcrumbJsonLd } from "@/lib/json-ld";
 import { getIndustryAverageDuration } from "@/lib/actions/interview";
+import { formatRelativeDate } from "@/lib/utils";
 import type { CompanyScore, Interview } from "@/types";
 
 export const revalidate = 3600;
@@ -269,6 +271,16 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
             pctNoFeedback={c.pct_no_feedback}
             totalReviews={c.total_reviews}
           />
+
+          <Separator />
+
+          {c.last_review_at && (
+            <p className="text-xs text-muted-foreground">
+              Last review: <span className="font-medium text-foreground">{formatRelativeDate(c.last_review_at)}</span>
+            </p>
+          )}
+
+          <WatchCompanyForm companyId={c.company_id} companyName={c.name} />
 
           <AdPlaceholder variant="sidebar" />
         </aside>

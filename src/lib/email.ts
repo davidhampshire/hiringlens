@@ -197,6 +197,39 @@ export function adminNewResponseEmail(companyName: string, roleTitle: string) {
   };
 }
 
+export function newReviewWatcherEmail(
+  companyName: string,
+  companySlug: string,
+  unsubscribeToken: string
+) {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hiringlens.com";
+  const companyUrl = `${siteUrl}/company/${companySlug}`;
+  const unsubscribeUrl = `${siteUrl}/unsubscribe?token=${unsubscribeToken}`;
+  return {
+    subject: `New interview review posted for ${companyName}`,
+    html: `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; padding: 24px;">
+        <h2 style="color: #111; margin-bottom: 16px;">New review at ${escapeHtml(companyName)}</h2>
+        <p style="color: #555; line-height: 1.6;">
+          A new interview experience has just been published for
+          <strong>${escapeHtml(companyName)}</strong> on HiringLens.
+        </p>
+        <p style="margin: 24px 0;">
+          <a href="${companyUrl}"
+             style="background: #111; color: #fff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-size: 14px;">
+            Read the review
+          </a>
+        </p>
+        <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0;" />
+        <p style="color: #999; font-size: 12px;">
+          You're receiving this because you signed up for alerts about ${escapeHtml(companyName)}.
+          <a href="${unsubscribeUrl}" style="color: #999;">Unsubscribe</a>
+        </p>
+      </div>
+    `,
+  };
+}
+
 function escapeHtml(str: string): string {
   return str
     .replace(/&/g, "&amp;")

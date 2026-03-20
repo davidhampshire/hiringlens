@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/hover-card";
 import { RealityScoreBadge } from "@/components/company/reality-score-badge";
 import { RatingsBreakdown } from "@/components/company/ratings-breakdown";
-import { cn, formatScore, getScoreColor, getScoreBgColor } from "@/lib/utils";
+import { cn, formatScore, getScoreColor, getScoreBgColor, formatRelativeDate } from "@/lib/utils";
 import type { CompanyScore } from "@/types";
 
 interface CompanyCardProps {
@@ -75,6 +75,11 @@ export function CompanyCard({ company }: CompanyCardProps) {
                     ~{Math.round(company.avg_duration_days)} days
                   </Badge>
                 )}
+                {company.last_review_at && (
+                  <span className="ml-auto text-xs text-muted-foreground/60">
+                    {formatRelativeDate(company.last_review_at)}
+                  </span>
+                )}
                 {company.website_url && (
                   <button
                     type="button"
@@ -87,7 +92,10 @@ export function CompanyCard({ company }: CompanyCardProps) {
                         "noopener,noreferrer"
                       );
                     }}
-                    className="ml-auto inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary"
+                    className={cn(
+                      "inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary",
+                      !company.last_review_at && "ml-auto"
+                    )}
                     title="Company website"
                   >
                     <svg

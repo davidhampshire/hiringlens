@@ -327,6 +327,7 @@ export type Database = {
           avg_stages: number | null;
           avg_duration_days: number | null;
           reality_score: number | null;
+          last_review_at: string | null;
         };
       };
     };
