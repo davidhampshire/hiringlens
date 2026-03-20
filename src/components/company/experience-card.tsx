@@ -8,7 +8,6 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { StarRating } from "@/components/shared/star-rating";
 import { FlagReportDialog } from "@/components/shared/flag-report-dialog";
-import { ShareButton } from "@/components/shared/share-button";
 import {
   Dialog,
   DialogContent,
@@ -27,6 +26,7 @@ import {
 } from "@/lib/constants";
 import { useVotes } from "@/hooks/use-votes";
 import { CompanyLogo } from "@/components/shared/company-logo";
+import { InfoTooltip } from "@/components/ui/tooltip";
 import type { Interview, CompanyResponse } from "@/types";
 
 interface ExperienceCardProps {
@@ -117,13 +117,27 @@ function RatingBreakdown({ interview }: { interview: Interview }) {
   );
 }
 
+interface ExperienceModalProps extends ExperienceCardProps {
+  vote: "helpful" | "unhelpful" | null;
+  helpfulCount: number;
+  unhelpfulCount: number;
+  isAuthenticated: boolean;
+  handleVote: (type: "helpful" | "unhelpful") => void;
+}
+
 /* ── Full Experience Modal ── */
 function ExperienceModal({
   interview,
   companyName,
   companySlug,
+  companyLogoUrl,
   companyResponse,
-}: ExperienceCardProps) {
+  vote,
+  helpfulCount,
+  unhelpfulCount,
+  isAuthenticated,
+  handleVote,
+}: ExperienceModalProps) {
   const avgRating =
     (interview.professionalism_rating +
       interview.communication_rating +
@@ -139,33 +153,37 @@ function ExperienceModal({
   });
 
   return (
-    <div className="max-h-[70vh] space-y-5 overflow-y-auto pr-1">
-      {/* Header */}
+    <div className="max-h-[75vh] space-y-5 overflow-y-auto pr-1">
+      {/* Header — company logo + name, role title, overall rating */}
       <div>
         {companyName && companySlug && (
-          <Link
-            href={`/company/${companySlug}`}
-            className="mb-1 inline-block text-sm font-medium text-primary hover:underline"
-          >
-            {companyName}
-          </Link>
+          <div className="mb-3 flex items-center gap-2.5">
+            {companyLogoUrl !== undefined && (
+              <CompanyLogo name={companyName} logoUrl={companyLogoUrl} size="md" />
+            )}
+            <Link
+              href={`/company/${companySlug}`}
+              className="text-base font-semibold text-primary hover:underline"
+            >
+              {companyName}
+            </Link>
+          </div>
         )}
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
-            <h3 className="text-lg font-semibold">{interview.role_title}</h3>
-            <p className="mt-0.5 text-sm text-muted-foreground">
+            <h3 className="text-xl font-semibold leading-tight sm:text-2xl">{interview.role_title}</h3>
+            <p className="mt-1 text-sm text-muted-foreground">
               by {interview.display_name || "Anonymous"}
             </p>
             <div className="mt-0.5 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
               {interview.seniority && (
                 <span>{SENIORITY_LABELS[interview.seniority]}</span>
               )}
-              {interview.department && <span>{interview.department}</span>}
               {interview.location && <span>{interview.location}</span>}
               <span>{fullDate}</span>
             </div>
           </div>
-          <div className="flex flex-col items-end gap-1">
+          <div className="flex shrink-0 flex-col items-end gap-1">
             <StarRating rating={avgRating} size="md" showValue />
             <span className="text-xs text-muted-foreground">Overall</span>
           </div>
@@ -270,20 +288,42 @@ function ExperienceModal({
             JD {interview.jd_accuracy === "somewhat" ? "somewhat accurate" : "inaccurate"}
           </Badge>
         )}
-        {interview.department && (
-          <Badge variant="outline" className="text-xs font-normal">
-            {interview.department}
-          </Badge>
-        )}
       </div>
 
       <Separator />
 
       {/* Rating Breakdown */}
       <div>
-        <h4 className="mb-2 text-sm font-semibold">Rating Breakdown</h4>
+        <div className="mb-2 flex items-center gap-1.5">
+          <h4 className="text-sm font-semibold">Rating Breakdown</h4>
+          <InfoTooltip content="Ratings across four dimensions: Professionalism, Communication, Clarity of process, and Fairness of assessment." />
+        </div>
         <RatingBreakdown interview={interview} />
       </div>
+
+      {/* Process Details — moved up, right after ratings */}
+      {(interview.stages_count || interview.total_duration_days) && (
+        <>
+          <Separator />
+          <div>
+            <h4 className="mb-2 text-sm font-semibold">Process Details</h4>
+            <div className="grid grid-cols-2 gap-3">
+              {interview.stages_count && (
+                <div className="rounded-md bg-muted/40 px-3 py-3 text-center">
+                  <p className="text-2xl font-medium">{interview.stages_count}</p>
+                  <p className="text-xs text-muted-foreground">Interview Stages</p>
+                </div>
+              )}
+              {interview.total_duration_days && (
+                <div className="rounded-md bg-muted/40 px-3 py-3 text-center">
+                  <p className="text-2xl font-medium">{interview.total_duration_days}</p>
+                  <p className="text-xs text-muted-foreground">Total Days</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Full Comments */}
       {cleanComments(interview.overall_comments) && (
@@ -323,33 +363,6 @@ function ExperienceModal({
         </div>
       )}
 
-      {/* Process Details */}
-      {(interview.stages_count || interview.total_duration_days) && (
-        <>
-          <Separator />
-          <div>
-            <h4 className="mb-2 text-sm font-semibold">Process Details</h4>
-            <div className="grid grid-cols-2 gap-3">
-              {interview.stages_count && (
-                <div className="rounded-md bg-muted/40 px-3 py-2 text-center">
-                  <p className="text-lg font-bold">{interview.stages_count}</p>
-                  <p className="text-xs text-muted-foreground">
-                    Interview Stages
-                  </p>
-                </div>
-              )}
-              {interview.total_duration_days && (
-                <div className="rounded-md bg-muted/40 px-3 py-2 text-center">
-                  <p className="text-lg font-bold">
-                    {interview.total_duration_days}
-                  </p>
-                  <p className="text-xs text-muted-foreground">Total Days</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </>
-      )}
       {/* Company Response */}
       {companyResponse && (
         <>
@@ -370,6 +383,84 @@ function ExperienceModal({
           </div>
         </>
       )}
+
+      {/* Bottom actions — votes + share */}
+      <div className="flex items-center justify-between border-t pt-4">
+        <div className="flex items-center gap-1">
+          <span className="mr-1 text-xs text-muted-foreground">Helpful?</span>
+          {isAuthenticated ? (
+            <>
+              <button
+                type="button"
+                onClick={() => handleVote("helpful")}
+                className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs transition-colors ${
+                  vote === "helpful"
+                    ? "bg-emerald-100 text-emerald-700"
+                    : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"
+                }`}
+              >
+                <svg className="h-3.5 w-3.5" fill={vote === "helpful" ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3H14z M4 15h0a2 2 0 01-2-2V9a2 2 0 012-2h0" />
+                </svg>
+                Yes{helpfulCount > 0 && ` (${helpfulCount})`}
+              </button>
+              <button
+                type="button"
+                onClick={() => handleVote("unhelpful")}
+                className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs transition-colors ${
+                  vote === "unhelpful"
+                    ? "bg-red-100 text-red-700"
+                    : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"
+                }`}
+              >
+                <svg className="h-3.5 w-3.5" fill={vote === "unhelpful" ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 15v4a3 3 0 003 3l4-9V2H5.72a2 2 0 00-2 1.7l-1.38 9a2 2 0 002 2.3H10z M20 2h0a2 2 0 012 2v4a2 2 0 01-2 2h0" />
+                </svg>
+                No{unhelpfulCount > 0 && ` (${unhelpfulCount})`}
+              </button>
+            </>
+          ) : (
+            <>
+              <span className="inline-flex items-center gap-1 rounded-full bg-muted/50 px-2.5 py-1 text-xs text-muted-foreground">
+                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3H14z M4 15h0a2 2 0 01-2-2V9a2 2 0 012-2h0" />
+                </svg>
+                {helpfulCount}
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-full bg-muted/50 px-2.5 py-1 text-xs text-muted-foreground">
+                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 15v4a3 3 0 003 3l4-9V2H5.72a2 2 0 00-2 1.7l-1.38 9a2 2 0 002 2.3H10z M20 2h0a2 2 0 012 2v4a2 2 0 01-2 2h0" />
+                </svg>
+                {unhelpfulCount}
+              </span>
+              <Link href="/sign-in" className="ml-1 text-xs text-primary hover:underline">
+                Sign in to vote
+              </Link>
+            </>
+          )}
+        </div>
+        {/* Share */}
+        <button
+          type="button"
+          onClick={() => {
+            const url = window.location.href;
+            if (navigator.share) {
+              navigator.share({ title: `${interview.role_title} interview experience`, url }).catch(() => {});
+            } else {
+              navigator.clipboard.writeText(url).then(
+                () => toast.success("Link copied!"),
+                () => toast.error("Failed to copy link")
+              );
+            }
+          }}
+          className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+        >
+          <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+          </svg>
+          Share
+        </button>
+      </div>
     </div>
   );
 }
@@ -710,25 +801,23 @@ export function ExperienceCard({
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
-            <div className="flex items-start justify-between gap-2">
-              <div>
-                <DialogTitle>Interview Experience</DialogTitle>
-                <DialogDescription>
-                  Full details for the {interview.role_title} interview
-                  {companyName ? ` at ${companyName}` : ""}
-                </DialogDescription>
-              </div>
-              <ShareButton
-                title={`${interview.role_title} Interview${companyName ? ` at ${companyName}` : ""} | HiringLens`}
-                text={`Check out this ${interview.role_title} interview experience${companyName ? ` at ${companyName}` : ""} on HiringLens`}
-              />
-            </div>
+            <DialogTitle>Interview Experience</DialogTitle>
+            <DialogDescription>
+              Full details for the {interview.role_title} interview
+              {companyName ? ` at ${companyName}` : ""}
+            </DialogDescription>
           </DialogHeader>
           <ExperienceModal
             interview={interview}
             companyName={companyName}
             companySlug={companySlug}
+            companyLogoUrl={companyLogoUrl}
             companyResponse={companyResponse}
+            vote={vote}
+            helpfulCount={helpfulCount}
+            unhelpfulCount={unhelpfulCount}
+            isAuthenticated={isAuthenticated}
+            handleVote={handleVote}
           />
         </DialogContent>
       </Dialog>
