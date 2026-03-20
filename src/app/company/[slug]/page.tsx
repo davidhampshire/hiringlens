@@ -182,15 +182,24 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
 
       {/* Company header */}
       <div className="animate-in-view-d1 mb-8">
-        <div className="flex items-start gap-4">
-          <CompanyLogo
-            name={c.name}
-            logoUrl={c.logo_url}
-            size="2xl"
-          />
+        <div className="flex items-start gap-3 sm:gap-4">
+          <div className="shrink-0">
+            <CompanyLogo
+              name={c.name}
+              logoUrl={c.logo_url}
+              size="xl"
+              className="sm:hidden"
+            />
+            <CompanyLogo
+              name={c.name}
+              logoUrl={c.logo_url}
+              size="2xl"
+              className="hidden sm:block"
+            />
+          </div>
           <div className="min-w-0 flex-1">
-            <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
-              <h1 className="text-3xl font-medium leading-tight sm:text-4xl">{c.name}</h1>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+              <h1 className="text-2xl font-medium leading-tight sm:text-4xl">{c.name}</h1>
               {c.industry && (
                 <span className="text-sm text-muted-foreground">{c.industry}</span>
               )}

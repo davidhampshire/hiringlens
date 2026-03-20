@@ -34,7 +34,7 @@ export function HeroSection() {
 
       <div className="relative mx-auto max-w-4xl px-4 pb-16 pt-10 text-center sm:px-6 sm:pb-20 sm:pt-12 lg:pb-24 lg:pt-14">
         {/* Headline */}
-        <h1 className="animate-in-view text-5xl font-medium leading-[1.05] text-foreground sm:text-7xl lg:text-8xl">
+        <h1 className="animate-in-view text-4xl font-medium leading-[1.05] text-foreground sm:text-7xl lg:text-8xl">
           See how
           <br />
           companies
@@ -51,7 +51,7 @@ export function HeroSection() {
         {/* Search */}
         <form
           onSubmit={handleSearch}
-          className="animate-in-view-d2 mx-auto mt-8 flex max-w-lg gap-2"
+          className="animate-in-view-d2 mx-auto mt-8 flex max-w-lg flex-col gap-2 sm:flex-row"
         >
           <Input
             type="search"
@@ -60,7 +60,7 @@ export function HeroSection() {
             onChange={(e) => setQuery(e.target.value)}
             className="h-12 text-base"
           />
-          <Button type="submit" size="lg" className="h-12 px-6">
+          <Button type="submit" size="lg" className="h-12 w-full px-6 sm:w-auto">
             Search
           </Button>
         </form>

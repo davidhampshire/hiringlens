@@ -34,19 +34,21 @@ export function ProcessTimeline({
         )}
       </div>
 
-      {/* Visual timeline */}
+      {/* Visual timeline — scrollable on mobile if many stages */}
       {avgStages && (
-        <div className="flex items-center gap-1 pt-1">
-          {Array.from({ length: Math.min(Math.round(avgStages), 10) }, (_, i) => (
-            <div key={i} className="flex items-center">
-              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
-                {i + 1}
+        <div className="overflow-x-auto pb-1">
+          <div className="flex items-center gap-1 pt-1">
+            {Array.from({ length: Math.min(Math.round(avgStages), 10) }, (_, i) => (
+              <div key={i} className="flex items-center">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
+                  {i + 1}
+                </div>
+                {i < Math.min(Math.round(avgStages), 10) - 1 && (
+                  <div className="h-0.5 w-4 shrink-0 bg-primary/30" />
+                )}
               </div>
-              {i < Math.min(Math.round(avgStages), 10) - 1 && (
-                <div className="h-0.5 w-4 bg-primary/30" />
-              )}
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
     </div>

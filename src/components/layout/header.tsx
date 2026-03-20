@@ -94,7 +94,7 @@ export function Header() {
         {/* Mobile hamburger */}
         <button
           ref={menuButtonRef}
-          className="flex h-10 w-10 items-center justify-center rounded-md md:hidden"
+          className="flex h-11 w-11 items-center justify-center rounded-md transition-colors hover:bg-accent md:hidden"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
           aria-expanded={mobileMenuOpen}
@@ -136,7 +136,7 @@ export function Header() {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "rounded-md px-3 py-2 text-sm font-medium",
+                  "rounded-md px-3 py-2.5 text-sm font-medium transition-colors",
                   isActive(link.href)
                     ? "bg-accent text-foreground"
                     : "text-muted-foreground hover:bg-accent hover:text-foreground"
@@ -149,7 +149,7 @@ export function Header() {
             ))}
             <Link
               href="/submit"
-              className="mt-1 rounded-md bg-primary px-3 py-2 text-center text-sm font-medium text-primary-foreground"
+              className="mt-1 rounded-md bg-primary px-3 py-2.5 text-center text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
               onClick={closeMenu}
             >
               Share Experience

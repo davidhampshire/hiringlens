@@ -173,15 +173,15 @@ export function RecentPostsList({
 
   return (
     <div className="space-y-4">
-      {/* Filter bar */}
-      <div className="flex flex-wrap items-center gap-2">
+      {/* Filter bar — 2-col grid on mobile, single row on sm+ */}
+      <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center">
         <Select
           value={sortBy}
           onValueChange={(v) =>
             updateFilter(v as SortOption, outcomeFilter, industryFilter, seniorityFilter, typeFilter)
           }
         >
-          <SelectTrigger className="h-9 w-[140px] bg-background text-xs">
+          <SelectTrigger className="h-9 w-full bg-background text-xs sm:w-[140px]">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -199,7 +199,7 @@ export function RecentPostsList({
             updateFilter(sortBy, v, industryFilter, seniorityFilter, typeFilter)
           }
         >
-          <SelectTrigger className="h-9 w-[130px] bg-background text-xs">
+          <SelectTrigger className="h-9 w-full bg-background text-xs sm:w-[130px]">
             <SelectValue placeholder="Outcome" />
           </SelectTrigger>
           <SelectContent>
@@ -216,7 +216,7 @@ export function RecentPostsList({
             updateFilter(sortBy, outcomeFilter, v, seniorityFilter, typeFilter)
           }
         >
-          <SelectTrigger className="h-9 w-[150px] bg-background text-xs">
+          <SelectTrigger className="h-9 w-full bg-background text-xs sm:w-[150px]">
             <SelectValue placeholder="Industry" />
           </SelectTrigger>
           <SelectContent>
@@ -233,7 +233,7 @@ export function RecentPostsList({
             updateFilter(sortBy, outcomeFilter, industryFilter, v, typeFilter)
           }
         >
-          <SelectTrigger className="h-9 w-[130px] bg-background text-xs">
+          <SelectTrigger className="h-9 w-full bg-background text-xs sm:w-[130px]">
             <SelectValue placeholder="Seniority" />
           </SelectTrigger>
           <SelectContent>
@@ -250,7 +250,7 @@ export function RecentPostsList({
             updateFilter(sortBy, outcomeFilter, industryFilter, seniorityFilter, v)
           }
         >
-          <SelectTrigger className="h-9 w-[130px] bg-background text-xs">
+          <SelectTrigger className="h-9 w-full bg-background text-xs sm:w-[130px]">
             <SelectValue placeholder="Type" />
           </SelectTrigger>
           <SelectContent>
@@ -264,7 +264,7 @@ export function RecentPostsList({
         {activeFilterCount > 0 && (
           <button
             onClick={clearFilters}
-            className="text-xs text-muted-foreground hover:text-foreground"
+            className="col-span-2 h-9 rounded-md border border-dashed border-muted-foreground/30 text-xs text-muted-foreground hover:text-foreground sm:col-auto sm:h-auto sm:rounded-none sm:border-none"
           >
             Clear filters
           </button>
