@@ -281,6 +281,29 @@ export type Database = {
           updated_at?: string;
         };
       };
+      company_score_history: {
+        Row: {
+          id: string;
+          company_id: string;
+          reality_score: number | null;
+          total_reviews: number;
+          snapshotted_at: string;
+        };
+        Insert: {
+          id?: string;
+          company_id: string;
+          reality_score?: number | null;
+          total_reviews?: number;
+          snapshotted_at?: string;
+        };
+        Update: {
+          id?: string;
+          company_id?: string;
+          reality_score?: number | null;
+          total_reviews?: number;
+          snapshotted_at?: string;
+        };
+      };
       moderation_flags: {
         Row: {
           id: string;

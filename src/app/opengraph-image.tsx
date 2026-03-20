@@ -92,7 +92,7 @@ export default function OGImage() {
           }}
         >
           <div style={{ fontSize: 18, color: "#a1a1aa" }}>
-            hiringlens.vercel.app
+            hiringlens.com
           </div>
           <div style={{ fontSize: 18, color: "#a1a1aa" }}>
             Real interview experiences from real candidates

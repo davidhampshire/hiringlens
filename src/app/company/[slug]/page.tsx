@@ -158,10 +158,24 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
     { name: c.name, url: `${siteUrl}/company/${slug}` },
   ]);
 
-  // Fetch industry average for timeline comparison
-  const industryAvgDuration = c.industry
-    ? await getIndustryAverageDuration(c.industry)
-    : null;
+  // Fetch industry average for timeline comparison + score trend in parallel
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+  const [industryAvgDuration, trendResult] = await Promise.all([
+    c.industry ? getIndustryAverageDuration(c.industry) : Promise.resolve(null),
+    supabase
+      .from("company_score_history")
+      .select("reality_score")
+      .eq("company_id", c.company_id)
+      .lte("snapshotted_at", thirtyDaysAgo)
+      .order("snapshotted_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+  ]);
+
+  const scoreTrend =
+    c.reality_score != null && trendResult.data?.reality_score != null
+      ? Math.round(c.reality_score) - Math.round(trendResult.data.reality_score)
+      : null;
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
@@ -237,6 +251,7 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
           <RealityScoreBadge
             score={c.reality_score}
             totalReviews={c.total_reviews}
+            trend={scoreTrend}
           />
 
           <Separator />

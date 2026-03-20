@@ -197,7 +197,7 @@ export default async function OGImage({
           }}
         >
           <div style={{ fontSize: 16, color: "#a1a1aa" }}>
-            hiringlens.vercel.app/company/{slug}
+            hiringlens.com/company/{slug}
           </div>
           <div style={{ fontSize: 16, color: "#a1a1aa" }}>
             Real interview experiences from real candidates

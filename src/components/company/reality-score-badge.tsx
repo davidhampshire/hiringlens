@@ -8,12 +8,15 @@ interface RealityScoreBadgeProps {
   score: number | null;
   totalReviews: number;
   size?: "default" | "sm";
+  /** Score delta vs ~30 days ago. Positive = improving, negative = declining. */
+  trend?: number | null;
 }
 
 export function RealityScoreBadge({
   score,
   totalReviews,
   size = "default",
+  trend,
 }: RealityScoreBadgeProps) {
   const [animatedScore, setAnimatedScore] = useState(0);
 
@@ -103,6 +106,28 @@ export function RealityScoreBadge({
           <p className="text-xs text-muted-foreground">
             Based on {totalReviews} {totalReviews === 1 ? "review" : "reviews"}
           </p>
+        )}
+        {!isSmall && trend != null && (
+          <div
+            className={cn(
+              "mt-0.5 flex items-center justify-center gap-1 text-xs font-medium",
+              trend > 2
+                ? "text-emerald-600"
+                : trend < -2
+                  ? "text-red-500"
+                  : "text-muted-foreground"
+            )}
+          >
+            <span>
+              {trend > 2 ? "↑" : trend < -2 ? "↓" : "→"}
+            </span>
+            <span>
+              {Math.abs(trend) > 2
+                ? `${trend > 0 ? "+" : ""}${Math.round(trend)} pts`
+                : "Stable"}
+            </span>
+            <span className="font-normal text-muted-foreground/70">vs last month</span>
+          </div>
         )}
       </div>
     </div>
