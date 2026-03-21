@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { signOut } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -21,17 +21,18 @@ interface UserMenuProps {
 export function UserMenu({ onAction, variant = "desktop" }: UserMenuProps) {
   const [email, setEmail] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
+  const pathname = usePathname();
 
+  // Initial load + listen for client-side auth changes (e.g. OAuth, client signOut)
   useEffect(() => {
     const supabase = createClient();
 
-    // Get initial session
     supabase.auth.getUser().then(({ data: { user } }) => {
       setEmail(user?.email ?? null);
       setIsLoading(false);
     });
 
-    // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -40,6 +41,22 @@ export function UserMenu({ onAction, variant = "desktop" }: UserMenuProps) {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // Re-check auth whenever the route changes — catches server-action sign-in/sign-out redirects
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setEmail(user?.email ?? null);
+    });
+  }, [pathname]);
+
+  async function handleSignOut() {
+    onAction?.();
+    const supabase = createClient();
+    await supabase.auth.signOut(); // clears cookie + fires onAuthStateChange → email = null immediately
+    router.push("/");
+    router.refresh(); // invalidates server-component cache
+  }
 
   // Loading skeleton — placeholder to prevent layout shift
   if (isLoading) {
@@ -94,10 +111,7 @@ export function UserMenu({ onAction, variant = "desktop" }: UserMenuProps) {
           My Account
         </Link>
         <button
-          onClick={async () => {
-            onAction?.();
-            await signOut();
-          }}
+          onClick={handleSignOut}
           className="block w-full rounded-md px-3 py-2 text-left text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
         >
           Sign Out
@@ -136,9 +150,7 @@ export function UserMenu({ onAction, variant = "desktop" }: UserMenuProps) {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="cursor-pointer"
-          onSelect={async () => {
-            await signOut();
-          }}
+          onSelect={handleSignOut}
         >
           Sign Out
         </DropdownMenuItem>
