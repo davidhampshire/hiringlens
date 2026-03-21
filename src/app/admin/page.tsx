@@ -179,7 +179,13 @@ export default async function AdminPage() {
     .select("*", { count: "exact", head: true })
     .eq("status", "approved");
 
-  const { count: totalUsers } = await supabase
+  // Use service role for user count — RLS restricts profiles to own row only
+  const { createClient: createServiceClient } = await import("@supabase/supabase-js");
+  const adminClient = createServiceClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+  const { count: totalUsers } = await adminClient
     .from("profiles")
     .select("*", { count: "exact", head: true });
 
