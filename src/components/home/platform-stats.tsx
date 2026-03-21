@@ -51,7 +51,7 @@ export async function PlatformStats() {
               <p className="text-2xl font-medium sm:text-3xl lg:text-4xl">
                 <AnimatedCounter value={stat.value} />
               </p>
-              <p className="mt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground sm:text-xs">
+              <p className="mt-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground sm:text-xs">
                 {stat.label}
               </p>
             </div>

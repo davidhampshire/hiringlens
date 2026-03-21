@@ -35,11 +35,11 @@ export function HeroSection() {
       <div className="relative mx-auto max-w-4xl px-4 pb-16 pt-10 text-center sm:px-6 sm:pb-20 sm:pt-12 lg:pb-24 lg:pt-14">
         {/* Headline */}
         <h1 className="animate-in-view text-4xl font-medium leading-[1.05] text-foreground sm:text-7xl lg:text-8xl">
-          See how
+          Putting the
           <br />
-          companies
+          spotlight on
           <br />
-          <span className="text-foreground/25">really</span> hire
+          <span className="text-foreground/25">company</span> hiring
         </h1>
 
         {/* Subtext — constrained to ~two lines on desktop */}
