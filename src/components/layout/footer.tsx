@@ -9,12 +9,17 @@ const EXPLORE_LINKS = [
   { label: "Share Experience", href: "/submit" },
 ];
 
+const FOR_COMPANIES_LINKS = [
+  { label: "Represent Your Company", href: "/represent" },
+  { label: "Advertisers", href: "/advertisers" },
+  { label: "Contact Us", href: "/contact" },
+];
+
 const RESOURCE_LINKS = [
   { label: "Help", href: "/help" },
   { label: "Guidelines", href: "/guidelines" },
   { label: "About", href: "/about" },
   { label: "Contact Us", href: "/contact" },
-  { label: "Advertisers", href: "/advertisers" },
 ];
 
 const LEGAL_LINKS = [
@@ -54,7 +59,7 @@ export function Footer() {
   return (
     <footer className="border-t bg-muted/30">
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-        <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-6 md:grid-cols-5">
           {/* Brand column — full width on mobile */}
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="flex items-center gap-2">
@@ -72,6 +77,7 @@ export function Footer() {
           </div>
 
           <FooterSection title="Explore" links={EXPLORE_LINKS} />
+          <FooterSection title="For Companies" links={FOR_COMPANIES_LINKS} />
           <FooterSection title="Resources" links={RESOURCE_LINKS} />
           <FooterSection title="Legal" links={LEGAL_LINKS} />
         </div>
