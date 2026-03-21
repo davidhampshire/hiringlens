@@ -37,9 +37,9 @@ export function HeroSection({ logoCompanies = [] }: HeroSectionProps) {
       {/* Soft radial glow */}
       <div className="absolute -right-1/4 -top-1/4 h-[600px] w-[600px] rounded-full bg-foreground/[0.03] blur-3xl" />
 
-      <div className="relative mx-auto max-w-4xl px-4 pb-10 pt-8 text-center sm:px-6 sm:pb-14 sm:pt-10 lg:pb-16 lg:pt-12">
-        {/* Headline — 2 lines, tighter than before */}
-        <h1 className="animate-in-view text-4xl font-medium leading-[1.05] text-foreground sm:text-6xl lg:text-7xl">
+      <div className="relative mx-auto max-w-4xl px-4 pb-16 pt-8 text-center sm:px-6 sm:pb-20 sm:pt-10 lg:pb-24 lg:pt-12">
+        {/* Headline — 2 lines */}
+        <h1 className="animate-in-view text-5xl font-medium leading-[1.05] text-foreground sm:text-7xl lg:text-8xl">
           Putting the spotlight on
           <br />
           <span className="text-foreground/25">company</span> hiring
@@ -75,7 +75,7 @@ export function HeroSection({ logoCompanies = [] }: HeroSectionProps) {
           </Button>
         </form>
 
-        <p className="animate-in-view-d2 mt-4 text-sm text-muted-foreground">
+        <p className="animate-in-view-d2 mt-6 text-sm text-muted-foreground">
           or{" "}
           <Link
             href="/submit"
