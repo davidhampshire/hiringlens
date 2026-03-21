@@ -37,7 +37,7 @@ export function HeroSection({ logoCompanies = [] }: HeroSectionProps) {
       {/* Soft radial glow */}
       <div className="absolute -right-1/4 -top-1/4 h-[600px] w-[600px] rounded-full bg-foreground/[0.03] blur-3xl" />
 
-      <div className="relative mx-auto max-w-4xl px-4 pb-16 pt-0 text-center sm:px-6 sm:pb-20 lg:pb-24">
+      <div className="relative mx-auto max-w-4xl px-4 pb-16 pt-10 text-center sm:px-6 sm:pb-20 lg:pb-24">
         {/* Headline — 2 lines */}
         <h1 className="animate-in-view text-5xl font-medium leading-[1.05] text-foreground sm:text-7xl lg:text-8xl">
           Putting the spotlight on
