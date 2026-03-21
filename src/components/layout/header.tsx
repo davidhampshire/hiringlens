@@ -42,6 +42,12 @@ export function Header() {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [mobileMenuOpen, closeMenu]);
 
+  // Lock body scroll when menu open
+  useEffect(() => {
+    document.body.style.overflow = mobileMenuOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileMenuOpen]);
+
   // Focus first link when menu opens
   useEffect(() => {
     if (mobileMenuOpen && menuRef.current) {
@@ -108,39 +114,71 @@ export function Header() {
             viewBox="0 0 24 24"
             aria-hidden="true"
           >
-            {mobileMenuOpen ? (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            ) : (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            )}
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 6h16M4 12h16M4 18h16"
+            />
           </svg>
         </button>
       </div>
 
-      {/* Mobile menu */}
+      {/* Full-page mobile menu overlay */}
       {mobileMenuOpen && (
-        <div id="mobile-menu" ref={menuRef} className="border-t px-4 pb-4 pt-2 md:hidden">
-          <nav aria-label="Mobile" className="flex flex-col gap-1">
+        <div
+          id="mobile-menu"
+          ref={menuRef}
+          className="fixed inset-0 z-50 flex flex-col bg-background md:hidden"
+        >
+          {/* Top bar — logo + close */}
+          <div className="flex h-16 shrink-0 items-center justify-between border-b px-4">
+            <Link
+              href="/"
+              onClick={closeMenu}
+              className="flex items-center gap-2 transition-opacity hover:opacity-75"
+            >
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
+                <span className="text-sm font-bold text-primary-foreground">HL</span>
+              </div>
+              <span className="text-lg font-semibold tracking-tight">
+                Hiring<span className="text-foreground/40">Lens</span>
+              </span>
+            </Link>
+            <button
+              onClick={closeMenu}
+              className="flex h-11 w-11 items-center justify-center rounded-md transition-colors hover:bg-accent"
+              aria-label="Close menu"
+            >
+              <svg
+                className="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+
+          {/* Nav links — centred vertically */}
+          <nav aria-label="Mobile" className="flex flex-1 flex-col justify-center px-6">
             <MobileSearchButton />
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "rounded-md px-3 py-2.5 text-sm font-medium transition-colors",
+                  "border-b py-5 text-xl font-medium transition-colors",
                   isActive(link.href)
-                    ? "bg-accent text-foreground"
-                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                    ? "text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
                 )}
                 aria-current={isActive(link.href) ? "page" : undefined}
                 onClick={closeMenu}
@@ -148,15 +186,19 @@ export function Header() {
                 {link.label}
               </Link>
             ))}
+          </nav>
+
+          {/* Bottom — CTA + account */}
+          <div className="shrink-0 space-y-3 px-6 pb-10 pt-4">
             <Link
               href="/submit"
-              className="mt-1 rounded-md bg-primary px-3 py-2.5 text-center text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+              className="block w-full rounded-md bg-primary px-4 py-4 text-center text-base font-medium text-primary-foreground transition-colors hover:bg-primary/90"
               onClick={closeMenu}
             >
               Share Experience
             </Link>
             <UserMenu variant="mobile" onAction={closeMenu} />
-          </nav>
+          </div>
         </div>
       )}
     </header>

@@ -46,14 +46,14 @@ export function HeroSection({ logoCompanies = [] }: HeroSectionProps) {
         </h1>
 
         {/* Subtext */}
-        <p className="animate-in-view-d2 mx-auto mt-5 max-w-sm text-sm leading-relaxed text-muted-foreground sm:max-w-xl sm:text-base">
+        <p className="animate-in-view-d2 mx-auto mt-7 max-w-sm text-sm leading-relaxed text-muted-foreground sm:mt-5 sm:max-w-xl sm:text-base">
           Real interview experiences from real candidates. Holding companies
           accountable and helping you prepare for what&apos;s actually ahead.
         </p>
 
         {/* Company logo carousel — one per industry, randomised each load */}
         {logoCompanies.length > 0 && (
-          <div className="animate-in-view-d2 mt-6 -mx-4 sm:-mx-6">
+          <div className="animate-in-view-d2 mt-8 -mx-4 sm:mt-6 sm:-mx-6">
             <LogoCarousel companies={logoCompanies} />
           </div>
         )}
@@ -61,7 +61,7 @@ export function HeroSection({ logoCompanies = [] }: HeroSectionProps) {
         {/* Search */}
         <form
           onSubmit={handleSearch}
-          className="animate-in-view-d2 mx-auto mt-6 flex max-w-lg flex-col gap-2 sm:flex-row"
+          className="animate-in-view-d2 mx-auto mt-8 flex max-w-lg flex-col gap-2 sm:mt-6 sm:flex-row"
         >
           <Input
             type="search"
@@ -75,7 +75,7 @@ export function HeroSection({ logoCompanies = [] }: HeroSectionProps) {
           </Button>
         </form>
 
-        <p className="animate-in-view-d2 mt-6 text-sm text-muted-foreground">
+        <p className="animate-in-view-d2 mt-8 text-sm text-muted-foreground sm:mt-6">
           or{" "}
           <Link
             href="/submit"

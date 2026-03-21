@@ -196,6 +196,13 @@
   }
 }
 
+/* Mobile: extra breathing room between homepage sections */
+@media (max-width: 639px) {
+  .reveal + .reveal {
+    margin-top: 1.5rem;
+  }
+}
+
 /* Company logo marquee carousel */
 @keyframes marquee {
   0%   { transform: translateX(0); }
