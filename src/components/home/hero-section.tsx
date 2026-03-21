@@ -5,8 +5,13 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { LogoCarousel, type CarouselCompany } from "./logo-carousel";
 
-export function HeroSection() {
+interface HeroSectionProps {
+  logoCompanies?: CarouselCompany[];
+}
+
+export function HeroSection({ logoCompanies = [] }: HeroSectionProps) {
   const router = useRouter();
   const [query, setQuery] = useState("");
 
@@ -32,26 +37,31 @@ export function HeroSection() {
       {/* Soft radial glow */}
       <div className="absolute -right-1/4 -top-1/4 h-[600px] w-[600px] rounded-full bg-foreground/[0.03] blur-3xl" />
 
-      <div className="relative mx-auto max-w-4xl px-4 pb-16 pt-10 text-center sm:px-6 sm:pb-20 sm:pt-12 lg:pb-24 lg:pt-14">
-        {/* Headline */}
-        <h1 className="animate-in-view text-4xl font-medium leading-[1.05] text-foreground sm:text-7xl lg:text-8xl">
-          Putting the
-          <br />
-          spotlight on
+      <div className="relative mx-auto max-w-4xl px-4 pb-10 pt-8 text-center sm:px-6 sm:pb-14 sm:pt-10 lg:pb-16 lg:pt-12">
+        {/* Headline — 2 lines, tighter than before */}
+        <h1 className="animate-in-view text-4xl font-medium leading-[1.05] text-foreground sm:text-6xl lg:text-7xl">
+          Putting the spotlight on
           <br />
           <span className="text-foreground/25">company</span> hiring
         </h1>
 
-        {/* Subtext — constrained to ~two lines on desktop */}
-        <p className="animate-in-view-d2 mx-auto mt-8 max-w-sm text-base leading-relaxed text-muted-foreground sm:max-w-2xl sm:text-lg">
+        {/* Subtext */}
+        <p className="animate-in-view-d2 mx-auto mt-5 max-w-sm text-sm leading-relaxed text-muted-foreground sm:max-w-xl sm:text-base">
           Real interview experiences from real candidates. Holding companies
           accountable and helping you prepare for what&apos;s actually ahead.
         </p>
 
+        {/* Company logo carousel — one per industry, randomised each load */}
+        {logoCompanies.length > 0 && (
+          <div className="animate-in-view-d2 mt-6 -mx-4 sm:-mx-6">
+            <LogoCarousel companies={logoCompanies} />
+          </div>
+        )}
+
         {/* Search */}
         <form
           onSubmit={handleSearch}
-          className="animate-in-view-d2 mx-auto mt-8 flex max-w-lg flex-col gap-2 sm:flex-row"
+          className="animate-in-view-d2 mx-auto mt-6 flex max-w-lg flex-col gap-2 sm:flex-row"
         >
           <Input
             type="search"

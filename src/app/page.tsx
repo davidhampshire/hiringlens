@@ -1,5 +1,7 @@
 import { Suspense } from "react";
+import { createClient } from "@/lib/supabase/server";
 import { HeroSection } from "@/components/home/hero-section";
+import type { CarouselCompany } from "@/components/home/logo-carousel";
 import { PlatformStats } from "@/components/home/platform-stats";
 import { MissionSection } from "@/components/home/mission-section";
 import { TrendingCompanies } from "@/components/home/trending-companies";
@@ -51,8 +53,30 @@ function StatsSkeleton() {
   );
 }
 
-export default function HomePage() {
+export default async function HomePage() {
   const jsonLd = buildHomepageJsonLd();
+
+  // Fetch companies for the hero carousel — one per industry, best-reviewed first
+  const supabase = await createClient();
+  const { data: scoreRows } = await supabase
+    .from("company_scores")
+    .select("company_id, name, industry, logo_url, website_url")
+    .order("total_reviews", { ascending: false })
+    .limit(60);
+
+  // Pick the top-reviewed company per industry
+  const byIndustry = new Map<string, CarouselCompany>();
+  for (const row of scoreRows ?? []) {
+    if (row.industry && !byIndustry.has(row.industry)) {
+      byIndustry.set(row.industry, {
+        id: row.company_id,
+        name: row.name,
+        logo_url: row.logo_url,
+        website_url: row.website_url,
+      });
+    }
+  }
+  const carouselCompanies = [...byIndustry.values()];
 
   return (
     <>
@@ -64,7 +88,7 @@ export default function HomePage() {
         />
       ))}
       <ScrollReveal />
-      <HeroSection />
+      <HeroSection logoCompanies={carouselCompanies} />
       <Suspense fallback={<StatsSkeleton />}>
         <PlatformStats />
       </Suspense>
