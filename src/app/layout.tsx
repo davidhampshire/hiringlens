@@ -26,6 +26,12 @@ export const metadata: Metadata = {
     default: "HiringLens - See How Companies Really Hire",
     template: "%s | HiringLens",
   },
+  // Google AdSense site verification — static meta tag, always visible to crawlers
+  ...(process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID && {
+    other: {
+      "google-adsense-account": process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID,
+    },
+  }),
   description:
     "Real interview experiences from real candidates. Know the process, prepare smarter, and interview with confidence.",
   openGraph: {
