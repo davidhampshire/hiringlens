@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AdPlaceholder } from "@/components/shared/ad-placeholder";
+import { AdUnit } from "@/components/shared/ad-unit";
 
 const VALUES = [
   {
@@ -92,7 +92,7 @@ export function MissionSection() {
         </p>
       </div>
 
-      <AdPlaceholder variant="leaderboard" className="mt-8" />
+      <AdUnit variant="leaderboard" className="mt-8" />
     </section>
   );
 }

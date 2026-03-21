@@ -9,7 +9,7 @@ import { RecentReviews } from "@/components/home/recent-reviews";
 import { ClosingCTA } from "@/components/home/closing-cta";
 import { CompanyEngageSection } from "@/components/home/company-engage-section";
 import { GetInvolved } from "@/components/home/get-involved";
-import { AdPlaceholder } from "@/components/shared/ad-placeholder";
+import { AdUnit } from "@/components/shared/ad-unit";
 import { CompanyPromo } from "@/components/shared/company-promo";
 import { ScrollReveal } from "@/components/shared/scroll-reveal";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -90,7 +90,7 @@ export default function HomePage() {
         <CompanyPromo variant="homepage" />
       </div>
       <div className="reveal mx-auto max-w-6xl px-4 sm:px-6">
-        <AdPlaceholder variant="leaderboard" />
+        <AdUnit variant="leaderboard" />
       </div>
       <div className="reveal">
         <Suspense fallback={<ReviewsSkeleton />}>
@@ -98,7 +98,7 @@ export default function HomePage() {
         </Suspense>
       </div>
       <div className="reveal mx-auto max-w-6xl px-4 pb-12 sm:px-6">
-        <AdPlaceholder variant="leaderboard" />
+        <AdUnit variant="leaderboard" />
       </div>
       <div className="reveal">
         <ClosingCTA />

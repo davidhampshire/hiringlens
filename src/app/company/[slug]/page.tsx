@@ -17,7 +17,7 @@ import type { CompanyResponse } from "@/types";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { ShareButton } from "@/components/shared/share-button";
 import { CompanyLogo } from "@/components/shared/company-logo";
-import { AdPlaceholder } from "@/components/shared/ad-placeholder";
+import { AdUnit } from "@/components/shared/ad-unit";
 import { TimelineComparison } from "@/components/company/timeline-comparison";
 import { JumpToExperiences } from "@/components/company/jump-to-experiences";
 import { WatchCompanyForm } from "@/components/company/watch-company-form";
@@ -300,7 +300,7 @@ export default async function CompanyPage({ params }: CompanyPageProps) {
 
           <CompanyRepCta companyName={c.name} />
 
-          <AdPlaceholder variant="sidebar" />
+          <AdUnit variant="sidebar" />
         </aside>
 
         {/* Main content — streams in */}

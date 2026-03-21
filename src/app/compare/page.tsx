@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { CompanySelector } from "@/components/compare/company-selector";
 import { ComparisonTable } from "@/components/compare/comparison-table";
-import { AdPlaceholder } from "@/components/shared/ad-placeholder";
+import { AdUnit } from "@/components/shared/ad-unit";
 import type { CompanyScore } from "@/types";
 
 const MAX_COMPANIES = 3;
@@ -52,7 +52,7 @@ export default function ComparePage() {
       {/* Comparison table */}
       <ComparisonTable companies={selectedCompanies} />
 
-      <AdPlaceholder variant="leaderboard" className="mt-8" />
+      <AdUnit variant="leaderboard" className="mt-8" />
 
     </div>
   );

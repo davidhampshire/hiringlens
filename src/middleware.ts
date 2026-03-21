@@ -28,11 +28,15 @@ const STATIC_HEADERS: Record<string, string> = {
 function buildCsp(nonce: string): string {
   return [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://va.vercel-scripts.com`,
+    // strict-dynamic means scripts loaded by a nonced script are also trusted,
+    // which covers Next.js hydration chunks and AdSense sub-scripts.
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://va.vercel-scripts.com https://pagead2.googlesyndication.com https://adservice.google.com https://*.googlesyndication.com https://*.googletagservices.com`,
     "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: blob: https://logo.clearbit.com https://www.google.com https://*.gstatic.com https://*.supabase.co",
-    "font-src 'self'",
-    "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://va.vercel-scripts.com https://vitals.vercel-insights.com",
+    "img-src 'self' data: blob: https://logo.clearbit.com https://www.google.com https://*.gstatic.com https://*.supabase.co https://*.googlesyndication.com https://*.doubleclick.net https://googleads.g.doubleclick.net",
+    "font-src 'self' https://fonts.gstatic.com",
+    "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://va.vercel-scripts.com https://vitals.vercel-insights.com https://pagead2.googlesyndication.com https://adservice.google.com https://*.doubleclick.net",
+    // AdSense renders creatives inside iframes served from these origins
+    "frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com",
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'",

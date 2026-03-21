@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { AdPlaceholder } from "@/components/shared/ad-placeholder";
+import { AdUnit } from "@/components/shared/ad-unit";
 import { PromoBanner } from "@/components/shared/promo-banner";
 import { InsightsGrid, type IndustryStats } from "@/components/insights/insights-grid";
 
@@ -159,7 +159,7 @@ export default async function InsightsPage() {
         </div>
       )}
 
-      <AdPlaceholder variant="leaderboard" className="mb-6" />
+      <AdUnit variant="leaderboard" className="mb-6" />
 
       {industries.length === 0 ? (
         <div className="py-12 text-center text-sm text-muted-foreground">

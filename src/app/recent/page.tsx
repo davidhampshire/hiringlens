@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { RecentPostsList } from "@/components/recent/recent-posts-list";
-import { AdPlaceholder } from "@/components/shared/ad-placeholder";
+import { AdUnit } from "@/components/shared/ad-unit";
 import { PromoBanner } from "@/components/shared/promo-banner";
 import { CompanyPromo } from "@/components/shared/company-promo";
 import type { Interview } from "@/types";
@@ -47,7 +47,7 @@ export default async function RecentPostsPage() {
         </p>
       </div>
 
-      <AdPlaceholder variant="leaderboard" className="mb-6" />
+      <AdUnit variant="leaderboard" className="mb-6" />
 
       <div className="animate-in-view-d1">
         <RecentPostsList
