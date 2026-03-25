@@ -129,10 +129,11 @@ export function Header() {
         <div
           id="mobile-menu"
           ref={menuRef}
-          className="fixed inset-0 z-50 flex flex-col bg-background md:hidden"
+          className="fixed inset-0 z-[9999] flex flex-col bg-white md:hidden"
+          style={{ backgroundColor: "white" }}
         >
           {/* Top bar — logo + close */}
-          <div className="flex h-16 shrink-0 items-center justify-between border-b px-4">
+          <div className="flex h-20 shrink-0 items-center justify-between border-b px-4">
             <Link
               href="/"
               onClick={closeMenu}
