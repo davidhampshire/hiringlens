@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
-import { SearchTrigger, MobileSearchButton } from "./search-dialog";
+import { SearchTrigger } from "./search-dialog";
 import { UserMenu } from "@/components/auth/user-menu";
 
 const NAV_LINKS = [
@@ -170,7 +170,16 @@ export function Header() {
 
           {/* Nav links — centred vertically */}
           <nav aria-label="Mobile" className="flex flex-1 flex-col justify-center px-6">
-            <MobileSearchButton />
+            <Link
+              href="/search"
+              onClick={closeMenu}
+              className="mb-2 flex items-center gap-2 border-b py-5 text-xl font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              Search
+            </Link>
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
