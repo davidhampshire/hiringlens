@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 import { SearchTrigger, MobileSearchButton } from "./search-dialog";
 import { UserMenu } from "@/components/auth/user-menu";
@@ -124,13 +125,12 @@ export function Header() {
         </button>
       </div>
 
-      {/* Full-page mobile menu overlay */}
-      {mobileMenuOpen && (
+      {/* Full-page mobile menu overlay — rendered via portal so backdrop-filter on header doesn't trap it */}
+      {mobileMenuOpen && typeof document !== "undefined" && createPortal(
         <div
           id="mobile-menu"
           ref={menuRef}
           className="fixed inset-0 z-[9999] flex flex-col bg-white md:hidden"
-          style={{ backgroundColor: "white" }}
         >
           {/* Top bar — logo + close */}
           <div className="flex h-20 shrink-0 items-center justify-between border-b px-4">
@@ -200,7 +200,8 @@ export function Header() {
             </Link>
             <UserMenu variant="mobile" onAction={closeMenu} />
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </header>
   );
